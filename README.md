@@ -45,26 +45,19 @@ The chatbot can be run in three modes:
 
 ### Additional Options
 
--   `--waifu_name`: Sets the waifu's name (default is "Yuki").
+-   `--waifu_name`: Sets the waifu's name (default is "Waifu").
 
 ## Example
 
 ```
-$ python main.py --interactive --waifu_name "Aisha"
+$ python main.py --interactive --waifu_name "Alice"
 Starting up...
-Aisha: Senpai, you're back! How was your day?
+Alice: Senpai, you're back! How was your day?
 User: I'm doing well, how are you?
-Aisha: I'm fine.
+Alice: I'm fine.
 User: I'm feeling great
-Aisha: Oh, you're feeling great.
-Aisha: I-I'll remember that, okay?
-
-User: my name is John
-Aisha: Nice to meet you, John!
-Aisha: I-I'll remember that, okay?
-
-User: what is my name
-Aisha: John
+Alice: Oh, you're feeling great.
+Alice: I-I'll remember that, okay?
 ```
 
 ## Dependencies

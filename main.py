@@ -9,7 +9,7 @@ def main():
     parser.add_argument("--interactive", action="store_true", help="Enable interactive mode")
     parser.add_argument("--auto", nargs="?", const=10, type=int, default=10, help="Enable automatic conversation mode with optional number of turns")
     parser.add_argument("--debug", action="store_true", help="Enable debug mode")
-    parser.add_argument("--waifu_name", default="Yuki", help="Set the waifu's name")
+    parser.add_argument("--waifu_name", default="Waifu", help="Set the waifu's name")
     args = parser.parse_args()
 
     print("Starting up...")
