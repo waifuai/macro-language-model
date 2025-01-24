@@ -184,12 +184,14 @@ class WaifuChatbot:
                     self.used_responses.add(response)
                     return response
             else:
+                # Check if current_topic is favorite_food and replace with actual value
+                topic_value = self.waifu_memory.favorite_food if self.current_topic == "favorite_food" else self.current_topic
                 response = dere_response(self.waifu_memory, self.current_dere, self.used_responses, self.debug,
-                        f"We were talking about {self.current_topic}, remember?",
-                        f"Let's get back to {self.current_topic}.",
-                        f"A-are you trying to avoid talking about {self.current_topic}...?",
-                        f"As I was saying about {self.current_topic}..."
-                    )
+                    f"We were talking about {topic_value}, remember?",
+                    f"Let's get back to {topic_value}.",
+                    f"A-are you trying to avoid talking about {topic_value}...?",
+                    f"As I was saying about {topic_value}..."
+                )
                 self.used_responses.add(response)
                 return response
 
