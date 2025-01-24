@@ -74,6 +74,7 @@ class WaifuChatbot:
 
     def respond(self, input_str):
         """Generates a response to the user's input."""
+        self.waifu_memory.conversation_history.append(("user", input_str))
         tokens = tokenize(input_str)
         if self.debug:
             print(f"Type of self.used_responses in respond: {type(self.used_responses)}")
@@ -113,24 +114,28 @@ class WaifuChatbot:
         # Introduce a new topic based on affection level and randomness
         if self.waifu_memory.affection > 40 and random.random() < 0.2:
             available_topics = [
-                    "family",
-                    "childhood",
-                    "feelings",
-                    "interests",
-                    "relationship_status",
-                    "favorite_food",
-                    "personality_quirks",
-                ]
-            if self.last_topic and self.last_topic in available_topics:
-                available_topics.remove(self.last_topic)  # Exclude the last topic
-
+                "family",
+                "childhood",
+                "feelings",
+                "interests",
+                "relationship_status",
+                "favorite_food",
+                "personality_quirks",
+            ]
+            
+            # Filter out last topic if exists
+            if self.last_topic in available_topics:
+                available_topics.remove(self.last_topic)
+            
             if available_topics:
                 new_topic = random.choice(available_topics)
                 self.current_topic = new_topic
-                self.last_topic = new_topic  # Update the last introduced topic
-            response = introduce_topic(new_topic, self.waifu_memory, self.current_dere, self.used_responses, self.debug)
-            self.used_responses.add(response)
-            return response
+                self.last_topic = new_topic
+                response = introduce_topic(new_topic, self.waifu_memory,
+                                         self.current_dere, self.used_responses,
+                                         self.debug)
+                self.used_responses.add(response)
+                return response
 
         # Respond based on the current topic, if any
         if self.current_topic:

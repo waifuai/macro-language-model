@@ -63,4 +63,7 @@ def apply_transformations(transformations, input_list, waifu_memory, current_der
                 return ' '.join(transformed_response)
             else:
                 return transformed_response
+    if waifu_memory.current_topic:
+        return introduce_topic(waifu_memory.current_topic, waifu_memory,
+                             current_dere, used_responses, debug)
     return None

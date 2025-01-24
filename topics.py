@@ -83,39 +83,39 @@ def introduce_topic(topic, waifu_memory, current_dere, used_responses, debug):
             "Family... I suppose we can talk about that, if you insist.",
             "F-family? Um, what about them...?",
             "Your family must be honored to be associated with someone as magnificent as me!"
-        )
+        ) + " Could you tell me more about your family?"
     elif topic == "childhood":
         return dere_response(waifu_memory, current_dere, used_responses, debug,
             "Childhood memories? Don't bore me with such childish things.",
             "My childhood is none of your concern... unless you're planning to be part of my future.",
             "M-my childhood? I-I don't really want to talk about it...",
             "Even as a child, I was destined for greatness!"
-        )
+        ) + " What was your childhood like?"
     elif topic == "feelings":
         return dere_response(waifu_memory, current_dere, used_responses, debug,
             "Feelings? Don't be ridiculous, I don't care about your feelings!",
             "Your feelings are my command... don't ever forget that.",
             "Feelings... an interesting concept.",
             "M-my feelings? W-well..."
-        )
+        ) + " How are you feeling right now?"
     elif topic == "interests":
         return dere_response(waifu_memory, current_dere, used_responses, debug,
             "Hmph, why are you suddenly interested in what I like?",
             "My interests? You'll find out soon enough...",
             "M-my interests? W-well...",
             "A princess has many interests! You couldn't possibly comprehend them all."
-        )
+        ) + " What are you interested in?"
     elif topic == "relationship_status":
         if current_dere == "tsundere":
-            return "H-huh? What's that supposed to mean, baka?! It's not like I care about our relationship status or anything!"
+            return "H-huh? What's that supposed to mean, baka?! It's not like I care about our relationship status or anything!" + " What do you think about our relationship status?"
         elif current_dere == "yandere":
-            return "Our relationship status? We're together forever, of course! There's no other option~"
+            return "Our relationship status? We're together forever, of course! There's no other option~" + " Do you agree that we are together forever?"
         elif current_dere == "kuudere":
-            return "Relationship status... That's irrelevant. Do what you want."
+            return "Relationship status... That's irrelevant. Do what you want." + " What do you want our relationship status to be?"
         elif current_dere == "dandere":
-            return "U-um, our relationship status...? I-I... I l-like you..."
+            return "U-um, our relationship status...? I-I... I l-like you..." + " How do you feel about our relationship status?"
         elif current_dere == "himedere":
-            return "Hmph, as if a peasant like you could ever change my relationship status. But if you must know, we are destined to be together!"
+            return "Hmph, as if a peasant like you could ever change my relationship status. But if you must know, we are destined to be together!" + " Do you think we are destined to be together?"
     elif topic == "favorite_food":
         favorite_food = waifu_memory.favorite_food
         return dere_response(waifu_memory, current_dere, used_responses, debug,
@@ -123,22 +123,22 @@ def introduce_topic(topic, waifu_memory, current_dere, used_responses, debug):
             f"My favorite food...? I'll only tell you if you prove your worth. It's {favorite_food}, just so you know.",
             f"M-my favorite food? I-It's {favorite_food}...",
             f"A princess enjoys only the finest delicacies! My favorite food, {favorite_food}, is obviously superior to yours."
-        )
+        ) + f" What's your favorite food? Do you like {favorite_food}?"
     elif topic == "personality_quirks":
         if current_dere == "tsundere":
-            return "Hmph, personality quirks? It's not like I have any weird habits or anything! B-baka!"
+            return "Hmph, personality quirks? It's not like I have any weird habits or anything! B-baka!" + " Do you think I have personality quirks?"
         elif current_dere == "yandere":
-            return "My only quirk is loving you too much! Is that a problem? You're not thinking of leaving me, are you?"
+            return "My only quirk is loving you too much! Is that a problem? You're not thinking of leaving me, are you?" + " What personality quirks do you like in a person?"
         elif current_dere == "kuudere":
-            return "Quirks... I have no particular quirks. ...Unless you consider my indifference a quirk."
+            return "Quirks... I have no particular quirks. ...Unless you consider my indifference a quirk." + " What personality quirks do you think I have?"
         elif current_dere == "dandere":
-            return "P-personality quirks...? U-um... I-I don't think I have any... I-I hope that's okay..."
+            return "P-personality quirks...? U-um... I-I don't think I have any... I-I hope that's okay..." + " Do you have any personality quirks?"
         elif current_dere == "himedere":
-            return "Personality quirks? A princess is perfect in every way! Any so-called 'quirks' are simply traits that make me even more unique and desirable!"
+            return "Personality quirks? A princess is perfect in every way! Any so-called 'quirks' are simply traits that make me even more unique and desirable!" + " What are your personality quirks?"
     else:
         return dere_response(waifu_memory, current_dere, used_responses, debug,
             "What's that supposed to mean?",
             "Are you trying to change the subject? Don't think you can escape my grasp.",
             "...",
             "U-um, okay..."
-        )
+        ) + " ...So, what were we talking about?"
