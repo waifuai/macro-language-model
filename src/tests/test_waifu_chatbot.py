@@ -1,10 +1,13 @@
 import unittest
-from waifu_chatbot import WaifuChatbot
 
-class TestWaifuChatbotMinimal(unittest.TestCase):
-    def test_basic_import(self):
-        chatbot = WaifuChatbot("TestWaifu", debug=True)
-        self.assertIsNotNone(chatbot)
+from tests.test_dere_types import TestDereTypes
+from tests.test_response_generation import TestResponseGeneration
+from tests.test_transformations import TestTransformations
+from tests.test_memory import TestMemory
+from tests.test_utils import TestUtils
+from tests.test_topics import TestTopics
+from tests.test_waifu_chatbot_class import TestWaifuChatbot
+from tests.test_waifu_frame import TestWaifuFrame
 
 if __name__ == '__main__':
     unittest.main()
