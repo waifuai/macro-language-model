@@ -1,6 +1,13 @@
+from typing import Any, List
+
 from transformations import deftransform
 
-def register_transforms(waifu):
+def register_transforms(waifu: Any) -> None:
+    """Registers transformations for the waifu chatbot.
+
+    Args:
+        waifu: The waifu chatbot object.
+    """
     deftransform(waifu.transformations, "my name is *", ["Nice to meet you, *!", "Hello *!"], memory_slot="name")
     deftransform(waifu.transformations, "i am feeling *", ["Oh, you're feeling *."], memory_slot="feeling")
     deftransform(waifu.transformations, "i like *", ["Oh, you like *."], memory_slot="likes", affection_change=2)

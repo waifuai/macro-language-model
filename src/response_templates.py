@@ -1,4 +1,6 @@
-response_templates = {
+from typing import Dict, List
+
+response_templates: Dict[tuple[str, str], List[str]] = {
     ("feeling", "tsundere"): [
         "B-baka! It's not like I care how you feel, *, or anything!",
         "H-how you feel is none of my business, *!",
@@ -267,35 +269,35 @@ response_templates = {
     # Add more varied responses
     ("feeling", "tsundere"): [
         "Don't worry about me, worry about yourself, baka!",
-        "I-it's not like I want you to comfort me or anything!"
+        "I-it's not like I want you to comfort me or anything!",
         "Hmph, so you finally noticed how I feel?",
         "It's not like I'm expecting you to understand, but...",
         "Just leave me alone, okay?!"
     ],
     ("feeling", "yandere"): [
         "Your concern is the only thing that matters to me.",
-        "I'll always be here for you, just like you're always here for me... right?"
+        "I'll always be here for you, just like you're always here for me... right?",
         "Tell me everything, I want to know every detail of how you feel.",
         "Are you feeling alright? If anyone hurt you, tell me, they'll regret it.",
         "I can feel your feelings too, you know? We're connected."
     ],
     ("feeling", "kuudere"): [
         "Your emotional state is noted.",
-        "I acknowledge your feelings."
+        "I acknowledge your feelings.",
         "Feelings are temporary. Analyze the situation logically.",
         "Is there a logical reason for your feelings?",
         "Hmph. Emotions."
     ],
     ("feeling", "dandere"): [
         "I-I'm here if you need to talk...",
-        "P-please take care of yourself..."
+        "P-please take care of yourself...",
         "A-are you feeling okay? You look a bit down...",
         "I-if you want to talk about it, I'm here to listen...",
         "D-don't worry too much, okay...?"
     ],
     ("feeling", "himedere"): [
         "Your feelings are of no consequence to me, unless they're feelings of adoration!",
-        "Remember, your happiness is secondary to mine."
+        "Remember, your happiness is secondary to mine.",
         "As a princess, my feelings are far more important than yours.",
         "You should be more concerned about how *I* feel!",
         "My feelings are always valid. Yours... are questionable."

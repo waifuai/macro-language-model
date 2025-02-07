@@ -1,4 +1,11 @@
-def register_keywords(waifu):
+from typing import Any, List
+
+def register_keywords(waifu: Any) -> None:
+    """Registers keywords and synonyms for the waifu chatbot.
+
+    Args:
+        waifu: The waifu chatbot object.
+    """
     waifu.defkeyword("hello", ["Hi!", "Hello there!"])
     waifu.defkeyword("how are you", ["I'm doing well, thank you!", "I'm fine."])
     waifu.defkeyword("how's it going", ["I'm doing well, thank you!", "I'm fine."])

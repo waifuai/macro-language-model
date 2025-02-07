@@ -3,8 +3,10 @@ import argparse
 from main_transforms import register_transforms
 from main_keywords import register_keywords
 from waifu_chatbot import WaifuChatbot
+from typing import Optional
 
-def main():
+def main() -> None:
+    """Main function to run the Waifu Chatbot."""
     parser = argparse.ArgumentParser(description="Waifu Chatbot")
     parser.add_argument("--interactive", action="store_true", help="Enable interactive mode")
     parser.add_argument("--auto", nargs="?", const=10, type=int, default=10, help="Enable automatic conversation mode with optional number of turns")

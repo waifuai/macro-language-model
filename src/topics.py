@@ -1,8 +1,20 @@
 import random
 from dere_types import dere_response
+from typing import List, Dict, Any
 
-def talk_about_interest(waifu_memory, current_dere, used_responses, debug):
-    """Generates a response about a random interest, considering the current dere type."""
+def talk_about_interest(waifu_memory: Any, current_dere: str, used_responses: List[str], debug: bool) -> str:
+    """
+    Generates a response about a random interest, considering the current dere type.
+
+    Args:
+        waifu_memory: An object containing the waifu's memory and preferences.
+        current_dere: The current dere type of the waifu (e.g., "tsundere", "yandere").
+        used_responses: A list of responses that have already been used to avoid repetition.
+        debug: A boolean indicating whether to print debug messages.
+
+    Returns:
+        A string containing the generated response.
+    """
     if debug:
         print(f"Type of used_responses in talk_about_interest: {type(used_responses)}")
     interest = random.choice(waifu_memory.interests)
@@ -73,8 +85,19 @@ def talk_about_interest(waifu_memory, current_dere, used_responses, debug):
 
     return response
 
-def introduce_topic(topic, waifu_memory, current_dere, used_responses, debug):
-    """Introduces a new topic with a relevant dere-style phrase."""
+def introduce_topic(topic: str, waifu_memory: Any, current_dere: str, used_responses: List[str], debug: bool) -> str:
+    """Introduces a new topic with a relevant dere-style phrase.
+
+    Args:
+        topic: The topic to introduce (e.g., "family", "childhood").
+        waifu_memory: An object containing the waifu's memory and preferences.
+        current_dere: The current dere type of the waifu.
+        used_responses: A list of responses that have already been used.
+        debug: A boolean indicating whether to print debug messages.
+
+    Returns:
+        A string containing the introduction to the topic.
+    """
     if debug:
         print(f"Type of used_responses in introduce_topic: {type(used_responses)}")
     if topic == "family":

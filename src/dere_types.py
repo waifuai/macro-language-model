@@ -1,6 +1,16 @@
 import random
+from typing import List, Set, Tuple
 
-def get_current_dere(affection):
+def get_current_dere(affection: int) -> str:
+    """
+    Determines the current dere type based on the affection level.
+
+    Args:
+        affection: The affection level of the waifu.
+
+    Returns:
+        The current dere type (e.g., "tsundere", "yandere").
+    """
     if affection < -5:
         return "tsundere"
     elif -5 <= affection <= 0:
@@ -12,8 +22,20 @@ def get_current_dere(affection):
     else:
         return "deredere"
 
-def maybe_change_dere(waifu_memory, current_dere, dere_types, used_responses, debug, *responses):
-    """Randomly changes the dere type and returns a dere-specific response."""
+def maybe_change_dere(waifu_memory: any, current_dere: str, dere_types: List[str], used_responses: Set[str], debug: bool, *responses: str) -> str:
+    """Randomly changes the dere type and returns a dere-specific response.
+
+    Args:
+        waifu_memory: An object containing the waifu's memory and preferences.
+        current_dere: The current dere type of the waifu.
+        dere_types: A list of possible dere types.
+        used_responses: A set of responses that have already been used.
+        debug: A boolean indicating whether to print debug messages.
+        *responses: Variable number of dere-specific responses.
+
+    Returns:
+        A string containing the dere-specific response.
+    """
     if debug:
         print(f"Type of used_responses in maybe_change_dere: {type(used_responses)}")
     if random.randint(0, 9) == 0:
@@ -26,8 +48,19 @@ def maybe_change_dere(waifu_memory, current_dere, dere_types, used_responses, de
         return response
     return dere_response(waifu_memory, current_dere, used_responses, debug, *responses)
 
-def dere_response(waifu_memory, current_dere, used_responses, debug, *responses):
-    """Returns a response based on the current dere type."""
+def dere_response(waifu_memory: any, current_dere: str, used_responses: Set[str], debug: bool, *responses: str) -> str:
+    """Returns a response based on the current dere type.
+
+    Args:
+        waifu_memory: An object containing the waifu's memory and preferences.
+        current_dere: The current dere type of the waifu.
+        used_responses: A set of responses that have already been used.
+        debug: A boolean indicating whether to print debug messages.
+        *responses: Variable number of dere-specific responses.
+
+    Returns:
+        A string containing the dere-specific response.
+    """
     if debug:
         print(f"Type of used_responses in dere_response: {type(used_responses)}")
     if not responses:

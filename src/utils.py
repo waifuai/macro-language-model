@@ -1,7 +1,8 @@
 import random
 import re
+from typing import List, Dict, Any
 
-def tokenize(input_str):
+def tokenize(input_str: str) -> List[str]:
     """Tokenizes the input string into a list of lowercase words."""
     return [
         word.lower()
@@ -9,7 +10,7 @@ def tokenize(input_str):
 
     ]
 
-def matches(pattern, input_list):
+def matches(pattern: List[str], input_list: List[str]) -> bool:
     """Checks if the input list matches the given pattern."""
     if not pattern:
         return not input_list
@@ -25,7 +26,7 @@ def matches(pattern, input_list):
         return matches(pattern[1:], input_list[1:])
     return False
 
-def substitute_template(template, substitutions):
+def substitute_template(template: str, substitutions: Dict[str, Any]) -> str:
     """Replaces placeholders in the template with actual values."""
     for placeholder, value in substitutions.items():
         template = template.replace(placeholder, str(value))

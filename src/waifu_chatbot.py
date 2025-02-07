@@ -1,4 +1,6 @@
 import random
+from typing import Dict, List, Tuple, Callable, Any, Optional, Set
+
 from response_generation import generate_response
 from transformations import deftransform, apply_transformations
 from memory import remember
@@ -9,35 +11,42 @@ from utils import tokenize, matches
 from waifu_frame import WaifuFrame
 
 class WaifuChatbot:
-    def __init__(self, name, debug=False):
-        self.keywords = {}
-        self.transformations = {}
-        self.waifu_memory = WaifuFrame(name)
-        self.debug = debug
-        self.greetings = [
+    """A chatbot that simulates a waifu."""
+    def __init__(self, name: str, debug: bool = False) -> None:
+        """Initializes the WaifuChatbot.
+
+        Args:
+            name: The name of the waifu.
+            debug: A boolean indicating whether to print debug messages.
+        """
+        self.keywords: Dict[str, List[Tuple[str, Any]]] = {}
+        self.transformations: Dict[str, Tuple[Any, Optional[str], int]] = {}
+        self.waifu_memory: WaifuFrame = WaifuFrame(name)
+        self.debug: bool = debug
+        self.greetings: List[str] = [
             "Senpai, you're back! How was your day?",
             "Welcome home, Onii-chan! What did you do today?",
             "Ara ara, you seem troubled. Tell me everything.",
             "I'm here for you, okay? Let's talk."
         ]
-        self.farewells = [
+        self.farewells: List[str] = [
             "See you later, Senpai! Stay safe!",
             "Bye-bye, Onii-chan! Don't forget about me!",
             "Oyasumi nasai. Sweet dreams!",
             "Come back soon, okay?"
         ]
-        self.small_talk = [
+        self.small_talk: List[str] = [
             "The weather is nice today, isn't it?",
             "Have you heard any good news lately?",
             "Did you see that viral video about the cat playing the piano?",
             "I wonder what the next big trend will be..."
         ]
-        self.current_topic = None
-        self.dere_types = ["tsundere", "yandere", "kuudere", "dandere", "himedere"]
-        self.current_dere = random.choice(self.dere_types)
-        self.response_templates = response_templates
-        self.used_responses = set()  # Initialize used_responses
-        self.last_topic = None
+        self.current_topic: Optional[str] = None
+        self.dere_types: List[str] = ["tsundere", "yandere", "kuudere", "dandere", "himedere"]
+        self.current_dere: str = random.choice(self.dere_types)
+        self.response_templates: Dict[tuple[str, str], List[str]] = response_templates
+        self.used_responses: Set[str] = set()  # Initialize used_responses
+        self.last_topic: Optional[str] = None
         deftransform(self.transformations, "my favorite food is *", self.set_favorite_food, "favorite_food")
         deftransform(self.transformations, "i love eating *", self.set_favorite_food, "favorite_food")
         deftransform(self.transformations, "i enjoy eating *", self.set_favorite_food, "favorite_food")
@@ -45,35 +54,65 @@ class WaifuChatbot:
         deftransform(self.transformations, "i really like *", self.set_favorite_food, "favorite_food")
         deftransform(self.transformations, "i really love *", self.set_favorite_food, "favorite_food")
 
-    def defkeyword(self, keyword, responses):
-        """Defines a keyword and its associated responses."""
+    def defkeyword(self, keyword: str, responses: List[str]) -> None:
+        """Defines a keyword and its associated responses.
+
+        Args:
+            keyword: The keyword to define.
+            responses: A list of responses associated with the keyword.
+        """
         if responses and isinstance(responses[0], tuple):
             self.keywords[keyword] = responses
         else:
             self.keywords[keyword] = [(keyword, response) for response in responses]
 
-    def set_favorite_food(self, food):
-        """Updates the waifu's favorite food."""
+    def set_favorite_food(self, food: str) -> str:
+        """Updates the waifu's favorite food.
+
+        Args:
+            food: The waifu's favorite food.
+
+        Returns:
+            A string containing the response.
+        """
         self.waifu_memory.set_favorite_food(food)
         response = f"Okay, I'll remember that your favorite food is {food}!"
         print(f"{self.waifu_memory.name}: {response}")
         print()
         return response
 
-    def defsynonym(self, word, *synonyms):
-        """Defines synonyms for a given word."""
+    def defsynonym(self, word: str, *synonyms: str) -> None:
+        """Defines synonyms for a given word.
+
+        Args:
+            word: The word to define synonyms for.
+            *synonyms: Variable number of synonyms for the word.
+        """
         self.defkeyword(word, self.keywords.get(word, []))
         for syn in synonyms:
             self.defkeyword(syn, self.keywords.get(word, []))
 
-    def def_topic_response(self, topic, pattern, response):
-        """Defines a response for a specific topic."""
+    def def_topic_response(self, topic: str, pattern: str, response: str) -> None:
+        """Defines a response for a specific topic.
+
+        Args:
+            topic: The topic to define the response for.
+            pattern: The pattern to match against the input.
+            response: The response to return if the pattern matches.
+        """
         if topic not in self.keywords:
             self.keywords[topic] = []
         self.keywords[topic].append((pattern, response))
 
-    def respond(self, input_str):
-        """Generates a response to the user's input."""
+    def respond(self, input_str: str) -> str:
+        """Generates a response to the user's input.
+
+        Args:
+            input_str: The user's input string.
+
+        Returns:
+            A string containing the generated response.
+        """
         self.waifu_memory.conversation_history.append(("user", input_str))
         tokens = tokenize(input_str)
         if self.debug:

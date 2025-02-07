@@ -1,11 +1,41 @@
+from typing import Dict, List, Tuple, Callable, Any, Optional, Set
+
 from utils import matches
 
-def deftransform(transformations, pattern, response, memory_slot=None, affection_change=0):
-    """Defines a transformation pattern and its corresponding response."""
+def deftransform(transformations: Dict[str, Tuple[Any, Optional[str], int]], pattern: str, response: Any, memory_slot: Optional[str] = None, affection_change: int = 0) -> None:
+    """Defines a transformation pattern and its corresponding response.
+
+    Args:
+        transformations: A dictionary to store the transformations.
+        pattern: The pattern to match against the input.
+        response: The response to return if the pattern matches.
+        memory_slot: The memory slot to store the matched value in.
+        affection_change: The amount to change the waifu's affection by.
+    """
     transformations[pattern] = (response, memory_slot, affection_change)
 
-def apply_transformations(transformations, input_list, waifu_memory, current_dere, talk_about_interest, introduce_topic, dere_response, maybe_change_dere, generate_response, remember, response_templates, used_responses, dere_types, debug):
-    """Applies transformations to the input and returns a transformed response."""
+def apply_transformations(transformations: Dict[str, Tuple[Any, Optional[str], int]], input_list: List[str], waifu_memory: Any, current_dere: str, talk_about_interest: Callable[..., str], introduce_topic: Callable[..., str], dere_response: Callable[..., str], maybe_change_dere: Callable[..., str], generate_response: Callable[..., str], remember: Callable[..., None], response_templates: Dict[tuple[str, str], List[str]], used_responses: Set[str], dere_types: List[str], debug: bool) -> Optional[str]:
+    """Applies transformations to the input and returns a transformed response.
+
+    Args:
+        transformations: A dictionary of transformations.
+        input_list: A list of words from the user input.
+        waifu_memory: The waifu's memory object.
+        current_dere: The current dere type of the waifu.
+        talk_about_interest: A function to talk about the waifu's interests.
+        introduce_topic: A function to introduce a new topic.
+        dere_response: A function to generate a dere-specific response.
+        maybe_change_dere: A function to maybe change the dere type.
+        generate_response: A function to generate a response.
+        remember: A function to remember something.
+        response_templates: A dictionary of response templates.
+        used_responses: A set of used responses.
+        dere_types: A list of dere types.
+        debug: A boolean indicating whether to print debug messages.
+
+    Returns:
+        A string containing the transformed response, or None if no transformation was applied.
+    """
     if debug:
         print(f"Type of used_responses in apply_transformations: {type(used_responses)}")
     for pattern, (response, memory_slot, affection_change) in transformations.items():
