@@ -6,8 +6,8 @@ def tokenize(input_str: str) -> List[str]:
     """Tokenizes the input string into a list of lowercase words."""
     return [
         word.lower()
-        for word in re.split(r"[ .,!?]", input_str)
-
+        for word in re.split(r"[ .,!?]+", input_str)
+        if word
     ]
 
 def matches(pattern: List[str], input_list: List[str]) -> bool:

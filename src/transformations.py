@@ -77,11 +77,15 @@ def apply_transformations(transformations: Dict[str, Tuple[Any, Optional[str], i
                     elif isinstance(part, tuple) and part[0] == "maybe-change-dere":
                         transformed_response.append(maybe_change_dere(waifu_memory, current_dere, dere_types, used_responses, debug, *part[1:]))
                     elif isinstance(part, tuple) and part[0] == "talk-about":
-                        transformed_response.append(talk_about_interest(waifu_memory, current_dere))
+                        transformed_response.append(talk_about_interest(waifu_memory, current_dere, used_responses, debug))
                     elif isinstance(part, tuple) and part[0] == "introduce-topic":
-                        transformed_response.append(introduce_topic(part[1], waifu_memory, current_dere))
+                        transformed_response.append(introduce_topic(part[1], waifu_memory, current_dere, used_responses, debug))
                     else:
                         transformed_response.append(part)
+                # Correctly substitute placeholders in transformed_response when it's a list
+                for i in range(len(transformed_response)):
+                    if isinstance(transformed_response[i], str):
+                        transformed_response[i] = transformed_response[i].replace("*", " ".join(substitutions.get("*", "")))
             else:
                 transformed_response = response
 

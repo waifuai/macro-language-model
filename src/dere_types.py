@@ -81,7 +81,10 @@ def dere_response(waifu_memory: any, current_dere: str, used_responses: Set[str]
     if not unused_responses:
         # Keep 50% of used responses to avoid immediate repetition
         keep_count = len(used_responses) // 2
-        used_responses.clear() if keep_count == 0 else set(list(used_responses)[-keep_count:])
+        used_responses_list = list(used_responses)
+        used_responses.clear()
+        if keep_count > 0:
+            used_responses.update(used_responses_list[-keep_count:])
         unused_responses = list(responses)
 
     chosen_response = random.choice(unused_responses)

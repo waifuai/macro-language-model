@@ -1,5 +1,6 @@
 import random
 from typing import Dict, List, Set, Any
+from dere_types import get_current_dere
 
 def generate_response(response_templates: Dict[tuple[str, str], List[str]], keyword: str, substitutions: Dict[str, Any], used_responses: Set[str], waifu_memory: Any, current_dere: str, dere_response: Any, debug: bool) -> str:
     """Generates a response based on the keyword, substitutions, and current dere type.
