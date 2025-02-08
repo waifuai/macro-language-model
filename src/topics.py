@@ -74,8 +74,8 @@ def introduce_topic(topic: str, waifu_memory: Any, current_dere: str, used_respo
     Returns:
         A string containing the introduction to the topic.
     """
-    
-    response = dere_response(waifu_memory, current_dere, used_responses, debug,
+    dere_context = DereContext(waifu_memory, current_dere, used_responses, debug)
+    response = dere_response(dere_context,
         "Hmph, why do you want to talk about this all of a sudden?",
         "I suppose we can talk about that, if you insist.",
         "Um, what about this...?",

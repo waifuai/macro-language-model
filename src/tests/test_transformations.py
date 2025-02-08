@@ -29,6 +29,11 @@ class TestTransformations(unittest.TestCase):
         self.assertIn("my name is *", self.transformations)
         self.assertEqual(self.transformations["my name is *"], (["Nice to meet you, *!"], "name", 5))
 
+    def test_deftransform_no_memory_or_affection(self):
+        deftransform(self.transformations, "hello", ["Hi there!"])
+        self.assertIn("hello", self.transformations)
+        self.assertEqual(self.transformations["hello"], (["Hi there!"], None, 0))
+
 
     def test_apply_transformations_match(self):
         deftransform(self.transformations, "my name is *", ["Nice to meet you, *!"], "name", affection_change = 0)
@@ -95,7 +100,7 @@ class TestTransformations(unittest.TestCase):
                 "response": ["maybe-change-dere"],
                 "input_list": ["change", "dere"],
                 "expected_response": "maybe-change-dere"
-            ],
+            },
             {
                 "pattern": "talk about interests",
                 "response": ["talk-about"],
