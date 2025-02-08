@@ -60,7 +60,9 @@ def apply_transformations(transformations: Dict[str, Tuple[Any, Optional[str], i
             elif isinstance(response, list):
                 transformed_response = []
                 for part in response:
-                    if isinstance(part, tuple) and part[0] == "generate":
+                    if isinstance(part, str):
+                        transformed_response.append(part.replace("*", " ".join(substitutions.get("*", ""))))
+                    elif isinstance(part, tuple) and part[0] == "generate":
                         keyword = part[1]
                         sub_dict = {}
                         for sub_key, sub_value in part[2]:
@@ -69,9 +71,7 @@ def apply_transformations(transformations: Dict[str, Tuple[Any, Optional[str], i
                             generate_response(response_templates, keyword, sub_dict, used_responses, waifu_memory, current_dere, dere_response, debug)
                         )
                     elif isinstance(part, tuple) and part[0] == "waifu-memory":
-                        transformed_response.append(getattr(waifu_memory, part[1]))
-                    elif part in substitutions:
-                        transformed_response.append(" ".join(substitutions[part]))
+                        transformed_response.append(str(getattr(waifu_memory, part[1])))
                     elif isinstance(part, tuple) and part[0] == "dere-response":
                         transformed_response.append(dere_response(waifu_memory, current_dere, used_responses, debug, *part[1:]))
                     elif isinstance(part, tuple) and part[0] == "maybe-change-dere":
@@ -81,22 +81,16 @@ def apply_transformations(transformations: Dict[str, Tuple[Any, Optional[str], i
                     elif isinstance(part, tuple) and part[0] == "introduce-topic":
                         transformed_response.append(introduce_topic(part[1], waifu_memory, current_dere, used_responses, debug))
                     else:
-                        transformed_response.append(part)
-                # Correctly substitute placeholders in transformed_response when it's a list
-                for i in range(len(transformed_response)):
-                    if isinstance(transformed_response[i], str):
-                        transformed_response[i] = transformed_response[i].replace("*", " ".join(substitutions.get("*", "")))
+                        transformed_response.append(str(part))
+                transformed_response = " ".join(transformed_response)
             else:
                 transformed_response = response
 
             if memory_slot:
-                value = " ".join(substitutions['*'])
+                value = " ".join(substitutions.get('*', []))
                 remember(waifu_memory, memory_slot, value, affection_change)
 
-            if isinstance(transformed_response, list):
-                return ' '.join(transformed_response)
-            else:
-                return transformed_response
+            return transformed_response
     if waifu_memory.current_topic:
         return introduce_topic(waifu_memory.current_topic, waifu_memory,
                              current_dere, used_responses, debug)

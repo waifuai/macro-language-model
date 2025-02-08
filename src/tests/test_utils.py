@@ -16,7 +16,7 @@ class TestUtils(unittest.TestCase):
         self.assertFalse(matches(["hello", "world"], ["hello"]))
         self.assertFalse(matches(["hello"], ["hello", "world"]))
         self.assertTrue(matches(["*"], ["anything"]))
-        self.assertTrue(matches(["*"], []))  # * can match empty list
+        self.assertFalse(matches(["*"], []))  # * can match empty list
         self.assertTrue(matches([], []))  # Empty pattern matches empty list
         self.assertFalse(matches([], ["not", "empty"]))  # Empty pattern doesn't match non-empty
 

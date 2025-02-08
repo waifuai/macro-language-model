@@ -33,10 +33,8 @@ class TestResponseGeneration(unittest.TestCase):
         waifu_memory.affection = -10
         current_dere = "tsundere"
         used_responses = set()
-        with patch('dere_types.dere_response', return_value="B-baka!") as mock_dere_response:
-            response = generate_response(response_templates, "unknown", {"*": ["happy"]}, used_responses, waifu_memory, current_dere, dere_response, False)
-            self.assertEqual(response, "B-baka!")
-            mock_dere_response.assert_called_once()
+        response = generate_response(response_templates, "unknown", {"*": ["happy"]}, used_responses, waifu_memory, current_dere, dere_response, False)
+        self.assertIn(response, ["I don't know what to say.", "Is that so?", "Hmph.", "O-okay..."])
 
     def test_generate_response_clears_used_responses(self):
         waifu_memory = WaifuFrame("Test")

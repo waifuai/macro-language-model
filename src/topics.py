@@ -109,6 +109,6 @@ def introduce_topic(topic: str, waifu_memory: Any, current_dere: str, used_respo
         "I suppose we can talk about that, if you insist.",
         "Um, what about this...?",
         "You should be honored that I'm even talking to you about this!"
-    ) + f" Could you tell me more about {topic}?"
+    )
     
-    return response
+    return f"{response} Could you tell me more about {topic}?"

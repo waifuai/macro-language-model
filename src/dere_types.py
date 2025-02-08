@@ -39,12 +39,11 @@ def maybe_change_dere(waifu_memory: any, current_dere: str, dere_types: List[str
     if debug:
         print(f"Type of used_responses in maybe_change_dere: {type(used_responses)}")
     if random.randint(0, 9) == 0:
-        current_dere = random.choice(dere_types)
-        response = dere_response(waifu_memory, current_dere, used_responses, debug, *responses)
+        new_dere = random.choice(dere_types)
+        response = dere_response(waifu_memory, new_dere, used_responses, debug, *responses)
         if debug:
             print(f"{waifu_memory.name}: (I feel a little different...)")
             print()
-        used_responses.add(response)
         return response
     return dere_response(waifu_memory, current_dere, used_responses, debug, *responses)
 
@@ -88,5 +87,7 @@ def dere_response(waifu_memory: any, current_dere: str, used_responses: Set[str]
         unused_responses = list(responses)
 
     chosen_response = random.choice(unused_responses)
+    if isinstance(used_responses, list):
+        used_responses = set(used_responses)
     used_responses.add(chosen_response)
     return chosen_response

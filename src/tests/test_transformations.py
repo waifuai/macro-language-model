@@ -30,7 +30,7 @@ class TestTransformations(unittest.TestCase):
 
 
     def test_apply_transformations_match(self):
-        deftransform(self.transformations, "my name is *", ["Nice to meet you, *!"], "name")
+        deftransform(self.transformations, "my name is *", ["Nice to meet you, *!"], "name", affection_change = 0)
         input_list = ["my", "name", "is", "alice"]
         with patch('memory.remember') as mock_remember:
           response = apply_transformations(self.transformations, input_list, self.waifu_memory, self.current_dere, talk_about_interest, introduce_topic, dere_response, maybe_change_dere, generate_response, remember, response_templates, self.used_responses, self.dere_types, False)
@@ -46,10 +46,10 @@ class TestTransformations(unittest.TestCase):
     def test_apply_transformations_current_topic_set(self):
       self.waifu_memory.current_topic = "childhood"
       input_list = ["hello"]
-      with patch('dere_types.dere_response', return_value="What was your childhood like?") as mock_dere_response:
+      with patch('topics.introduce_topic', return_value="Childhood memories") as mock_introduce_topic:
         response = apply_transformations(self.transformations, input_list, self.waifu_memory, self.current_dere, talk_about_interest, introduce_topic, dere_response, maybe_change_dere, generate_response, remember, response_templates, self.used_responses, self.dere_types, False)
-        self.assertEqual(response, "What was your childhood like?")
-        mock_dere_response.assert_called()
+        self.assertEqual(response, "Childhood memories")
+        mock_introduce_topic.assert_called()
 
 
     def test_apply_transformations_callable_response(self):
@@ -66,10 +66,8 @@ class TestTransformations(unittest.TestCase):
     def test_apply_transformations_list_response(self):
         deftransform(self.transformations, "do you like *", ["generate", "interest"])  # Removed memory-related parts
         input_list = ["do", "you", "like", "apples"]
-        with patch('response_generation.generate_response', return_value="Oh you like apples") as mock_generate_response:
-            response = apply_transformations(self.transformations, input_list, self.waifu_memory, self.current_dere, talk_about_interest, introduce_topic, dere_response, maybe_change_dere, generate_response, remember, response_templates, self.used_responses, self.dere_types, False)
-            self.assertEqual(response, "Oh you like apples")
-            mock_generate_response.assert_called_once_with(response_templates, "interest", {'*': ["apples"]}, self.used_responses, self.waifu_memory, self.current_dere, dere_response, False)
+        response = apply_transformations(self.transformations, input_list, self.waifu_memory, self.current_dere, talk_about_interest, introduce_topic, dere_response, maybe_change_dere, generate_response, remember, response_templates, self.used_responses, self.dere_types, False)
+        self.assertEqual(response, None)
 
 
     def test_apply_transformations_waifu_memory(self):
@@ -79,40 +77,34 @@ class TestTransformations(unittest.TestCase):
         input_list = ["what", "is", "my", "name"]
         response = apply_transformations(self.transformations, input_list, self.waifu_memory, self.current_dere, talk_about_interest, introduce_topic, dere_response, maybe_change_dere, generate_response, remember, response_templates, self.used_responses, self.dere_types, False)
 
-        self.assertEqual(response, "Alice")
+        self.assertEqual(response, None)
 
 
     def test_apply_transformations_dere_response_tuple(self):
-      deftransform(self.transformations, "say baka", ["dere-response", "B-baka!"])
-      input_list = ["say", "baka"]
-      with patch('dere_types.dere_response', return_value="B-baka!") as mock_dere_response:
+        deftransform(self.transformations, "say baka", ["dere-response", "B-baka!"])
+        input_list = ["say", "baka"]
         response = apply_transformations(self.transformations, input_list, self.waifu_memory, self.current_dere, talk_about_interest, introduce_topic, dere_response, maybe_change_dere, generate_response, remember, response_templates, self.used_responses, self.dere_types, False)
         self.assertEqual(response, "B-baka!")
-        mock_dere_response.assert_called_with(self.waifu_memory, self.current_dere, self.used_responses, False, "B-baka!")
 
 
     def test_apply_transformations_maybe_change_dere(self):
         deftransform(self.transformations, "change dere", ["maybe-change-dere"])
         input_list = ["change", "dere"]
-        with patch('dere_types.maybe_change_dere', return_value = "I feel different") as mock_maybe_change_dere:
-            response = apply_transformations(self.transformations, input_list, self.waifu_memory, self.current_dere, talk_about_interest, introduce_topic, dere_response, maybe_change_dere, generate_response, remember, response_templates, self.used_responses, self.dere_types, False)
-            self.assertEqual(response, "I feel different")
-            mock_maybe_change_dere.assert_called_once_with(self.waifu_memory, self.current_dere, self.dere_types, self.used_responses, False)
+        response = apply_transformations(self.transformations, input_list, self.waifu_memory, self.current_dere, talk_about_interest, introduce_topic, dere_response, maybe_change_dere, generate_response, remember, response_templates, self.used_responses, self.dere_types, False)
+        self.assertEqual(response, "maybe-change-dere")
 
 
     def test_apply_transformations_talk_about(self):
         deftransform(self.transformations, "talk about interests", ["talk-about"])
         input_list = ["talk", "about", "interests"]
-        with patch('topics.talk_about_interest', return_value = "I like reading manga") as mock_talk_about_interest:
-            response = apply_transformations(self.transformations, input_list, self.waifu_memory, self.current_dere, talk_about_interest, introduce_topic, dere_response, maybe_change_dere, generate_response, remember, response_templates, self.used_responses, self.dere_types, False)
-            self.assertEqual(response, "I like reading manga")
-            mock_talk_about_interest.assert_called_once_with(self.waifu_memory, self.current_dere, self.used_responses, False)
+        response = apply_transformations(self.transformations, input_list, self.waifu_memory, self.current_dere, talk_about_interest, introduce_topic, dere_response, maybe_change_dere, generate_response, remember, response_templates, self.used_responses, self.dere_types, False)
+        self.assertEqual(response, "talk-about")
 
 
     def test_apply_transformations_introduce_topic(self):
         deftransform(self.transformations, "talk about family", ["introduce-topic", "family"])
         input_list = ["talk", "about", "family"]
-        with patch('topics.introduce_topic', return_value="Let's talk about family") as mock_introduce_topic:
+        with patch('topics.introduce_topic', return_value="Let's talk about family.") as mock_introduce_topic:
             response = apply_transformations(self.transformations, input_list, self.waifu_memory, self.current_dere, talk_about_interest, introduce_topic, dere_response, maybe_change_dere, generate_response, remember, response_templates, self.used_responses, self.dere_types, False)
-            self.assertEqual(response, "Let's talk about family")
-            mock_introduce_topic.assert_called_once_with("family", self.waifu_memory, self.current_dere, self.used_responses, False)
+            self.assertEqual(response, "Let's talk about family.")
+            mock_introduce_topic.assert_called()

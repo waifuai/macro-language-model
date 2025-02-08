@@ -123,9 +123,7 @@ class WaifuChatbot:
 
         # Check for topic-specific responses first
         if self.current_topic and self.current_topic in self.keywords:
-            print(f"Current topic: {self.current_topic}")
             for resp_pattern, resp_text in self.keywords[self.current_topic]:
-                print(f"Checking pattern: {resp_pattern}, response: {resp_text}")
                 if matches(tokenize(resp_pattern), tokens):
                     self.used_responses.add(resp_text)
                     self.current_topic = None
@@ -139,7 +137,6 @@ class WaifuChatbot:
         # Then check for general keywords
         for word in tokens:
             if word in self.keywords:
-                print(f"Found keyword: {word}")
                 responses = self.keywords[word]
                 for resp_pattern, resp_text in responses:
                     if matches(tokenize(resp_pattern), tokens):
@@ -168,26 +165,23 @@ class WaifuChatbot:
 
             if available_topics:
                 new_topic = random.choice(available_topics)
-                self.current_topic = new_topic
                 self.last_topic = new_topic
                 response = introduce_topic(new_topic, self.waifu_memory,
                                          self.current_dere, self.used_responses,
                                          self.debug)
+                self.current_topic = new_topic
                 return response
 
         # Respond based on the current topic, if any
         if self.current_topic:
-            # Check if current_topic is favorite_food and replace with actual value
-            topic_value = self.waifu_memory.favorite_food if self.current_topic == "favorite_food" else self.current_topic
             response = dere_response(self.waifu_memory, self.current_dere, self.used_responses, self.debug,
-                f"We were talking about {topic_value}, remember?",
-                f"Let's get back to {topic_value}.",
-                f"A-are you trying to avoid talking about {topic_value}...?",
-                f"As I was saying about {topic_value}..."
+                f"We were talking about {self.current_topic}, remember?",
+                f"Let's get back to {self.current_topic}.",
+                f"A-are you trying to avoid talking about {self.current_topic}...?",
+                f"As I was saying about {self.current_topic}..."
             )
             return response
 
-        response = maybe_change_dere(self.waifu_memory, self.current_dere, self.dere_types, self.used_responses, self.debug,
+        return maybe_change_dere(self.waifu_memory, self.current_dere, self.dere_types, self.used_responses, self.debug,
             "What are you talking about?", "I don't get it.", "Hmph.", "O-okay..."
         )
-        return response
