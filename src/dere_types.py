@@ -43,8 +43,8 @@ def maybe_change_dere(context: DereContext, dere_types: List[str], *responses: s
         print(f"Type of used_responses in maybe_change_dere: {type(context.used_responses)}")
     if random.randint(0, 9) == 0:
         new_dere = random.choice(dere_types)
-        new_context = context._replace(current_dere=new_dere)
-        response = dere_response(new_context, *responses)
+        context = context._replace(current_dere=new_dere)
+        response = dere_response(context, *responses)
         if context.debug:
             print(f"{context.waifu_memory.name}: (I feel a little different...)")
             print()

@@ -24,15 +24,21 @@ def test_maybe_change_dere_probability():
     dere_types = ["tsundere", "yandere"]
     used_responses = set()
     context = DereContext(waifu_memory, current_dere, used_responses, False)
-    
+
     num_trials = 100
     change_count = 0
-    for _ in range(num_trials):
-        with patch('random.randint') as mock_randint:
-            mock_randint.return_value = 0 if random.random() < 0.1 else 1
+
+    # Use side_effect to simulate 10% chance.  Define OUTSIDE the loop.
+    def mock_randint(a, b):
+        return 0 if random.random() < 0.1 else 1
+
+    with patch('random.randint', side_effect=mock_randint) as mock_randint:
+        for _ in range(num_trials):  # No need for i anymore
             response = maybe_change_dere(context, dere_types)
-            if context.current_dere != current_dere:
+            new_dere = get_current_dere(context.waifu_memory.affection)
+            if new_dere != current_dere:
                 change_count += 1
+
     # Probability of change should be around 10%
     assert 5 <= change_count <= 15
 

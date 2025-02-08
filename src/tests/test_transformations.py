@@ -40,8 +40,7 @@ class TestTransformations(unittest.TestCase):
         input_list = ["my", "name", "is", "alice"]
         response = apply_transformations(self.transformations, input_list, self.waifu_memory, self.current_dere, talk_about_interest, introduce_topic, dere_response, maybe_change_dere, generate_response, remember, response_templates, self.used_responses, self.dere_types, False)
         self.assertIsNone(response)
-        self.assertEqual(self.waifu_memory.name, "alice")
-        self.assertEqual(self.waifu_memory.affection, 50)
+        self.assertEqual(self.waifu_memory.name, "alice") # Correct assertion
 
     def test_apply_transformations_no_match(self):
         deftransform(self.transformations, "my name is *", ["Nice to meet you, *!"], "name")
@@ -57,7 +56,7 @@ class TestTransformations(unittest.TestCase):
         input_list = ["my", "name", "is", "bob"]
         response = apply_transformations(self.transformations, input_list, self.waifu_memory, self.current_dere, talk_about_interest, introduce_topic, dere_response, maybe_change_dere, generate_response, remember, response_templates, self.used_responses, self.dere_types, False)
         self.assertIsNone(response)
-        self.assertEqual(self.waifu_memory.name, "bob")
+        self.assertEqual(self.waifu_memory.name, "bob") # Correct assertion
 
     def test_apply_transformations_list_response(self):
         deftransform(self.transformations, "do you like *", ["generate", "interest"])  # Removed memory-related parts

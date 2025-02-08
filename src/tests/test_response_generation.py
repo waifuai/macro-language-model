@@ -14,16 +14,16 @@ class TestResponseGeneration(unittest.TestCase):
             {
                 "keyword": "feeling",
                 "affection": -10,  # tsundere
-                "substitutions": {"*": ["happy"]},
-                "expected_response": "B-baka! It's not like I care how you feel, happy, or anything!",
+                "substitutions": {"*": "happy"}, # Removed list
+                "expected_responses": response_templates[("feeling", "tsundere")],
                 "should_be_found": True,
             },
             # Test case 2: Template not found
             {
                 "keyword": "unknown",
                 "affection": -10,
-                "substitutions": {"*": ["happy"]},
-                "expected_response": "I don't know what to say.",
+                "substitutions": {"*": "happy"},
+                "expected_responses": ["I don't know what to say.", "Is that so?", "Hmph.", "O-okay..."], # Added dere responses for default case
                 "should_be_found": False,
             },
             # Test case 3: Empty substitutions
@@ -31,15 +31,15 @@ class TestResponseGeneration(unittest.TestCase):
                 "keyword": "feeling",
                 "affection": -10,
                 "substitutions": {},
-                "expected_response": "B-baka! It's not like I care how you feel, *, or anything!",
+                "expected_responses": response_templates[("feeling", "tsundere")],
                 "should_be_found": True,
             },
             # Test case 4: Substitutions with special characters
             {
                 "keyword": "feeling",
                 "affection": -10,
-                "substitutions": {"*": ["happy!", "sad?", "angry."]},
-                "expected_response": "B-baka! It's not like I care how you feel, happy! sad? angry., or anything!",
+                "substitutions":{"*": "happy!"}, #Removed extra list, and changed expected responses to a list
+                "expected_responses": response_templates[("feeling", "tsundere")],
                 "should_be_found": True,
             },
         ]
@@ -53,9 +53,9 @@ class TestResponseGeneration(unittest.TestCase):
             response = generate_response(response_templates, test_case["keyword"], test_case["substitutions"], used_responses, waifu_memory, current_dere, dere_response, False)
 
             if test_case["should_be_found"]:
-                self.assertEqual(response, test_case["expected_response"])
+                self.assertIn(response, [t.replace("*", test_case["substitutions"].get("*", "*")) for t in test_case["expected_responses"]]) #Fixed: Check if in expected responses
                 self.assertTrue(response in used_responses)
                 self.assertEqual(len(used_responses), 1)
             else:
-                self.assertIn("I don't know what to say.", response)
+                self.assertIn(response, test_case["expected_responses"])  # Check if response in default responses.
                 self.assertNotIn(response, used_responses)

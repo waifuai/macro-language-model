@@ -85,9 +85,9 @@ class WaifuChatbot:
         """
         if word not in self.keywords:
             return
-        keyword_list = self.keywords[word]
+
         for syn in synonyms:
-            self.keywords[syn] = [tuple(item) for item in keyword_list]
+            self.keywords[syn] = self.keywords[word][:]  # Create a copy of list.
 
     def def_topic_response(self, topic: str, pattern: str, response: str) -> None:
         """Defines a response for a specific topic.
@@ -120,7 +120,7 @@ class WaifuChatbot:
                 for resp_pattern, resp_text in responses:
                     if matches(tokenize(resp_pattern), tokens):
                         self.used_responses.add(resp_text)
-                        self.current_topic = None  # Reset the topic if a keyword is matched
+                        # self.current_topic = None  # REMOVE THIS LINE
                         return resp_text
         return None
 
@@ -157,13 +157,15 @@ class WaifuChatbot:
 
     def _respond_based_on_current_topic(self, tokens: List[str]) -> Optional[str]:
         """Responds based on the current topic, if any."""
-        if self.current_topic and self.current_topic in self.keywords:
-            for resp_pattern, resp_text in self.keywords[self.current_topic]:
-                if matches(tokenize(resp_pattern), tokens):
-                    self.used_responses.add(resp_text)
-                    self.current_topic = None
-                    return resp_text
-        if self.current_topic:
+        if self.current_topic:  # Simplified the condition
+            if self.current_topic in self.keywords:
+                for resp_pattern, resp_text in self.keywords[self.current_topic]:
+                    if matches(tokenize(resp_pattern), tokens):
+                        self.used_responses.add(resp_text)
+                        self.current_topic = None  # Reset topic after a match
+                        return resp_text
+
+            # If we have a current_topic, but no specific response was found:
             dere_context = DereContext(self.waifu_memory, self.current_dere, self.used_responses, self.debug)
             response = dere_response(dere_context,
                 f"We were talking about {self.current_topic}, remember?",
@@ -171,10 +173,8 @@ class WaifuChatbot:
                 f"A-are you trying to avoid talking about {self.current_topic}...?",
                 f"As I was saying about {self.current_topic}..."
             )
-            if response:
-                return response
-            else:
-                self.current_topic = None
+            return response  # Return the dere_response
+
         return None
 
     def _get_default_response(self) -> str:
@@ -202,21 +202,17 @@ class WaifuChatbot:
         response = self._respond_based_on_current_topic(tokens)
         if response:
             return response
-
         # Then check for transformations
         response = self._handle_transformations(tokens)
         if response:
             return response
-
         # Then check for general keywords
         response = self._handle_keywords(tokens)
         if response:
             return response
-
         # Introduce a new topic based on affection level and randomness
         response = self._maybe_introduce_topic(input_str)
         if response:
             return response
-
         # Get the default response
         return self._get_default_response()

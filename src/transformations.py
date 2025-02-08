@@ -48,27 +48,6 @@ def _handle_introduce_topic(context: DereContext, part: tuple) -> str:
     return introduce_topic(part[1], context.waifu_memory, context.current_dere, context.used_responses, context.debug)
 
 def apply_transformations(transformations: Dict[str, Tuple[Any, Optional[str], int]], input_list: List[str], waifu_memory: Any, current_dere: str, talk_about_interest: Callable[..., str], introduce_topic: Callable[..., str], dere_response: Callable[..., str], maybe_change_dere: Callable[..., str], generate_response: Callable[..., str], remember: Callable[..., None], response_templates: Dict[tuple[str, str], List[str]], used_responses: Set[str], dere_types: List[str], debug: bool) -> Optional[str]:
-    """Applies transformations to the input and returns a transformed response.
-
-    Args:
-        transformations: A dictionary of transformations.
-        input_list: A list of words from the user input.
-        waifu_memory: The waifu's memory object.
-        current_dere: The current dere type of the waifu.
-        talk_about_interest: A function to talk about the waifu's interests.
-        introduce_topic: A function to introduce a new topic.
-        dere_response: A function to generate a dere-specific response.
-        maybe_change_dere: A function to maybe change the dere type.
-        generate_response: A function to generate a response.
-        remember: A function to remember something.
-        response_templates: A dictionary of response templates.
-        used_responses: A set of used responses.
-        dere_types: A list of dere types.
-        debug: A boolean indicating whether to print debug messages.
-
-    Returns:
-        A string containing the transformed response, or None if no transformation was applied.
-    """
     dere_context = DereContext(waifu_memory, current_dere, used_responses, debug)
     if debug:
         print(f"Type of used_responses in apply_transformations: {type(used_responses)}")
@@ -116,8 +95,9 @@ def apply_transformations(transformations: Dict[str, Tuple[Any, Optional[str], i
                     else:
                         transformed_response.append(str(part))
                 transformed_response = " ".join(transformed_response)
+
             else:
-                transformed_response = response
+                transformed_response = str(response) # Ensure string conversion
 
             if memory_slot:
                 # Concatenate all substitutions for memory slot
@@ -126,7 +106,8 @@ def apply_transformations(transformations: Dict[str, Tuple[Any, Optional[str], i
                     memory_value += " ".join(v) + " "
                 remember(waifu_memory, memory_slot, memory_value.strip(), affection_change)
 
-            return None
+            return None  # Correct return
+
     if waifu_memory.current_topic:
         return introduce_topic(waifu_memory.current_topic, waifu_memory,
                              current_dere, used_responses, debug)

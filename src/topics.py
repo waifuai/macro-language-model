@@ -46,20 +46,23 @@ def talk_about_interest(waifu_memory: Any, current_dere: str, used_responses: Li
     Returns:
         A string containing the generated response.
     """
+    if not waifu_memory.interests:  # Add this check
+        dere_context = DereContext(waifu_memory, current_dere, set(used_responses), debug) #Convert used_response to set.
+        return dere_response(dere_context,
+            "What are you talking about?", "I don't get it.", "Hmph.", "O-okay..."
+        )
+
     interest = random.choice(waifu_memory.interests)
     if interest in interest_templates:
         templates = interest_templates[interest]
         if current_dere in templates:
             response = random.choice(templates[current_dere])
             return response
-        else:
-            return dere_response(waifu_memory, current_dere, used_responses, debug,
-                "What are you talking about?", "I don't get it.", "Hmph.", "O-okay..."
-            )
-    else:
-        return dere_response(waifu_memory, current_dere, used_responses, debug,
+    # No need for the 'else' here, it's covered above
+    dere_context = DereContext(waifu_memory, current_dere, set(used_responses), debug)
+    return dere_response(dere_context,
             "What are you talking about?", "I don't get it.", "Hmph.", "O-okay..."
-        )
+    )
 
 def introduce_topic(topic: str, waifu_memory: Any, current_dere: str, used_responses: List[str], debug: bool) -> str:
     """Introduces a new topic with a relevant dere-style phrase.
@@ -74,12 +77,12 @@ def introduce_topic(topic: str, waifu_memory: Any, current_dere: str, used_respo
     Returns:
         A string containing the introduction to the topic.
     """
-    dere_context = DereContext(waifu_memory, current_dere, used_responses, debug)
+    dere_context = DereContext(waifu_memory, current_dere, set(used_responses), debug)
     response = dere_response(dere_context,
         "Hmph, why do you want to talk about this all of a sudden?",
         "I suppose we can talk about that, if you insist.",
         "Um, what about this...?",
         "You should be honored that I'm even talking to you about this!"
     )
-    
+
     return f"{response} Could you tell me more about {topic}?"

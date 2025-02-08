@@ -15,14 +15,15 @@ def tokenize(input_str: str) -> List[str]:
 def matches(pattern: List[str], input_list: List[str]) -> bool:
     """Checks if the input list matches the given pattern."""
     if not pattern:
-        return not input_list
+        return not input_list  # Empty pattern matches only empty input
     if not input_list:
-        return False
+        return pattern[0] == '*' and matches(pattern[1:], input_list) # Empty input can match *
     if pattern[0] == "*":
         return matches(pattern[1:], input_list) or matches(pattern, input_list[1:])
-    if pattern[0] == input_list[0]:
+    elif pattern[0] == input_list[0]:
         return matches(pattern[1:], input_list[1:])
-    return False
+    else:
+        return False
 
 def substitute_template(template: str, substitutions: Dict[str, Any]) -> str:
     """Replaces placeholders in the template with actual values."""
