@@ -1,10 +1,11 @@
 import random
 from typing import Dict, List, Tuple, Callable, Any, Optional, Set
+import json
 
 from response_generation import generate_response
 from transformations import deftransform, apply_transformations
 from memory import remember
-from dere_types import get_current_dere, maybe_change_dere, dere_response
+from dere_types import get_current_dere, maybe_change_dere, dere_response, DereContext
 from response_templates import response_templates
 from topics import talk_about_interest, introduce_topic
 from utils import tokenize, matches
@@ -23,18 +24,12 @@ class WaifuChatbot:
         self.transformations: Dict[str, Tuple[Any, Optional[str], int]] = {}
         self.waifu_memory: WaifuFrame = WaifuFrame(name)
         self.debug: bool = debug
-        self.greetings: List[str] = [
-            "Senpai, you're back! How was your day?",
-            "Welcome home, Onii-chan! What did you do today?",
-            "Ara ara, you seem troubled. Tell me everything.",
-            "I'm here for you, okay? Let's talk."
-        ]
-        self.farewells: List[str] = [
-            "See you later, Senpai! Stay safe!",
-            "Bye-bye, Onii-chan! Don't forget about me!",
-            "Oyasumi nasai. Sweet dreams!",
-            "Come back soon, okay?"
-        ]
+
+        with open("src/chatbot_config.json", "r") as f:
+            config = json.load(f)
+            self.greetings: List[str] = config["greetings"]
+            self.farewells: List[str] = config["farewells"]
+
         self.small_talk: List[str] = [
             "The weather is nice today, isn't it?",
             "Have you heard any good news lately?",
@@ -107,34 +102,19 @@ class WaifuChatbot:
             self.keywords[topic] = []
         self.keywords[topic].append((pattern, response))
 
-    def respond(self, input_str: str) -> str:
-        """Generates a response to the user's input.
+    def _handle_topic_specific_response(self, tokens: List[str]) -> Optional[str]:
+        """Handles topic-specific responses."""
+        return None
 
-        Args:
-            input_str: The user's input string.
-
-        Returns:
-            A string containing the generated response.
-        """
-        self.waifu_memory.conversation_history.append(("user", input_str))
-        tokens = tokenize(input_str)
-        if self.debug:
-            print(f"Type of self.used_responses in respond: {type(self.used_responses)}")
-
-        # Check for topic-specific responses first
-        if self.current_topic and self.current_topic in self.keywords:
-            for resp_pattern, resp_text in self.keywords[self.current_topic]:
-                if matches(tokenize(resp_pattern), tokens):
-                    self.used_responses.add(resp_text)
-                    self.current_topic = None
-                    return resp_text
-
-        # Then check for transformations
+    def _handle_transformations(self, tokens: List[str]) -> Optional[str]:
+        """Handles transformations."""
         transformed = apply_transformations(self.transformations, tokens, self.waifu_memory, self.current_dere, talk_about_interest, introduce_topic, dere_response, maybe_change_dere, generate_response, remember, self.response_templates, self.used_responses, self.dere_types, self.debug)
         if transformed:
             return transformed
+        return None
 
-        # Then check for general keywords
+    def _handle_keywords(self, tokens: List[str]) -> Optional[str]:
+        """Handles general keywords."""
         for word in tokens:
             if word in self.keywords:
                 responses = self.keywords[word]
@@ -143,8 +123,10 @@ class WaifuChatbot:
                         self.used_responses.add(resp_text)
                         self.current_topic = None  # Reset the topic if a keyword is matched
                         return resp_text
+        return None
 
-        # Introduce a new topic based on affection level and randomness
+    def _maybe_introduce_topic(self, input_str: str) -> Optional[str]:
+        """Introduces a new topic based on affection level and randomness."""
         if (self.waifu_memory.affection > 40 and
                 random.random() < 0.2 and
                 input_str != self.last_topic):
@@ -166,22 +148,76 @@ class WaifuChatbot:
             if available_topics:
                 new_topic = random.choice(available_topics)
                 self.last_topic = new_topic
+                dere_context = DereContext(self.waifu_memory, self.current_dere, self.used_responses, self.debug)
                 response = introduce_topic(new_topic, self.waifu_memory,
                                          self.current_dere, self.used_responses,
                                          self.debug)
                 self.current_topic = new_topic
                 return response
+        return None
 
-        # Respond based on the current topic, if any
+    def _respond_based_on_current_topic(self, tokens: List[str]) -> Optional[str]:
+        """Responds based on the current topic, if any."""
+        if self.current_topic and self.current_topic in self.keywords:
+            for resp_pattern, resp_text in self.keywords[self.current_topic]:
+                if matches(tokenize(resp_pattern), tokens):
+                    self.used_responses.add(resp_text)
+                    self.current_topic = None
+                    return resp_text
         if self.current_topic:
-            response = dere_response(self.waifu_memory, self.current_dere, self.used_responses, self.debug,
+            dere_context = DereContext(self.waifu_memory, self.current_dere, self.used_responses, self.debug)
+            response = dere_response(dere_context,
                 f"We were talking about {self.current_topic}, remember?",
                 f"Let's get back to {self.current_topic}.",
                 f"A-are you trying to avoid talking about {self.current_topic}...?",
                 f"As I was saying about {self.current_topic}..."
             )
-            return response
+            if response:
+                return response
+            else:
+                self.current_topic = None
+        return None
 
-        return maybe_change_dere(self.waifu_memory, self.current_dere, self.dere_types, self.used_responses, self.debug,
+    def _get_default_response(self) -> str:
+        """Gets the default response."""
+        dere_context = DereContext(self.waifu_memory, self.current_dere, self.used_responses, self.debug)
+        return maybe_change_dere(dere_context, self.dere_types,
             "What are you talking about?", "I don't get it.", "Hmph.", "O-okay..."
         )
+
+    def respond(self, input_str: str) -> str:
+        """Generates a response to the user's input.
+
+        Args:
+            input_str: The user's input string.
+
+        Returns:
+            A string containing the generated response.
+        """
+        self.waifu_memory.conversation_history.append(("user", input_str))
+        tokens = tokenize(input_str)
+        if self.debug:
+            print(f"Type of self.used_responses in respond: {type(self.used_responses)}")
+
+        # Check for topic-specific responses first and respond based on the current topic, if any
+        response = self._respond_based_on_current_topic(tokens)
+        if response:
+            return response
+
+        # Then check for transformations
+        response = self._handle_transformations(tokens)
+        if response:
+            return response
+
+        # Then check for general keywords
+        response = self._handle_keywords(tokens)
+        if response:
+            return response
+
+        # Introduce a new topic based on affection level and randomness
+        response = self._maybe_introduce_topic(input_str)
+        if response:
+            return response
+
+        # Get the default response
+        return self._get_default_response()

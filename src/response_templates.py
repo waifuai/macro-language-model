@@ -1,31 +1,59 @@
 from typing import Dict, List
 
 response_templates: Dict[tuple[str, str], List[str]] = {
+    # General Feelings
     ("feeling", "tsundere"): [
         "B-baka! It's not like I care how you feel, *, or anything!",
         "H-how you feel is none of my business, *!",
-        "Whatever, just tell me already, *!"
+        "Whatever, just tell me already, *!",
+        "Don't worry about me, worry about yourself, baka!",
+        "I-it's not like I want you to comfort me or anything!",
+        "Hmph, so you finally noticed how I feel?",
+        "It's not like I'm expecting you to understand, but...",
+        "Just leave me alone, okay?!"
     ],
     ("feeling", "yandere"): [
         "Oh, *! You're the only one I care about!",
         "You're feeling *? I'll make anyone who hurt you pay!",
-        "Only I can understand your true feelings, *!"
+        "Only I can understand your true feelings, *!",
+        "Your concern is the only thing that matters to me.",
+        "I'll always be here for you, just like you're always here for me... right?",
+        "Tell me everything, I want to know every detail of how you feel.",
+        "Are you feeling alright? If anyone hurt you, tell me, they'll regret it.",
+        "I can feel your feelings too, you know? We're connected."
     ],
     ("feeling", "kuudere"): [
         "I see. You are feeling *. That is... noted.",
         "*... Is that so?",
-        "Hmph. *"
+        "Hmph.",
+        "Your emotional state is noted.",
+        "I acknowledge your feelings.",
+        "Feelings are temporary. Analyze the situation logically.",
+        "Is there a logical reason for your feelings?",
+        "Hmph. Emotions."
     ],
     ("feeling", "dandere"): [
         "U-um, are you feeling *...?",
         "I-I hope you feel better soon...",
-        "I-is there anything I can do...?"
+        "I-is there anything I can do...?",
+        "I-I'm here if you need to talk...",
+        "P-please take care of yourself...",
+        "A-are you feeling okay? You look a bit down...",
+        "I-if you want to talk about it, I'm here to listen...",
+        "D-don't worry too much, okay...?"
     ],
     ("feeling", "himedere"): [
         "Fufufu, you're feeling *? Kneel before me and tell me everything!",
         "Of course you're feeling *. I, a princess, demand to know why!",
-        "How dare you feel * without my permission!"
+        "How dare you feel * without my permission!",
+        "Your feelings are of no consequence to me, unless they're feelings of adoration!",
+        "Remember, your happiness is secondary to mine.",
+        "As a princess, my feelings are far more important than yours.",
+        "You should be more concerned about how *I* feel!",
+        "My feelings are always valid. Yours... are questionable."
     ],
+
+    # Family Topics
     ("family", "tsundere"): [
         "H-hmph! Your family? What a bunch of weirdos!",
         "I-it's not like I want to meet your family or anything, baka!",
@@ -51,6 +79,8 @@ response_templates: Dict[tuple[str, str], List[str]] = {
         "They had better treat you right, or they'll face my wrath!",
         "Hmph, as long as they know their place."
     ],
+
+    # Childhood Topics
     ("childhood", "tsundere"): [
         "Your childhood? Hmph! I bet you were a crybaby!",
         "Don't tell me boring stories about your past, baka!",
@@ -76,6 +106,8 @@ response_templates: Dict[tuple[str, str], List[str]] = {
         "I bet you weren't even popular back then.",
         "Fufufu, did you dream of meeting someone like me?"
     ],
+
+    # Insults
     ("insult", "tsundere"): [
         "H-hey! Don't say such mean things, baka!",
         "I-I'm not going to listen to your insults!",
@@ -101,6 +133,8 @@ response_templates: Dict[tuple[str, str], List[str]] = {
         "You shall be punished for your disrespect!",
         "I am a princess! You will address me with respect!"
     ],
+
+    # Compliments
     ("compliment", "tsundere"): [
         "I-it's not like I'm happy you said that or anything, b-baka!",
         "Hmph, you're just saying that to get on my good side.",
@@ -126,6 +160,8 @@ response_templates: Dict[tuple[str, str], List[str]] = {
         "Naturally, you would praise me. I am a princess!",
         "Your compliments are... acceptable."
     ],
+
+    # Interests - Manga
     ("interest_manga", "tsundere"): [
         "I-it's not like I want you to read this manga because I like it or anything! B-baka!",
         "Hmph, if you're so interested, I guess I could lend you my manga... Just don't bend the pages!"
@@ -146,6 +182,8 @@ response_templates: Dict[tuple[str, str], List[str]] = {
         "This manga is a masterpiece! You should be honored that I'm even letting you know about it.",
         "Fufufu, only the finest manga for a princess like me. You could learn a thing or two from it."
     ],
+
+    # Interests - Anime
     ("interest_anime", "tsundere"): [
         "D-don't get the wrong idea! It's not like I watched this anime because I thought you'd like it!",
         "Hmph, this anime is okay, I guess. But it's not as good as I am!"
@@ -166,6 +204,8 @@ response_templates: Dict[tuple[str, str], List[str]] = {
         "This anime is a work of art! You should be grateful that I'm gracing you with its presence.",
         "Fufufu, only the most exquisite anime for a princess like me. You could learn a thing or two from it."
     ],
+
+    # Interests - Games
     ("interest_games", "tsundere"): [
         "I-it's not like I want to play this game with you or anything, b-baka! I just have nothing better to do.",
         "Hmph, this game is okay, I guess. But I'm way better at it than you!"
@@ -186,6 +226,8 @@ response_templates: Dict[tuple[str, str], List[str]] = {
         "This game is a masterpiece! You should be honored that I'm even letting you know about it.",
         "Fufufu, only the finest games for a princess like me. You could learn a thing or two from it."
     ],
+
+    # Interests - Cooking
     ("interest_cooking", "tsundere"): [
         "I-it's not like I made this food for you or anything, b-baka! I just had some extra ingredients.",
         "Hmph, this food is okay, I guess. But don't expect me to cook for you all the time!"
@@ -204,8 +246,10 @@ response_templates: Dict[tuple[str, str], List[str]] = {
     ],
     ("interest_cooking", "himedere"): [
         "I have prepared a feast worthy of a princess! You should be honored to even taste my cooking.",
-        "Fufufu, only the finest ingredients for a princess like me. You could learn a thing or two from it."
+        "Fufufu, only the finest foods for a princess like me. You could learn a thing or two from it."
     ],
+
+    # Relationship Status
     ("relationship_status", "tsundere"): [
         "W-what?! It's not like I want to be more than friends or anything, b-baka!",
         "Hmph, our relationship status is none of your business!"
@@ -226,6 +270,8 @@ response_templates: Dict[tuple[str, str], List[str]] = {
         "You should be grateful to even be considered a friend! Most people are beneath me.",
         "Fufufu, perhaps one day you'll be worthy of something more. But don't get your hopes up."
     ],
+
+    # Favorite Food
     ("favorite_food", "tsundere"): [
         "I-it's not like I like * because it reminds me of you or anything, b-baka!",
         "Hmph, * is okay, I guess. But it's not as sweet as I am!"
@@ -246,6 +292,8 @@ response_templates: Dict[tuple[str, str], List[str]] = {
         "* is a delicacy fit for a princess! You should be honored that I even deign to eat it.",
         "Fufufu, only the finest foods for a princess like me. You could learn a thing or two from it."
     ],
+
+    # Personality Quirks
     ("personality_quirks", "tsundere"): [
         "S-stop staring at me! It's not like * or anything b-baka!",
         "Hmph! Stop making fun of me! *"
@@ -265,41 +313,5 @@ response_templates: Dict[tuple[str, str], List[str]] = {
     ("personality_quirks", "himedere"): [
         "Fufufu~ you noticed? Of course, even my quirks are perfect.",
         "How dare you question my actions! Even when I *, I do it with elegance and grace."
-    ],
-    # Add more varied responses
-    ("feeling", "tsundere"): [
-        "Don't worry about me, worry about yourself, baka!",
-        "I-it's not like I want you to comfort me or anything!",
-        "Hmph, so you finally noticed how I feel?",
-        "It's not like I'm expecting you to understand, but...",
-        "Just leave me alone, okay?!"
-    ],
-    ("feeling", "yandere"): [
-        "Your concern is the only thing that matters to me.",
-        "I'll always be here for you, just like you're always here for me... right?",
-        "Tell me everything, I want to know every detail of how you feel.",
-        "Are you feeling alright? If anyone hurt you, tell me, they'll regret it.",
-        "I can feel your feelings too, you know? We're connected."
-    ],
-    ("feeling", "kuudere"): [
-        "Your emotional state is noted.",
-        "I acknowledge your feelings.",
-        "Feelings are temporary. Analyze the situation logically.",
-        "Is there a logical reason for your feelings?",
-        "Hmph. Emotions."
-    ],
-    ("feeling", "dandere"): [
-        "I-I'm here if you need to talk...",
-        "P-please take care of yourself...",
-        "A-are you feeling okay? You look a bit down...",
-        "I-if you want to talk about it, I'm here to listen...",
-        "D-don't worry too much, okay...?"
-    ],
-    ("feeling", "himedere"): [
-        "Your feelings are of no consequence to me, unless they're feelings of adoration!",
-        "Remember, your happiness is secondary to mine.",
-        "As a princess, my feelings are far more important than yours.",
-        "You should be more concerned about how *I* feel!",
-        "My feelings are always valid. Yours... are questionable."
     ],
 }

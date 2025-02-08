@@ -19,9 +19,7 @@ def matches(pattern: List[str], input_list: List[str]) -> bool:
     if not input_list:
         return False
     if pattern[0] == "*":
-        return matches(pattern[1:], input_list) or (
-            input_list and matches(pattern, input_list[1:])
-        )
+        return matches(pattern[1:], input_list) or matches(pattern, input_list[1:])
     if pattern[0] == input_list[0]:
         return matches(pattern[1:], input_list[1:])
     return False
