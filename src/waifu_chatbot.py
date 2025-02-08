@@ -108,9 +108,10 @@ class WaifuChatbot:
     def _handle_transformations(self, tokens: List[str]) -> Optional[str]:
         """Handles transformations."""
         transformed = apply_transformations(self.transformations, tokens, self.waifu_memory, self.current_dere, talk_about_interest, introduce_topic, dere_response, maybe_change_dere, generate_response, remember, self.response_templates, self.used_responses, self.dere_types, self.debug)
-        if transformed:
-            return transformed
-        return None
+        # if transformed:  <-- Remove this conditional return.
+        #     return transformed
+        return transformed # Always return. The apply_transformations function will return None if no transformation applied.
+        # return None  <-- No longer needed
 
     def _handle_keywords(self, tokens: List[str]) -> Optional[str]:
         """Handles general keywords."""

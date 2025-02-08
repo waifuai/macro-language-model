@@ -58,4 +58,4 @@ class TestResponseGeneration(unittest.TestCase):
                 self.assertEqual(len(used_responses), 1)
             else:
                 self.assertIn(response, test_case["expected_responses"])  # Check if response in default responses.
-                self.assertNotIn(response, used_responses)
+                self.assertIn(response, used_responses) # Should be in used_responses

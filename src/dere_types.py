@@ -43,7 +43,7 @@ def maybe_change_dere(context: DereContext, dere_types: List[str], *responses: s
         print(f"Type of used_responses in maybe_change_dere: {type(context.used_responses)}")
     if random.randint(0, 9) == 0:
         new_dere = random.choice(dere_types)
-        context = context._replace(current_dere=new_dere)
+        context = context._replace(current_dere=new_dere)  # Update context directly
         response = dere_response(context, *responses)
         if context.debug:
             print(f"{context.waifu_memory.name}: (I feel a little different...)")
@@ -52,41 +52,29 @@ def maybe_change_dere(context: DereContext, dere_types: List[str], *responses: s
     return dere_response(context, *responses)
 
 def dere_response(context: DereContext, *responses: str) -> str:
-    """Returns a response based on the current dere type.
+    """Returns a random dere-specific response, avoiding repetition.
 
     Args:
         context: The DereContext containing waifu memory, current dere, used responses, and debug flag.
         *responses: Variable number of dere-specific responses.
 
     Returns:
-        A string containing the dere-specific response.
+        A dere-specific response.
     """
-    if context.debug:
-        print(f"Type of used_responses in dere_response: {type(context.used_responses)}")
-    if not responses:
-        if context.current_dere == "tsundere":
-            responses = ("B-baka! It's not like I care what you say!", "Hmph! Whatever.")
-        elif context.current_dere == "yandere":
-            responses = ("You're mine forever, you know that?", "Don't even think about leaving me.", "I will never let you go.", "You belong to me, and me alone.")
-        elif context.current_dere == "kuudere":
-            responses = ("Hmph.", "...", "Is that so.", "I see.", "Understood.")
-        elif context.current_dere == "dandere":
-            responses = ("U-um...", "O-okay...", "I-I understand...", "If you say so...", "S-sure...")
-        elif context.current_dere == "himedere":
-            responses = ("Bow down to me, you peasant!", "You are lucky to be in my presence.", "Hmph, how amusing.", "Do as I command!", "You should be honored.")
 
-    unused_responses = [r for r in responses if r not in context.used_responses]
+    if not responses:  # Handle the case where no responses are provided
+        return "..." # Or some other default
 
- # Ensure responses is always a tuple
-    if not unused_responses:
-        # Keep 50% of used responses to avoid immediate repetition
-        keep_count = len(context.used_responses) // 2
-        used_responses_list = list(context.used_responses)
+    unused_responses = [resp for resp in responses if resp not in context.used_responses]
+
+    if unused_responses:
+        response = random.choice(unused_responses)
+        context.used_responses.add(response)
+        return response
+    else:
+        # All responses have been used, so we clear the used_responses
+        # and pick a response again.
         context.used_responses.clear()
-        if keep_count > 0:
-            context.used_responses.update(used_responses_list[-keep_count:])
-        unused_responses = list(responses)
-
-    chosen_response = random.choice(unused_responses)
-    context.used_responses.add(chosen_response)
-    return chosen_response
+        response = random.choice(responses)
+        context.used_responses.add(response)
+        return response
