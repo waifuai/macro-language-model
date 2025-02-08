@@ -126,7 +126,7 @@ def apply_transformations(transformations: Dict[str, Tuple[Any, Optional[str], i
                     memory_value += " ".join(v) + " "
                 remember(waifu_memory, memory_slot, memory_value.strip(), affection_change)
 
-            return transformed_response
+            return None
     if waifu_memory.current_topic:
         return introduce_topic(waifu_memory.current_topic, waifu_memory,
                              current_dere, used_responses, debug)

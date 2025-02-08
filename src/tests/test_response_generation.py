@@ -15,7 +15,7 @@ class TestResponseGeneration(unittest.TestCase):
                 "keyword": "feeling",
                 "affection": -10,  # tsundere
                 "substitutions": {"*": ["happy"]},
-                "expected_substrings": ["B-baka!", "happy"],
+                "expected_response": "B-baka! It's not like I care how you feel, happy, or anything!",
                 "should_be_found": True,
             },
             # Test case 2: Template not found
@@ -23,7 +23,7 @@ class TestResponseGeneration(unittest.TestCase):
                 "keyword": "unknown",
                 "affection": -10,
                 "substitutions": {"*": ["happy"]},
-                "expected_substrings": ["I don't know what to say."],
+                "expected_response": "I don't know what to say.",
                 "should_be_found": False,
             },
             # Test case 3: Empty substitutions
@@ -31,7 +31,7 @@ class TestResponseGeneration(unittest.TestCase):
                 "keyword": "feeling",
                 "affection": -10,
                 "substitutions": {},
-                "expected_substrings": ["B-baka!", "or anything!"],
+                "expected_response": "B-baka! It's not like I care how you feel, *, or anything!",
                 "should_be_found": True,
             },
             # Test case 4: Substitutions with special characters
@@ -39,7 +39,7 @@ class TestResponseGeneration(unittest.TestCase):
                 "keyword": "feeling",
                 "affection": -10,
                 "substitutions": {"*": ["happy!", "sad?", "angry."]},
-                "expected_substrings": ["B-baka!", "happy!", "sad?", "angry."],
+                "expected_response": "B-baka! It's not like I care how you feel, happy! sad? angry., or anything!",
                 "should_be_found": True,
             },
         ]
@@ -53,9 +53,8 @@ class TestResponseGeneration(unittest.TestCase):
             response = generate_response(response_templates, test_case["keyword"], test_case["substitutions"], used_responses, waifu_memory, current_dere, dere_response, False)
 
             if test_case["should_be_found"]:
-                for substring in test_case["expected_substrings"]:
-                    self.assertIn(substring, response)
-                self.assertIn(response, used_responses)
+                self.assertEqual(response, test_case["expected_response"])
+                self.assertTrue(response in used_responses)
                 self.assertEqual(len(used_responses), 1)
             else:
                 self.assertIn("I don't know what to say.", response)

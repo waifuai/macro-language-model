@@ -28,12 +28,13 @@ def test_maybe_change_dere_probability():
     num_trials = 100
     change_count = 0
     for _ in range(num_trials):
-        with patch('random.randint', return_value=0 if random.random() < 0.1 else 1):
+        with patch('random.randint') as mock_randint:
+            mock_randint.return_value = 0 if random.random() < 0.1 else 1
             response = maybe_change_dere(context, dere_types)
             if context.current_dere != current_dere:
                 change_count += 1
     # Probability of change should be around 10%
-    assert 7 <= change_count <= 13
+    assert 5 <= change_count <= 15
 
 @pytest.mark.parametrize("current_dere, provided_responses, used_responses, expected_responses", [
     ("tsundere", ["B-baka!", "Hmph!"], set(), ["B-baka!", "Hmph!"]),

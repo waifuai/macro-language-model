@@ -87,8 +87,7 @@ class WaifuChatbot:
             return
         keyword_list = self.keywords[word]
         for syn in synonyms:
-            self.keywords[syn] = keyword_list[:]
-            self.keywords[syn] = list(self.keywords[word])
+            self.keywords[syn] = [tuple(item) for item in keyword_list]
 
     def def_topic_response(self, topic: str, pattern: str, response: str) -> None:
         """Defines a response for a specific topic.
