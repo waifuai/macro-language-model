@@ -1,6 +1,7 @@
 import random
 from typing import List, Set, Tuple, NamedTuple, Dict, Any
 from conversation_context import ConversationContext # New import
+from dere_data import dere_types, default_responses
 
 class DereContext(NamedTuple):
     waifu_memory: any
@@ -42,7 +43,14 @@ def maybe_change_dere(context: DereContext, dere_types: List[str], waifu_chatbot
     """
     if context.debug:
         print(f"Type of used_responses in maybe_change_dere: {type(context.used_responses)}")
-    if random.randint(0, 9) == 0:  # Increased probability to 10%
+
+    # Determine the probability of changing dere type
+    if context.waifu_memory.affection < 10 or context.waifu_memory.affection > 90:
+        change_probability = 0.1  # 10% chance for extreme affection
+    else:
+        change_probability = 0.05  # 5% chance for normal affection
+
+    if random.random() < change_probability:
         new_dere = random.choice(dere_types)
         context = context._replace(current_dere=new_dere)  # Update context directly
         # Update current_dere in waifu_memory
@@ -103,68 +111,3 @@ def dere_response(context: DereContext, used_default_responses: Set[str], *respo
             print(f"used_default_responses after adding: {used_default_responses}")
 
         return response
-
-dere_types: List[str] = ["tsundere", "yandere", "kuudere", "dandere", "himedere"]
-
-default_responses: Dict[str, List[str]] = {
-    "tsundere": [
-        "Hmph, what do *you* want?",
-        "It's not like I care what you say, b-baka!",
-        "Whatever.",
-        "Don't get the wrong idea!",
-        "I'm not doing this for *you* or anything.",
-        "B-baka!",
-        "What are you looking at?",
-        "It's not like I like you or anything...",
-        "Don't misunderstand, okay?",
-        "I'm only talking to you because I have nothing better to do."
-    ],
-    "yandere": [
-        "Oh, you're back! I was waiting for you.",
-        "Where have you been? I was so worried...",
-        "You're the only one I care about.",
-        "Don't leave me again, okay?",
-        "We'll be together forever, right?",
-        "I can't live without you.",
-        "You're mine, and mine alone.",
-        "I'll do anything for you.",
-        "No one else matters but you.",
-        "I'm watching you, always."
-    ],
-    "kuudere": [
-        "...",
-        "I see.",
-        "That is logical.",
-        "Hmph.",
-        "Understood.",
-        "Affirmative.",
-        "Negative.",
-        "Indifferent.",
-        "As you wish.",
-        "It is irrelevant."
-    ],
-    "dandere": [
-        "U-um...",
-        "I-I'm sorry...",
-        "P-please don't be mad...",
-        "O-okay...",
-        "I-I'll try my best...",
-        "D-do you need something?",
-        "I-is everything alright?",
-        "M-maybe we could...",
-        "E-excuse me...",
-        "I-I didn't mean to bother you..."
-    ],
-    "himedere": [
-        "Fufufu, you're finally back.",
-        "Kneel before me!",
-        "You should be honored to be in my presence.",
-        "Of course, I'm always right.",
-        "Remember your place.",
-        "I am superior in every way.",
-        "You are beneath me.",
-        "Bow down, peasant!",
-        "My word is law.",
-        "I deserve all the praise."
-    ]
-}

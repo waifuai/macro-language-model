@@ -1,24 +1,25 @@
 import random
 from typing import Dict, List, Tuple, Callable, Any, Optional, Set
-import json
 import re
 
 from transformations import deftransform
 from memory import remember
-from dere_manager import get_current_dere, maybe_change_dere, dere_response, DereContext, dere_types, default_responses
-from response_templates import response_templates
+from dere_manager import get_current_dere, maybe_change_dere, dere_response, DereContext
+from dere_data import dere_types  # Corrected import
 from topics import talk_about_interest, introduce_topic
 from utils import tokenize, matches
 from waifu_frame import WaifuFrame
 from topic_manager import TopicManager
 from response_generator import ResponseGenerator
 from conversation_context import ConversationContext
-from response_generation import generate_response # New import
+from response_generation import generate_response
+from chatbot_config import greetings, farewells
 
 
 class WaifuChatbot:
     """A chatbot that simulates a waifu."""
-    def __init__(self, name: str, debug: bool = False, response_templates: Optional[Dict[tuple[str, str], List[str]]] = None) -> None: # Modified
+    # Removed response_templates from __init__
+    def __init__(self, name: str, debug: bool = False) -> None:
         """Initializes the WaifuChatbot.
 
         Args:
@@ -30,24 +31,19 @@ class WaifuChatbot:
         self.waifu_memory: WaifuFrame = WaifuFrame(name)
         self.debug: bool = debug
         self.conversation_context = ConversationContext()
-        # self.dere_context = DereContext(self.waifu_memory, random.choice(dere_types), self.conversation_context.used_responses, self.debug) # Modified
-        # self.topic_manager: TopicManager = TopicManager(self) # Pass self
-        # self.response_generator = ResponseGenerator(self, self.waifu_memory, self.keywords, self.transformations, response_templates, talk_about_interest, introduce_topic, generate_response, remember, self.debug) # Modified
-        self.last_topic_introduction: Optional[str] = None # Store the last topic introduction
-        self.turn_count: int = 0 # Add a turn counter
-        self.previous_input: str = "" # Add previous_input
-        self.expecting_topic_input: bool = False # Flag for topic input
+        self.last_topic_introduction: Optional[str] = None  # Store the last topic introduction
+        self.turn_count: int = 0  # Add a turn counter
+        self.previous_input: str = ""  # Add previous_input
+        self.expecting_topic_input: bool = False  # Flag for topic input
 
-
-        with open("src/chatbot_config.json", "r") as f:
-            config = json.load(f)
-            self.greetings: List[str] = config["greetings"]
-            self.farewells: List[str] = config["farewells"]
+        self.greetings = greetings
+        self.farewells = farewells
 
         self.current_dere: str = random.choice(dere_types)
-        self.dere_context = DereContext(self.waifu_memory, self.current_dere, self.conversation_context.used_responses, self.debug) # Modified
+        self.dere_context = DereContext(self.waifu_memory, self.current_dere, self.conversation_context.used_responses, self.debug)
         self.topic_manager: TopicManager = TopicManager(self)  # Pass self
-        self.response_generator = ResponseGenerator(self, self.waifu_memory, self.keywords, self.transformations, response_templates, talk_about_interest, introduce_topic, generate_response, remember, self.debug)  # Modified
+        # Removed response_templates
+        self.response_generator = ResponseGenerator(self, self.waifu_memory, self.keywords, self.transformations, talk_about_interest, introduce_topic, generate_response, remember, self.debug)
 
         patterns = [
             "my favorite food is *",
