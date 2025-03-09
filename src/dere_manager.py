@@ -42,7 +42,7 @@ def maybe_change_dere(context: DereContext, dere_types: List[str], waifu_chatbot
     """
     if context.debug:
         print(f"Type of used_responses in maybe_change_dere: {type(context.used_responses)}")
-    if random.randint(0, 9) == 0:
+    if random.randint(0, 99) == 0:  # Reduced probability to 1%
         new_dere = random.choice(dere_types)
         context = context._replace(current_dere=new_dere)  # Update context directly
         # Update current_dere in waifu_memory
@@ -64,7 +64,8 @@ def dere_response(context: DereContext, *responses: str) -> str:
     Returns:
         A dere-specific response.
     """
-    print(f"dere_response called with context: {context}") # Debug print
+    if context.debug:
+        print(f"dere_response called with context: {context}") # Debug print
     if not responses:  # Handle the case where no responses are provided
         return "..." # Or some other default
 

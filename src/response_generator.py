@@ -31,14 +31,16 @@ class ResponseGenerator:
 
     def _handle_transformations(self, tokens: List[str]) -> Optional[str]:
         """Handles transformations."""
-        print(f"ResponseGenerator._handle_transformations: Entering")
+        if self.waifu_chatbot.debug:
+            print(f"ResponseGenerator._handle_transformations: Entering")
         # Access dere_context from waifu_chatbot instance
-        transformed = apply_transformations(self.transformations, tokens, self.waifu_memory, self.waifu_chatbot.dere_context.current_dere, self.talk_about_interest, self.introduce_topic, dere_response, maybe_change_dere, self.generate_response, self.remember, self.response_templates, self.waifu_chatbot.dere_context.used_responses, dere_types, self.debug, self.waifu_chatbot)
+        transformed = apply_transformations(self.transformations, tokens, self.waifu_memory, self.waifu_chatbot.dere_context.current_dere, self.talk_about_interest, self.introduce_topic, dere_response, maybe_change_dere, self.generate_response, self.remember, self.response_templates, self.waifu_chatbot.dere_context.used_responses, dere_types, self.waifu_chatbot.debug, self.waifu_chatbot)
         return transformed
 
     def _handle_keywords(self, tokens: List[str]) -> Optional[str]:
         """Handles general keywords."""
-        print(f"ResponseGenerator._handle_keywords: Entering")
+        if self.waifu_chatbot.debug:
+            print(f"ResponseGenerator._handle_keywords: Entering")
         for word in tokens:
             if word in self.keywords:
                 responses = self.keywords[word]
@@ -46,23 +48,18 @@ class ResponseGenerator:
                     if matches(tokenize(resp_pattern), tokens):
                         # Access dere_context from waifu_chatbot instance
                         self.waifu_chatbot.dere_context.used_responses.add(resp_text)
-                        print (f"ResponseGenerator._handle_keywords: Matched keyword: {word}, response: {resp_text}")
+                        if self.waifu_chatbot.debug:
+                            print (f"ResponseGenerator._handle_keywords: Matched keyword: {word}, response: {resp_text}")
                         return resp_text
         return None
 
     def _get_default_response(self) -> str:
         """Gets the default response."""
-        print(f"ResponseGenerator._get_default_response: Entering")
+        if self.waifu_chatbot.debug:
+            print(f"ResponseGenerator._get_default_response: Entering")
         # Access dere_context from waifu_chatbot instance
         current_dere = get_current_dere(self.waifu_memory.affection)  # Get the current dere type
-        #if current_dere in default_responses: # Removed
-        #    return random.choice(default_responses[current_dere])
-        #else:
-        #    # Fallback if dere type somehow not in defaults
-        #    # Access dere_context from waifu_chatbot instance
-        #    return maybe_change_dere(self.waifu_chatbot.dere_context, dere_types,
-        #        "What are you talking about?", "I don't get it.", "Hmph.", "O-okay..."
-        #    )
+
         return dere_response(self.waifu_chatbot.dere_context, *default_responses.get(current_dere, ["..."])) # Use dere_response
 
     def _maybe_use_small_talk(self) -> Optional[str]:
@@ -75,38 +72,43 @@ class ResponseGenerator:
         """Generates a response to the user's input.
                 """
         # Check for topic-specific responses first and respond based on the current topic, if any
-        print(f"ResponseGenerator.generate: Entering with input: {input_str}")
-
-        # Call respond_based_on_current_topic here
-        print(f"ResponseGenerator.generate: topic_context = {self.topic_context}") # Debug print
+        if self.waifu_chatbot.debug:
+            print(f"ResponseGenerator.generate: Entering with input: {input_str}")
+            print(f"ResponseGenerator.generate: topic_context = {self.topic_context}") # Debug print
         topic_response = self.waifu_chatbot.topic_manager.respond_based_on_current_topic(tokens, self.keywords)
         if topic_response:
-            print(f"ResponseGenerator.generate: Returning topic response: {topic_response}")
+            if self.waifu_chatbot.debug:
+                print(f"ResponseGenerator.generate: Returning topic response: {topic_response}")
             self.topic_context = True # Set topic_context to True
             return topic_response
 
         if self.topic_context:
-            print(f"ResponseGenerator.generate: In topic context, trying to generate topic-specific response")
+            if self.waifu_chatbot.debug:
+                print(f"ResponseGenerator.generate: In topic context, trying to generate topic-specific response")
             # Prioritize topic-specific responses
             topic_response = self.waifu_chatbot.topic_manager.respond_based_on_current_topic(tokens, self.keywords)
             if topic_response:
-                print(f"ResponseGenerator.generate: Returning topic response: {topic_response}")
+                if self.waifu_chatbot.debug:
+                    print(f"ResponseGenerator.generate: Returning topic response: {topic_response}")
                 return topic_response
             else:
                 # If no topic-specific response, still allow other responses, but with lower priority
-                print(f"ResponseGenerator.generate: No specific topic response found in topic context")
+                if self.waifu_chatbot.debug:
+                    print(f"ResponseGenerator.generate: No specific topic response found in topic context")
                 #self.topic_context = False # Reset topic_context if no response found
 
         # Then check for transformations
         response = self._handle_transformations(tokens)
         if response:
-            print(f"ResponseGenerator.generate: Returning transformation response: {response}")
+            if self.waifu_chatbot.debug:
+                print(f"ResponseGenerator.generate: Returning transformation response: {response}")
             return response
-          
+
         # Then check for keywords
         response = self._handle_keywords(tokens)
         if response:
-            print(f"ResponseGenerator.generate: Returning keyword response: {response}")
+            if self.waifu_chatbot.debug:
+                print(f"ResponseGenerator.generate: Returning keyword response: {response}")
             return response
 
 
@@ -114,10 +116,12 @@ class ResponseGenerator:
         # Use small talk
         response = self._maybe_use_small_talk()
         if response:
-            print(f"ResponseGenerator.generate: Returning small talk response: {response}")
+            if self.waifu_chatbot.debug:
+                print(f"ResponseGenerator.generate: Returning small talk response: {response}")
             return response
 
         # Get the default response
         response =  self._get_default_response()
-        print(f"ResponseGenerator.generate: Returning default response: {response}")
+        if self.waifu_chatbot.debug:
+            print(f"ResponseGenerator.generate: Returning default response: {response}")
         return response

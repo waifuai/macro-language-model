@@ -24,11 +24,12 @@ class TopicManager:
 
     def maybe_introduce_topic(self, input_str: str, turn_count: int) -> Optional[str]:
         """Introduces a new topic based on affection level, randomness, and topic counts."""
-        print(f"TopicManager.maybe_introduce_topic: Entering with input: {input_str}, turn: {turn_count}")
+        if self.waifu_chatbot.debug:
+            print(f"TopicManager.maybe_introduce_topic: Entering with input: {input_str}, turn: {turn_count}")
         if (self.waifu_memory.affection > 30 and # Lowered affection threshold
-                random.random() < 0.4 and # Increased probability
+                random.random() < 0.3 and # Decreased probability
                 (self.last_topic_keyword is None or self.last_topic_keyword not in input_str) and
-                self.turns_since_last_topic >= 2 and
+                self.turns_since_last_topic >= 5 and # Increased turns_since_last_topic
                 self.topic_turns == 0): # Only introduce a new topic if topic_turns is 0
 
             available_topics = [
@@ -63,20 +64,19 @@ class TopicManager:
                 new_topic = random.choice(min_count_topics)
 
                 self.last_topic = new_topic
-                response = introduce_topic(new_topic, self.waifu_memory, self.dere_context.current_dere, list(self.dere_context.used_responses), self.dere_context.debug)
+                response = introduce_topic(new_topic, self.waifu_memory, self.dere_context.current_dere, list(self.dere_context.used_responses), self.waifu_chatbot.debug)
                 self.current_topic = new_topic
                 self.topic_dere = self.dere_context.current_dere # Store the current dere type
 
                 # Increment the topic count
                 self.waifu_memory.topic_counts[new_topic] += 1
-                print(f"TopicManager.maybe_introduce_topic: Introduced topic: {new_topic}")
+                if self.waifu_chatbot.debug:
+                    print(f"TopicManager.maybe_introduce_topic: Introduced topic: {new_topic}")
                 # Extract and store the topic keyword
-                #match = re.search(r"(?:about|food\??|relationship\??) ([\w\s]+?)(?:\?|!)*$", response) # Removed
-                #if match:
-                #    self.last_topic_keyword = match.group(1).strip()
-                #    print(f"TopicManager.maybe_introduce_topic: Extracted topic keyword: {self.last_topic_keyword}")
+
                 self.last_topic_keyword = new_topic # Store topic directly
-                print(f"TopicManager.maybe_introduce_topic: Stored topic keyword: {self.last_topic_keyword}")
+                if self.waifu_chatbot.debug:
+                    print(f"TopicManager.maybe_introduce_topic: Stored topic keyword: {self.last_topic_keyword}")
                 self.turns_since_last_topic = 0 # Reset the counter
                 self.topic_turns = 2 # Set topic_turns to 2
                 return response
@@ -88,9 +88,11 @@ class TopicManager:
 
     def respond_based_on_current_topic(self, tokens: List[str], keywords: Dict[str, List[Tuple[str, Any]]]) -> Optional[str]:
         """Responds based on the current topic, if any."""
-        print(f"TopicManager.respond_based_on_current_topic: Entering with tokens: {tokens}")
+        if self.waifu_chatbot.debug:
+            print(f"TopicManager.respond_based_on_current_topic: Entering with tokens: {tokens}")
         if self.current_topic:
-            print(f"TopicManager.respond_based_on_current_topic: Current topic: {self.current_topic}, topic_turns: {self.topic_turns}")
+            if self.waifu_chatbot.debug:
+                print(f"TopicManager.respond_based_on_current_topic: Current topic: {self.current_topic}, topic_turns: {self.topic_turns}")
             if self.topic_turns > 0: # Only respond if topic_turns > 0
                 if self.current_topic in keywords:
                     for resp_pattern, resp_text in keywords[self.current_topic]:
@@ -98,12 +100,15 @@ class TopicManager:
                             self.dere_context.used_responses.add(resp_text)
                             self.current_topic = None  # Reset topic after a match
                             self.topic_dere = None # Reset the dere type
-                            print(f"TopicManager.respond_based_on_current_topic: Found response: {resp_text}")
+                            self.topic_turns = 0 # Reset topic turns
+                            if self.waifu_chatbot.debug:
+                                print(f"TopicManager.respond_based_on_current_topic: Found response: {resp_text}")
                             return resp_text
 
-                # If we have a current_topic, but no specific response was found:
+                # If we have a current_topic, but no specific keyword was found:
                 # Call generate_response with the current topic
-                print(f"TopicManager.respond_based_on_current_topic: No keywords matched, calling generate_response with topic: {self.current_topic}")
+                if self.waifu_chatbot.debug:
+                    print(f"TopicManager.respond_based_on_current_topic: No keywords matched, calling generate_response with topic: {self.current_topic}")
                 substitutions = {}
                 if self.current_topic == "favorite_food":
                     substitutions = {"favorite_food": self.waifu_memory.favorite_food}
@@ -115,21 +120,25 @@ class TopicManager:
                     self.waifu_memory,
                     self.topic_dere, # Use the stored dere type
                     dere_response,
-                    self.dere_context.debug,
+                    self.waifu_chatbot.debug,
                     self.previous_input # Pass previous input
                 )
                 if response: # If a topic-specific response was generated
-                    #self.topic_turns = 2 # Set topic_turns to 2 # Removed
-                    self.topic_turns -= 1
+                    self.topic_turns = 0 # Reset topic turns
+                    self.current_topic = None # Reset the topic
+                    self.topic_dere = None # Reset dere type
                     self.turns_since_last_topic = 0 # Reset the counter
-                    self.waifu_chatbot.response_generator.topic_context = True # Set topic_context to True
-                    print(f"TopicManager.respond_based_on_current_topic: topic_turns set to {self.topic_turns}")
+                    self.waifu_chatbot.response_generator.topic_context = False # Reset topic_context
+                    if self.waifu_chatbot.debug:
+                        print(f"TopicManager.respond_based_on_current_topic: topic_turns set to {self.topic_turns}")
                 else:
                     self.topic_turns -= 1
-                    print(f"TopicManager.respond_based_on_current_topic: topic_turns remains {self.topic_turns}")
+                    if self.waifu_chatbot.debug:
+                        print(f"TopicManager.respond_based_on_current_topic: topic_turns remains {self.topic_turns}")
                 return response
             else:
-                print(f"TopicManager.respond_based_on_current_topic: No more topic turns remaining")
+                if self.waifu_chatbot.debug:
+                    print(f"TopicManager.respond_based_on_current_topic: No more topic turns remaining")
                 self.current_topic = None # Reset if no current topic
                 self.topic_dere = None
         return None

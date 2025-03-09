@@ -15,7 +15,8 @@ def main() -> None:
     parser.add_argument("--waifu_name", default="Waifu", help="Set the waifu's name")
     args = parser.parse_args()
 
-    print("Starting up...")
+    if not args.debug:
+        print("Starting up...")
     waifu = WaifuChatbot(args.waifu_name, debug=args.debug, response_templates=response_templates) # Modified
 
     register_keywords(waifu)
@@ -37,37 +38,18 @@ def main() -> None:
         # Automatic conversation loop
         max_turns = args.auto
         user_input = waifu.greetings[0]
+        print(f"User: {user_input}") # Print initial greeting
 
-        if args.debug:
-            # Self-conversation loop for debugging
-            max_turns = 10
-            user_input = waifu.greetings[0]
-    
-            for _ in range(max_turns):
-                print(f"User: {user_input}")
-                response = waifu.respond(user_input)
-                print(f"{waifu.waifu_memory.name}: {response}")
-                print()
-    
-                if response in waifu.farewells:
-                    break
-    
-                user_input = response
-        else:
-            # Automatic conversation loop
-            max_turns = args.auto
-            user_input = waifu.greetings[0]
-    
-            for _ in range(max_turns):
-                print(f"User: {user_input}")
-                response = waifu.respond(user_input)
-                print(f"{waifu.waifu_memory.name}: {response}")
-                print()
-    
-                if response in waifu.farewells:
-                    break
-    
-                user_input = response
+        for _ in range(max_turns):
+            response = waifu.respond(user_input)
+            print(f"{waifu.waifu_memory.name}: {response}")
+
+            if response in waifu.farewells:
+                break
+
+            user_input = response
+            print(f"User: {user_input}") # Print before next turn
+            
 
 if __name__ == "__main__":
     main()
