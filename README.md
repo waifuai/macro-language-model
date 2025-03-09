@@ -6,7 +6,7 @@ This project implements a chatbot that simulates conversation with a customizabl
 
 ## Files
 
--   **`main.py`**: The main script for running the chatbot. It handles argument parsing for interactive, automatic, and debug modes, and it initializes and runs the chatbot.
+-   **`main.py`**: The main script for running the chatbot. It handles argument parsing for interactive, automatic, debug, and Gemini modes, and it initializes and runs the chatbot.
 -   **`dere_types.py`**: Defines functions related to different "dere" types (personality archetypes) for the chatbot.
     -   `get_current_dere`: Determines the dere type based on affection level.
     -   `maybe_change_dere`: Randomly changes the dere type.
@@ -25,27 +25,42 @@ This project implements a chatbot that simulates conversation with a customizabl
 -   **`utils.py`**: Defines utility functions for tokenizing input strings, matching patterns, and substituting placeholders in templates.
 -   **`waifu_chatbot.py`**: Defines the `WaifuChatbot` class, which is the core of the chatbot. It handles keyword definitions, transformations, memory, dere types, response generation, and topic management.
 -   **`waifu_frame.py`**: Defines the `WaifuFrame` class, which represents the chatbot's memory and personality.
+-   **`src/chatbot_config.json`**: Contains configuration data for the chatbot, such as greetings and small talk phrases.
+-   **`src/gemini_utils.py`**: Contains utility functions for interacting with the Gemini API.
+-    **`src/dere_manager.py`**: Manages dere type logic, including transitions and responses.
+-   **`src/conversation_context.py`**: Manages conversation history and used responses.
+-   **`src/topic_manager.py`**: Manages topic introduction and topic-specific responses.
+-   **`src/response_generator.py`**: Coordinates response generation using keywords, transformations, and dere types.
+-   **`src/cli.py`**: Handles command-line argument parsing.
+-   **`src/modes.py`**: Contains functions for running the chatbot in different modes (interactive, auto, gemini).
+-   **`src/dere_data.py`**: Contains data related to dere types, including default responses.
+- **`src/response_templates/*`**: Contains separate files for each dere type's response templates.
+- **`src/transformation_handlers.py`**: Contains handler functions for different transformation response types.
 
 ## Usage
 
-The chatbot can be run in three modes:
+The chatbot can be run in four modes:
 
-1. **Interactive mode:**  `python main.py --interactive`
-    
+1.  **Interactive mode:** `python main.py --interactive`
+
     This mode allows for a real-time conversation with the chatbot.
-    
-2. **Automatic mode:**  `python main.py --auto [number_of_turns]`
-    
+
+2.  **Automatic mode:** `python main.py --auto [number_of_turns]`
+
     This mode simulates a conversation with a specified number of turns. If no number is provided, it defaults to 10 turns.
-    
-3. **Debug mode:**  `python main.py --debug`
-    
+
+3.  **Debug mode:** `python main.py --debug`
+
     This mode enables debug information and runs a self-conversation loop for testing purposes.
-    
+
+4.  **Gemini mode:** `python main.py --gemini`
+
+    This mode uses Google's Gemini API to generate user responses, allowing for a more dynamic and varied conversation. Requires an API key in `../api.txt`.
 
 ### Additional Options
 
 -   `--waifu_name`: Sets the waifu's name (default is "Waifu").
+-   `--gemini`: Enables Gemini mode.
 
 ## Example
 
@@ -67,8 +82,16 @@ This project uses the following Python libraries:
 -   `argparse`: For parsing command-line arguments.
 -   `random`: For generating random choices.
 -   `re`: For regular expression operations.
+-   `google-generativeai`: For using the Gemini API.
+-   `tenacity`: For retrying with exponential backoff.
 
-These libraries are typically included in standard Python distributions.
+The `google-generativeai` and `tenacity` libraries can be installed using pip:
+
+```
+pip install google-generativeai tenacity --user
+```
+
+The other libraries are typically included in standard Python distributions.
 
 ## Future Improvements
 
