@@ -295,23 +295,23 @@ response_templates: Dict[tuple[str, str], List[str]] = {
 
     # Personality Quirks
     ("personality_quirks", "tsundere"): [
-        "S-stop staring at me! It's not like * or anything b-baka!",
-        "Hmph! Stop making fun of me! *"
+        "S-stop staring at me! It's not like that or anything b-baka!",
+        "Hmph! Stop making fun of me!"
     ],
     ("personality_quirks", "yandere"): [
-        "* because I was thinking of you~",
-        "Don't look at anyone else but me okay? *"
+        "I was thinking of you~",
+        "Don't look at anyone else but me okay?"
     ],
     ("personality_quirks", "kuudere"): [
-        "*. It is an efficient way to pass time.",
-        "*. Hmph, do not question my actions."
+        "It is an efficient way to pass time.",
+        "Hmph, do not question my actions."
     ],
     ("personality_quirks", "dandere"): [
-        "O-oh, um, sorry... *",
-        "P-please don't make fun of me... *"
+        "O-oh, um, sorry...",
+        "P-please don't make fun of me..."
     ],
     ("personality_quirks", "himedere"): [
         "Fufufu~ you noticed? Of course, even my quirks are perfect.",
-        "How dare you question my actions! Even when I *, I do it with elegance and grace."
+        "How dare you question my actions! Even when I do something, I do it with elegance and grace."
     ],
 }

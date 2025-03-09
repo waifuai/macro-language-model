@@ -27,5 +27,19 @@ def register_transforms(waifu: Any) -> None:
     deftransform(waifu.transformations, "do you have any quirks", ["talk-about", "personality_quirks"])
     deftransform(waifu.transformations, "i have a quirk", ["Oh? What is it?", "Tell me more about your quirk."])
     # Add more general transformations
-    deftransform(waifu.transformations, "i am *", ["Why are you *?", "How long have you been *?"])
-    deftransform(waifu.transformations, "i feel *", ["Why do you feel *?", "I'm here for you."])
+    deftransform(waifu.transformations, "i am *", ["Why are you *?", "How long have you been *?"], affection_change=1)
+    deftransform(waifu.transformations, "i feel *", ["Why do you feel *?", "I'm here for you."], affection_change=1)
+    # Add affection changes to existing transformations
+    deftransform(waifu.transformations, "tell me a joke", ["Why don't scientists trust atoms? Because they make up everything!"], affection_change=1)
+    deftransform(waifu.transformations, "my name is *", ["Nice to meet you, *!", "Hello *!"], memory_slot="name", affection_change=1)
+
+    # Transformations for agreement/disagreement
+    deftransform(waifu.transformations, "yes", ["I agree!", "Yeah!", "Sounds good!"], affection_change=1)
+    deftransform(waifu.transformations, "yeah", ["I agree!", "Yeah!", "Sounds good!"], affection_change=1)
+    deftransform(waifu.transformations, "yep", ["I agree!", "Yeah!", "Sounds good!"], affection_change=1)
+    deftransform(waifu.transformations, "no", ["Oh, really?", "I see...", "Hmm."], affection_change=-1)
+    deftransform(waifu.transformations, "nope", ["Oh, really?", "I see...", "Hmm."], affection_change=-1)
+    deftransform(waifu.transformations, "i agree", ["That's great!", "I'm glad we agree."])
+    deftransform(waifu.transformations, "i disagree", ["Oh, that's interesting.", "Why do you think that?"])
+    deftransform(waifu.transformations, "you are right", ["Of course I am!", "I know, right?"])
+    deftransform(waifu.transformations, "you are wrong", ["Am not!", "I disagree."])

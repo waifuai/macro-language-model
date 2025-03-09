@@ -4,21 +4,32 @@ from dere_manager import DereContext, dere_response
 from utils import tokenize, matches
 from topics import introduce_topic
 from conversation_context import ConversationContext # New import
+from response_generation import generate_response
+import re
 
 
 class TopicManager:
-    def __init__(self, waifu_memory: Any, dere_context: DereContext):
-        self.waifu_memory = waifu_memory
-        self.dere_context = dere_context
+    def __init__(self, waifu_chatbot: Any):
+        self.waifu_chatbot = waifu_chatbot
+        self.waifu_memory = waifu_chatbot.waifu_memory
+        self.dere_context = waifu_chatbot.dere_context
         self.current_topic: Optional[str] = None
         self.last_topic: Optional[str] = None
+        self.last_topic_keyword: Optional[str] = None # Store the extracted topic keyword
+        self.turns_since_last_topic: int = 0 # Counter for turns since last topic
+        self.previous_input: str = "" # Store the previous input
+        self.topic_dere: Optional[str] = None # Store the dere type when the topic was introduced
+        self.topic_turns: int = 0 # Counter for turns since a topic-specific response
 
 
-    def maybe_introduce_topic(self, input_str: str) -> Optional[str]:
+    def maybe_introduce_topic(self, input_str: str, turn_count: int) -> Optional[str]:
         """Introduces a new topic based on affection level, randomness, and topic counts."""
-        if (self.waifu_memory.affection > 40 and
-                random.random() < 0.2 and
-                input_str != self.last_topic):
+        print(f"TopicManager.maybe_introduce_topic: Entering with input: {input_str}, turn: {turn_count}")
+        if (self.waifu_memory.affection > 30 and # Lowered affection threshold
+                random.random() < 0.4 and # Increased probability
+                (self.last_topic_keyword is None or self.last_topic_keyword not in input_str) and
+                self.turns_since_last_topic >= 2 and
+                self.topic_turns == 0): # Only introduce a new topic if topic_turns is 0
 
             available_topics = [
                 "family",
@@ -54,38 +65,71 @@ class TopicManager:
                 self.last_topic = new_topic
                 response = introduce_topic(new_topic, self.waifu_memory, self.dere_context.current_dere, list(self.dere_context.used_responses), self.dere_context.debug)
                 self.current_topic = new_topic
+                self.topic_dere = self.dere_context.current_dere # Store the current dere type
 
                 # Increment the topic count
                 self.waifu_memory.topic_counts[new_topic] += 1
+                print(f"TopicManager.maybe_introduce_topic: Introduced topic: {new_topic}")
+                # Extract and store the topic keyword
+                #match = re.search(r"(?:about|food\??|relationship\??) ([\w\s]+?)(?:\?|!)*$", response) # Removed
+                #if match:
+                #    self.last_topic_keyword = match.group(1).strip()
+                #    print(f"TopicManager.maybe_introduce_topic: Extracted topic keyword: {self.last_topic_keyword}")
+                self.last_topic_keyword = new_topic # Store topic directly
+                print(f"TopicManager.maybe_introduce_topic: Stored topic keyword: {self.last_topic_keyword}")
+                self.turns_since_last_topic = 0 # Reset the counter
+                self.topic_turns = 2 # Set topic_turns to 2
                 return response
+        self.turns_since_last_topic += 1 # Increment the counter
+        self.last_topic = None  # Reset last_topic if no new topic is introduced
+        self.last_topic_keyword = None # Reset the keyword as well
+        #self.topic_dere = None # Removed: Only reset when a NEW topic is introduced
         return None
 
     def respond_based_on_current_topic(self, tokens: List[str], keywords: Dict[str, List[Tuple[str, Any]]]) -> Optional[str]:
         """Responds based on the current topic, if any."""
-
+        print(f"TopicManager.respond_based_on_current_topic: Entering with tokens: {tokens}")
         if self.current_topic:
-            if self.current_topic in keywords:
-                for resp_pattern, resp_text in keywords[self.current_topic]:
-                    if matches(tokenize(resp_pattern), tokens):
-                        self.dere_context.used_responses.add(resp_text)
-                        self.current_topic = None  # Reset topic after a match
-                        return resp_text
+            print(f"TopicManager.respond_based_on_current_topic: Current topic: {self.current_topic}, topic_turns: {self.topic_turns}")
+            if self.topic_turns > 0: # Only respond if topic_turns > 0
+                if self.current_topic in keywords:
+                    for resp_pattern, resp_text in keywords[self.current_topic]:
+                        if matches(tokenize(resp_pattern), tokens):
+                            self.dere_context.used_responses.add(resp_text)
+                            self.current_topic = None  # Reset topic after a match
+                            self.topic_dere = None # Reset the dere type
+                            print(f"TopicManager.respond_based_on_current_topic: Found response: {resp_text}")
+                            return resp_text
 
-            # If we have a current_topic, but no specific response was found:
-            if self.current_topic == "favorite_food":
-                response = dere_response(self.dere_context,
-                    f"We were talking about your favorite food, {self.waifu_memory.favorite_food}, remember?",
-                    f"Let's get back to your favorite food, {self.waifu_memory.favorite_food}.",
-                    f"A-are you trying to avoid talking about your favorite_food, {self.waifu_memory.favorite_food}...?",
-                    f"As I was saying about your favorite food, {self.waifu_memory.favorite_food}..."
+                # If we have a current_topic, but no specific response was found:
+                # Call generate_response with the current topic
+                print(f"TopicManager.respond_based_on_current_topic: No keywords matched, calling generate_response with topic: {self.current_topic}")
+                substitutions = {}
+                if self.current_topic == "favorite_food":
+                    substitutions = {"favorite_food": self.waifu_memory.favorite_food}
+                response = generate_response(
+                    self.waifu_chatbot.response_generator.response_templates, # Pass response_templates
+                    self.current_topic,  # Use current_topic as keyword
+                    substitutions,  # Pass substitutions
+                    self.dere_context.used_responses,
+                    self.waifu_memory,
+                    self.topic_dere, # Use the stored dere type
+                    dere_response,
+                    self.dere_context.debug,
+                    self.previous_input # Pass previous input
                 )
+                if response: # If a topic-specific response was generated
+                    #self.topic_turns = 2 # Set topic_turns to 2 # Removed
+                    self.topic_turns -= 1
+                    self.turns_since_last_topic = 0 # Reset the counter
+                    self.waifu_chatbot.response_generator.topic_context = True # Set topic_context to True
+                    print(f"TopicManager.respond_based_on_current_topic: topic_turns set to {self.topic_turns}")
+                else:
+                    self.topic_turns -= 1
+                    print(f"TopicManager.respond_based_on_current_topic: topic_turns remains {self.topic_turns}")
+                return response
             else:
-                response = dere_response(self.dere_context,
-                    f"We were talking about {self.current_topic}, remember?",
-                    f"Let's get back to {self.current_topic}.",
-                    f"A-are you trying to avoid talking about {self.current_topic}...?",
-                    f"As I was saying about {self.current_topic}..."
-                )
-            self.current_topic = None  # Reset topic even if no match is found
-            return response
+                print(f"TopicManager.respond_based_on_current_topic: No more topic turns remaining")
+                self.current_topic = None # Reset if no current topic
+                self.topic_dere = None
         return None

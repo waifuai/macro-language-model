@@ -2,13 +2,17 @@ import random
 from typing import Dict, List, Set, Any
 from dere_types import get_current_dere, DereContext # Import DereContext
 
-def generate_response(response_templates: Dict[tuple[str, str], List[str]], keyword: str, substitutions: Dict[str, Any], used_responses: Set[str], waifu_memory: Any, current_dere: str, dere_response: Any, debug: bool) -> str:
+def generate_response(response_templates: Dict[tuple[str, str], List[str]], keyword: str, substitutions: Dict[str, Any], used_responses: Set[str], waifu_memory: Any, topic_dere: str, dere_response: Any, debug: bool, previous_input: str = "") -> str: # Added topic_dere
     """Generates a response based on the keyword, substitutions, and current dere type.
     """
     if debug:
         print(f"Type of used_responses in generate_response: {type(used_responses)}")
-    dere_type = get_current_dere(waifu_memory.affection)
+    #dere_type = get_current_dere(waifu_memory.affection) # Removed
+    dere_type = topic_dere # Use the passed-in dere type
     template_group = None
+
+    print(f"generate_response: keyword: {keyword}, dere_type: {dere_type}") # Debug print
+    print(f"generate_response: response_templates keys: {list(response_templates.keys())}") # Debug print
 
     for (k, d), templates in response_templates.items():
         if k == keyword and d == dere_type:
@@ -33,5 +37,5 @@ def generate_response(response_templates: Dict[tuple[str, str], List[str]], keyw
         return template
 
     # Create DereContext here:
-    dere_context = DereContext(waifu_memory, current_dere, used_responses, debug)
+    dere_context = DereContext(waifu_memory, topic_dere, used_responses, debug) # Use topic_dere
     return dere_response(dere_context, "I don't know what to say.", "Is that so?", "Hmph.", "O-okay...")

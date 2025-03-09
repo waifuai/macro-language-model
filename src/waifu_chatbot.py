@@ -31,8 +31,11 @@ class WaifuChatbot:
         self.debug: bool = debug
         self.conversation_context = ConversationContext()
         self.dere_context = DereContext(self.waifu_memory, random.choice(dere_types), self.conversation_context.used_responses, self.debug)
-        self.topic_manager: TopicManager = TopicManager(self.waifu_memory, self.dere_context)
-        self.response_generator = ResponseGenerator(self.waifu_memory, self.keywords, self.transformations, response_templates, talk_about_interest, introduce_topic, generate_response, remember, self.dere_context, self.debug) # Modified
+        self.topic_manager: TopicManager = TopicManager(self) # Pass self
+        self.response_generator = ResponseGenerator(self, self.waifu_memory, self.keywords, self.transformations, response_templates, talk_about_interest, introduce_topic, generate_response, remember, self.debug) # Modified
+        self.last_topic_introduction: Optional[str] = None # Store the last topic introduction
+        self.turn_count: int = 0 # Add a turn counter
+        self.previous_input: str = "" # Add previous_input
 
 
         with open("src/chatbot_config.json", "r") as f:
@@ -85,6 +88,7 @@ class WaifuChatbot:
 
         Args:
             word: The word to define synonyms for.
+
             *synonyms: Variable number of synonyms for the word.
         """
         if word not in self.keywords:
@@ -115,18 +119,64 @@ class WaifuChatbot:
             A string containing the generated response.
         """
         self.conversation_context.conversation_history.append(("user", input_str))
+        original_input = input_str # Store for later
+        self.turn_count += 1 # Increment the turn count
+
+        # Remove the last topic introduction phrase, if it exists
+        if self.last_topic_introduction and self.last_topic_introduction in input_str:
+            input_str = input_str.replace(self.last_topic_introduction, "").strip()
+
         # Pre-process input: lowercase and remove punctuation
         input_str = re.sub(r'[^\w\s]', '', input_str).lower()
         tokens = tokenize(input_str)
         if self.debug:
             print(f"Type of self.used_responses in respond: {type(self.conversation_context.used_responses)}")
 
-        response = self.topic_manager.maybe_introduce_topic(input_str)
+        print(f"WaifuChatbot.respond: Input: {input_str}")
+
+        response = self.topic_manager.maybe_introduce_topic(input_str, self.turn_count) # Pass turn_count
         if response:
+            print(f"WaifuChatbot.respond: Topic introduced: {response}")
+            self.last_topic_introduction = response  # Store the topic introduction
+            # Extract the topic keyword using a regex
+            #match = re.search(r"(?:about|food\??|relationship\??) ([\w\s]+?)(?:\?|!)*$", response) # Removed
+            #if match:
+            #    topic_keyword = match.group(1).strip()
+            #    print(f"WaifuChatbot.respond: Extracted topic keyword: {topic_keyword}")
+            #    # Use the original input, but replace the introduction with the keyword
+            #    input_str = topic_keyword
+            #    tokens = tokenize(input_str) # Re-tokenize
+            #else:
+            #    print("WaifuChatbot.respond: Could not extract topic keyword")
+            #if self.topic_manager.current_topic: # Removed
+            #    input_str = self.topic_manager.current_topic # Use the topic name directly
+            #    print(f"WaifuChatbot.respond: Using topic as input: {input_str}")
+            #    tokens = tokenize(input_str)
+
             return response
 
-        response = self.topic_manager.respond_based_on_current_topic(tokens, self.keywords)
-        if response:
-            return response
+        # Removed the call to respond_based_on_current_topic here
 
-        return self.response_generator.generate(input_str, tokens)
+        print(f"WaifuChatbot.respond: Calling response generator")
+        response = self.response_generator.generate(input_str, tokens)
+
+        # Check if the response contains any topic keywords # Removed
+        #topics = ["family", "childhood", "feelings", "interests", "relationship_status", "favorite_food", "personality_quirks"]
+        #for topic in topics:
+        #    if topic in response:
+        #        print(f"WaifuChatbot.respond: Found topic keyword '{topic}' in response")
+        #        input_str = topic
+        #        tokens = tokenize(input_str)
+        #        break
+        self.previous_input = original_input # Store the original input before processing
+
+        # Add a small random affection change
+        affection_change = random.randint(-1, 2)  # -1, 0, 1, or 2
+        self.waifu_memory.affection += affection_change
+        self.waifu_memory.affection = max(0, min(100, self.waifu_memory.affection)) # Keep within 0-100
+        print(f"WaifuChatbot.respond: Affection changed by {affection_change}, new affection: {self.waifu_memory.affection}")
+
+        # Maybe change dere type
+        maybe_change_dere(self.dere_context, dere_types, self) # Pass self
+
+        return response

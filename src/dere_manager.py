@@ -29,7 +29,7 @@ def get_current_dere(affection: int) -> str:
     else:
         return "deredere"
 
-def maybe_change_dere(context: DereContext, dere_types: List[str], *responses: str) -> str:
+def maybe_change_dere(context: DereContext, dere_types: List[str], waifu_chatbot: Any) -> str: # Added waifu_chatbot
     """Randomly changes the dere type and returns a dere-specific response.
 
     Args:
@@ -45,12 +45,14 @@ def maybe_change_dere(context: DereContext, dere_types: List[str], *responses: s
     if random.randint(0, 9) == 0:
         new_dere = random.choice(dere_types)
         context = context._replace(current_dere=new_dere)  # Update context directly
-        response = dere_response(context, *responses)
+        # Update current_dere in waifu_memory
+        waifu_chatbot.dere_context = context # Update the dere_context in waifu chatbot
+        response = dere_response(context, *waifu_chatbot.response_generator.small_talk) # Pass small talk
         if context.debug:
             print(f"{context.waifu_memory.name}: (I feel a little different...)")
             print()
         return response
-    return dere_response(context, *responses)
+    return dere_response(context, *waifu_chatbot.response_generator.small_talk) # Pass small talk
 
 def dere_response(context: DereContext, *responses: str) -> str:
     """Returns a random dere-specific response, avoiding repetition.
@@ -62,7 +64,7 @@ def dere_response(context: DereContext, *responses: str) -> str:
     Returns:
         A dere-specific response.
     """
-
+    print(f"dere_response called with context: {context}") # Debug print
     if not responses:  # Handle the case where no responses are provided
         return "..." # Or some other default
 

@@ -19,3 +19,20 @@ def register_keywords(waifu: Any) -> None:
     waifu.defkeyword("see you", waifu.farewells)
 
     waifu.defsynonym("hi", "hello", "hey", "hiya", "greetings")
+
+    # More general keywords
+    waifu.defkeyword("yes", ["Yes, that's right!", "Yeah!", "Yup!"])
+    waifu.defkeyword("no", ["No, that's not right.", "Nope!"])
+    waifu.defkeyword("maybe", ["Maybe...", "Perhaps...", "I'm not sure."])
+    waifu.defkeyword("okay", ["Okay!", "Alright."])
+    waifu.defkeyword("thanks", ["You're welcome!", "No problem!"])
+    waifu.defkeyword("thank you", ["You're welcome!", "No problem!"])
+
+    # Topic-related keywords
+    waifu.defkeyword("family", ["family", "parents", "siblings", "relatives"])
+    waifu.defkeyword("childhood", ["childhood", "past", "young", "kid"])
+    waifu.defkeyword("feelings", ["feelings", "emotions", "happy", "sad", "angry", "excited"])
+    waifu.defkeyword("interests", ["interests", "hobbies", "like", "enjoy", "passion"])
+    waifu.defkeyword("relationship", ["relationship", "friends", "dating", "love"])
+    waifu.defkeyword("food", ["food", "eat", "hungry", "favorite food", "cooking", "pocky"])
+    waifu.defkeyword("quirks", ["quirks", "personality", "unique", "special"])
