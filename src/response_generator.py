@@ -92,10 +92,10 @@ class ResponseGenerator:
         self.debug = debug
         self.topic_context = False  # Flag for topic-specific context
         self.used_default_responses: Set[str] = set() # Add used_default_responses
-        # with open("src/chatbot_config.json", "r") as f: #Should not be used
-        #     config = json.load(f)
-        #     self.small_talk: List[str] = config["small_talk"]
-        self.small_talk: List[str] = []
+        with open("src/chatbot_config.json", "r") as f:
+            config = json.load(f)
+            self.small_talk: List[str] = config["small_talk"]
+        # self.small_talk: List[str] = []
 
 
     def _handle_topic_specific_response(self, tokens: List[str]) -> Optional[str]:
