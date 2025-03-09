@@ -46,15 +46,33 @@ def maybe_change_dere(context: DereContext, dere_types: List[str], waifu_chatbot
 
     # Determine the probability of changing dere type
     if context.waifu_memory.affection < 10 or context.waifu_memory.affection > 90:
-        change_probability = 0.1  # 10% chance for extreme affection
+        change_probability = 0.4  # Increased chance for extreme affection
     else:
-        change_probability = 0.05  # 5% chance for normal affection
+        change_probability = 0.3  # Increased base chance
+
+    # Check for consecutive identical responses
+    if len(waifu_chatbot.conversation_context.conversation_history) >= 2:
+        last_response = waifu_chatbot.conversation_context.conversation_history[-1][1]
+        second_last_response = waifu_chatbot.conversation_context.conversation_history[-2][1]
+        if last_response == second_last_response:
+            change_probability = 0.7  # Significantly increase if responses are identical
+
+    # Check for turns with the same dere type
+    if waifu_chatbot.dere_context.current_dere == context.current_dere:
+        waifu_chatbot.turns_in_same_dere += 1
+    else:
+        waifu_chatbot.turns_in_same_dere = 1 # Reset if dere type changes.
+        waifu_chatbot.dere_context = context._replace(current_dere=waifu_chatbot.dere_context.current_dere)
+
+    if waifu_chatbot.turns_in_same_dere > 2: # Reduced turns before increasing probability
+        change_probability = 0.6 # Increase probability after 2 turns in the same dere type.
 
     if random.random() < change_probability:
         new_dere = random.choice(dere_types)
         context = context._replace(current_dere=new_dere)  # Update context directly
         # Update current_dere in waifu_memory
         waifu_chatbot.dere_context = context # Update the dere_context in waifu chatbot
+        waifu_chatbot.turns_in_same_dere = 1 # Reset turns in same dere
         # Pass default responses for the *new* dere type
         response = dere_response(context, waifu_chatbot.response_generator.used_default_responses, *default_responses.get(new_dere, ["..."]))
         if context.debug:
@@ -85,7 +103,17 @@ def dere_response(context: DereContext, used_default_responses: Set[str], *respo
     if context.debug:
         print(f"responses: {responses}")
 
-    unused_responses = [resp for resp in responses if resp not in used_default_responses]
+    # Combine provided responses with a larger pool of defaults
+    all_responses = list(responses) + [
+        "...",
+        "I don't know.",
+        "Maybe.",
+        "What do you think?",
+        "I haven't decided yet."
+    ]
+
+
+    unused_responses = [resp for resp in all_responses if resp not in used_default_responses]
     if context.debug:
         print(f"unused_responses: {unused_responses}")
 
@@ -103,7 +131,7 @@ def dere_response(context: DereContext, used_default_responses: Set[str], *respo
         if context.debug:
             print("All responses used, clearing used_default_responses")
         used_default_responses.clear()
-        response = random.choice(responses)
+        response = random.choice(all_responses)
         if context.debug:
             print(f"Chosen response after clearing: {response}")
         used_default_responses.add(response)

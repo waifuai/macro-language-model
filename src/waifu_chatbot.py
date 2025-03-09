@@ -35,6 +35,7 @@ class WaifuChatbot:
         self.turn_count: int = 0  # Add a turn counter
         self.previous_input: str = ""  # Add previous_input
         self.expecting_topic_input: bool = False  # Flag for topic input
+        self.turns_in_same_dere: int = 0 # Add a turn counter for dere type
 
         self.greetings = greetings
         self.farewells = farewells

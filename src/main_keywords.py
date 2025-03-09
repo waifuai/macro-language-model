@@ -29,13 +29,13 @@ def register_keywords(waifu: Any) -> None:
     waifu.defkeyword("thank you", ["You're welcome!", "No problem!"])
 
     # Topic-related keywords
-    waifu.defkeyword("family", ["family", "parents", "siblings", "relatives"])
-    waifu.defkeyword("childhood", ["childhood", "past", "young", "kid"])
-    waifu.defkeyword("feelings", ["feelings", "emotions", "happy", "sad", "angry", "excited"])
-    waifu.defkeyword("interests", ["interests", "hobbies", "like", "enjoy", "passion"])
-    waifu.defkeyword("relationship", ["relationship", "friends", "dating", "love"])
-    waifu.defkeyword("food", ["food", "eat", "hungry", "favorite food", "cooking", "pocky"])
-    waifu.defkeyword("quirks", ["quirks", "personality", "unique", "special"])
+    waifu.defkeyword("family", ["family", "parents", "siblings", "relatives", "mom", "dad", "brother", "sister"])
+    waifu.defkeyword("childhood", ["childhood", "past", "young", "kid", "baby", "teenager", "child"])
+    waifu.defkeyword("feelings", ["feelings", "emotions", "happy", "sad", "angry", "excited", "scared", "worried", "anxious"])
+    waifu.defkeyword("interests", ["interests", "hobbies", "like", "enjoy", "passion", "favorite", "love", "hate"])
+    waifu.defkeyword("relationship", ["relationship", "friends", "dating", "love", "friendship", "partner", "boyfriend", "girlfriend"])
+    waifu.defkeyword("food", ["food", "eat", "hungry", "favorite food", "cooking", "pocky", "dish", "meal", "delicious", "tasty"])
+    waifu.defkeyword("quirks", ["quirks", "personality", "unique", "special", "weird", "strange", "unusual"])
 
     # Keywords for asking questions
     waifu.defkeyword("who", ["Who are you talking about?", "I don't know who that is."])
@@ -52,3 +52,21 @@ def register_keywords(waifu: Any) -> None:
     waifu.defsynonym("when's", "when", "is")
     waifu.defsynonym("why's", "why", "is")
     waifu.defsynonym("how's", "how", "is")
+
+    # Synonyms for family members
+    waifu.defsynonym("mom", "mother", "mommy", "mama")
+    waifu.defsynonym("dad", "father", "daddy", "papa")
+    waifu.defsynonym("brother", "sibling")
+    waifu.defsynonym("sister", "sibling")
+
+    # Synonyms for feelings
+    waifu.defsynonym("happy", "joyful", "cheerful", "glad", "delighted")
+    waifu.defsynonym("sad", "unhappy", "depressed", "miserable", "down")
+    waifu.defsynonym("angry", "mad", "furious", "irritated", "enraged")
+    waifu.defsynonym("excited", "thrilled", "enthusiastic", "eager")
+    waifu.defsynonym("scared", "afraid", "frightened", "terrified")
+    waifu.defsynonym("worried", "anxious", "concerned", "nervous")
+
+    # Synonyms for like/dislike
+    waifu.defsynonym("like", "enjoy", "love", "adore", "appreciate")
+    waifu.defsynonym("hate", "dislike", "despise", "loathe", "abhor")

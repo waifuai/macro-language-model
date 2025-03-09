@@ -1,7 +1,7 @@
 from typing import Dict, List, Tuple, Callable, Any, Optional, Set
 from transformations import apply_transformations
 from utils import tokenize, matches
-from dere_manager import dere_response, get_current_dere, maybe_change_dere
+from dere_manager import dere_response, get_current_dere, maybe_change_dere, DereContext
 from dere_data import dere_types, default_responses
 from conversation_context import ConversationContext
 import json
@@ -126,15 +126,75 @@ class ResponseGenerator:
                         return resp_text
         return None
 
+    def _get_intelligent_default_response(self, context: DereContext) -> str:
+        """Returns a more intelligent default response based on the dere type."""
+        dere_defaults = {
+            "tsundere": [
+                "Hmph, whatever.",
+                "It's not like I care, b-baka!",
+                "Don't get the wrong idea!",
+                "Whatever you say...",
+                "I'm not interested in that."
+            ],
+            "yandere": [
+                "...",
+                "I only care about you.",
+                "Don't leave me.",
+                "We'll be together forever.",
+                "You're mine."
+            ],
+            "kuudere": [
+                "...",
+                "I see.",
+                "That is logical.",
+                "Indifferent.",
+                "As you wish."
+            ],
+            "dandere": [
+                "U-um...",
+                "I-I'm sorry...",
+                "O-okay...",
+                "I-I'll try my best...",
+                "E-excuse me..."
+            ],
+            "himedere": [
+                "Fufufu...",
+                "Kneel before me!",
+                "You should be honored.",
+                "Of course.",
+                "Remember your place."
+            ],
+            "deredere": [
+                "Okay!",
+                "Sure!",
+                "I understand.",
+                "No problem!",
+                "Got it!"
+            ]
+        }
+
+        default_list = dere_defaults.get(context.current_dere, ["..."])
+        unused_responses = [resp for resp in default_list if resp not in self.used_default_responses]
+
+        if unused_responses:
+            response = random.choice(unused_responses)
+            self.used_default_responses.add(response)
+            return response
+        else:
+            self.used_default_responses.clear()
+            return random.choice(default_list)
+
+
     def _get_default_response(self) -> str:
         """Gets the default response."""
         if self.waifu_chatbot.debug:
             print(f"ResponseGenerator._get_default_response: Entering")
         # Access dere_context from waifu_chatbot instance
-        current_dere = get_current_dere(self.waifu_memory.affection)  # Get the current dere type
+        #current_dere = get_current_dere(self.waifu_memory.affection)  # Get the current dere type # Removed
         #used_default_responses: Set[str] = set() # Removed
 
-        return dere_response(self.waifu_chatbot.dere_context, self.used_default_responses, *default_responses.get(current_dere, ["..."])) # Use dere_response
+        #return dere_response(self.waifu_chatbot.dere_context, self.used_default_responses, *default_responses.get(current_dere, ["..."])) # Use dere_response
+        return self._get_intelligent_default_response(self.waifu_chatbot.dere_context)
 
     def _maybe_use_small_talk(self) -> Optional[str]:
         """Uses small talk based on randomness"""

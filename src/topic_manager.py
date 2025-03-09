@@ -25,6 +25,7 @@ class TopicManager:
         self.previous_input: str = "" # Store the previous input
         self.topic_dere: Optional[str] = None # Store the dere type when the topic was introduced
         self.topic_turns: int = 0 # Counter for turns since a topic-specific response
+        self.max_topic_turns: int = 4 # Maximum turns to stay on a topic
 
         self.response_templates = {
             ("feeling", "tsundere"): tsundere_responses["feeling"],
@@ -146,7 +147,7 @@ class TopicManager:
                 if self.waifu_chatbot.debug:
                     print(f"TopicManager.maybe_introduce_topic: Stored topic keyword: {self.last_topic_keyword}")
                 self.turns_since_last_topic = 0 # Reset the counter
-                self.topic_turns = 4 # Set topic_turns to 4
+                self.topic_turns = 2 # Reduced topic_turns
                 self.waifu_chatbot.response_generator.topic_context = True # Set topic_context
                 return response
         self.turns_since_last_topic += 1 # Increment the counter
@@ -162,6 +163,14 @@ class TopicManager:
         if self.current_topic:
             if self.waifu_chatbot.debug:
                 print(f"TopicManager.respond_based_on_current_topic: Current topic: {self.current_topic}, topic_turns: {self.topic_turns}")
+
+            # Check if user input relates to the current topic
+            input_relates_to_topic = False
+            for token in tokens:
+                if token in self.current_topic or (self.current_topic in keywords and any(token in entry[0] for entry in keywords[self.current_topic])):
+                    input_relates_to_topic = True
+                    break
+
             if self.topic_turns > 0: # Only respond if topic_turns > 0
                 if self.current_topic in keywords:
                     for resp_pattern, resp_text in keywords[self.current_topic]:
@@ -194,17 +203,21 @@ class TopicManager:
                     self.previous_input # Pass previous input
                 )
                 if response: # If a topic-specific response was generated
-                    self.topic_turns -= 1 # Decrement topic_turns
-                    #self.current_topic = None # Reset the topic
-                    #self.topic_dere = None # Reset dere type
+                    if input_relates_to_topic:
+                        self.topic_turns -= 1 # Decrement topic_turns
+                    else:
+                        self.topic_turns -= 2  # Decrement faster if user doesn't engage
+                        if self.topic_turns < 0:
+                            self.topic_turns = 0
+
+                    if self.topic_turns == 0:
+                        self.current_topic = None  # Reset the topic when turns run out
+                        self.topic_dere = None
                     self.turns_since_last_topic = 0 # Reset the counter
                     self.waifu_chatbot.response_generator.topic_context = False # Reset topic_context
                     if self.waifu_chatbot.debug:
                         print(f"TopicManager.respond_based_on_current_topic: topic_turns set to {self.topic_turns}")
-                else:
-                    self.topic_turns -= 1
-                    if self.waifu_chatbot.debug:
-                        print(f"TopicManager.respond_based_on_current_topic: topic_turns remains {self.topic_turns}")
+
                 return response
             else:
                 if self.waifu_chatbot.debug:
@@ -212,4 +225,12 @@ class TopicManager:
                 self.current_topic = None # Reset if no current topic
                 self.topic_dere = None
                 self.turns_since_last_topic = 0 # Reset turns_since_last_topic
+
+            if self.topic_turns <= 0 or not input_relates_to_topic:
+                if self.waifu_chatbot.debug:
+                    print("TopicManager.respond_based_on_current_topic: Exiting topic due to no engagement or turns limit")
+                self.current_topic = None
+                self.topic_dere = None
+                self.turns_since_last_topic = 0
+
         return None
