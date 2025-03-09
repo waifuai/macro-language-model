@@ -30,9 +30,9 @@ class WaifuChatbot:
         self.waifu_memory: WaifuFrame = WaifuFrame(name)
         self.debug: bool = debug
         self.conversation_context = ConversationContext()
-        self.dere_context = DereContext(self.waifu_memory, random.choice(dere_types), self.conversation_context.used_responses, self.debug)
-        self.topic_manager: TopicManager = TopicManager(self) # Pass self
-        self.response_generator = ResponseGenerator(self, self.waifu_memory, self.keywords, self.transformations, response_templates, talk_about_interest, introduce_topic, generate_response, remember, self.debug) # Modified
+        # self.dere_context = DereContext(self.waifu_memory, random.choice(dere_types), self.conversation_context.used_responses, self.debug) # Modified
+        # self.topic_manager: TopicManager = TopicManager(self) # Pass self
+        # self.response_generator = ResponseGenerator(self, self.waifu_memory, self.keywords, self.transformations, response_templates, talk_about_interest, introduce_topic, generate_response, remember, self.debug) # Modified
         self.last_topic_introduction: Optional[str] = None # Store the last topic introduction
         self.turn_count: int = 0 # Add a turn counter
         self.previous_input: str = "" # Add previous_input
@@ -45,6 +45,10 @@ class WaifuChatbot:
             self.farewells: List[str] = config["farewells"]
 
         self.current_dere: str = random.choice(dere_types)
+        self.dere_context = DereContext(self.waifu_memory, self.current_dere, self.conversation_context.used_responses, self.debug) # Modified
+        self.topic_manager: TopicManager = TopicManager(self)  # Pass self
+        self.response_generator = ResponseGenerator(self, self.waifu_memory, self.keywords, self.transformations, response_templates, talk_about_interest, introduce_topic, generate_response, remember, self.debug)  # Modified
+
         patterns = [
             "my favorite food is *",
             "i love eating *",
@@ -150,6 +154,8 @@ class WaifuChatbot:
             self.expecting_topic_input = True
             return response
 
+        # Maybe change dere type
+        maybe_change_dere(self.dere_context, dere_types, self) # Pass self
 
         if self.debug:
             print(f"WaifuChatbot.respond: Calling response generator")
@@ -165,7 +171,6 @@ class WaifuChatbot:
         if self.debug:
             print(f"WaifuChatbot.respond: Affection changed by {affection_change}, new affection: {self.waifu_memory.affection}")
 
-        # Maybe change dere type
-        maybe_change_dere(self.dere_context, dere_types, self) # Pass self
+
 
         return response

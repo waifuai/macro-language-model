@@ -48,7 +48,7 @@ def talk_about_interest(waifu_memory: Any, current_dere: str, used_responses: Li
     """
     if not waifu_memory.interests:
         dere_context = DereContext(waifu_memory, current_dere, set(used_responses), debug) #Convert used_response to set.
-        return dere_response(dere_context,
+        return dere_response(dere_context, set(),
             "What are you talking about?", "I don't get it.", "Hmph.", "O-okay..."
         )
 
@@ -60,7 +60,7 @@ def talk_about_interest(waifu_memory: Any, current_dere: str, used_responses: Li
             return response
     # No need for the 'else' here, it's covered above
     dere_context = DereContext(waifu_memory, current_dere, set(used_responses), debug)
-    return dere_response(dere_context,
+    return dere_response(dere_context, set(),
             "What are you talking about?", "I don't get it.", "Hmph.", "O-okay..."
     )
 
@@ -78,7 +78,7 @@ def introduce_topic(topic: str, waifu_memory: Any, current_dere: str, used_respo
         A string containing the introduction to the topic.
     """
     dere_context = DereContext(waifu_memory, current_dere, set(used_responses), debug)
-    response = dere_response(dere_context,
+    response = dere_response(dere_context, set(),
         "Hmph, why do you want to talk about this all of a sudden?",
         "I suppose we can talk about that, if you insist.",
         "Um, what about this...?",

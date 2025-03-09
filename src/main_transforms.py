@@ -43,3 +43,11 @@ def register_transforms(waifu: Any) -> None:
     deftransform(waifu.transformations, "i disagree", ["Oh, that's interesting.", "Why do you think that?"])
     deftransform(waifu.transformations, "you are right", ["Of course I am!", "I know, right?"])
     deftransform(waifu.transformations, "you are wrong", ["Am not!", "I disagree."])
+
+    # Transformations for handling questions
+    deftransform(waifu.transformations, "who is *", ["I don't know who * is.", "Who are you talking about?"])
+    deftransform(waifu.transformations, "what is *", ["I'm not sure what * is.", "What are you referring to?"])
+    deftransform(waifu.transformations, "where is *", ["I don't know where * is.", "Where is that?"])
+    deftransform(waifu.transformations, "when is *", ["I don't remember when * is.", "When was that?"])
+    deftransform(waifu.transformations, "why is *", ["I don't know why * is.", "Why do you ask?"])
+    deftransform(waifu.transformations, "how is *", ["I don't know how * is.", "How is that possible?"])

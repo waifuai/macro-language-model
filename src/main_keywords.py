@@ -36,3 +36,19 @@ def register_keywords(waifu: Any) -> None:
     waifu.defkeyword("relationship", ["relationship", "friends", "dating", "love"])
     waifu.defkeyword("food", ["food", "eat", "hungry", "favorite food", "cooking", "pocky"])
     waifu.defkeyword("quirks", ["quirks", "personality", "unique", "special"])
+
+    # Keywords for asking questions
+    waifu.defkeyword("who", ["Who are you talking about?", "I don't know who that is."])
+    waifu.defkeyword("what", ["What are you talking about?", "I don't understand."])
+    waifu.defkeyword("where", ["Where is that?", "I don't know where that is."])
+    waifu.defkeyword("when", ["When was that?", "I don't remember."])
+    waifu.defkeyword("why", ["Why do you ask?", "I don't know why."])
+    waifu.defkeyword("how", ["How is that possible?", "I don't know how."])
+
+    # Synonyms for question words
+    waifu.defsynonym("what's", "what", "is")
+    waifu.defsynonym("where's", "where", "is")
+    waifu.defsynonym("who's", "who", "is")
+    waifu.defsynonym("when's", "when", "is")
+    waifu.defsynonym("why's", "why", "is")
+    waifu.defsynonym("how's", "how", "is")

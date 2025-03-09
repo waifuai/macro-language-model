@@ -20,6 +20,7 @@ class ResponseGenerator:
         #self.dere_context = dere_context # Removed
         self.debug = debug
         self.topic_context = False  # Flag for topic-specific context
+        self.used_default_responses: Set[str] = set() # Add used_default_responses
         with open("src/chatbot_config.json", "r") as f:
             config = json.load(f)
             self.small_talk: List[str] = config["small_talk"]
@@ -59,8 +60,9 @@ class ResponseGenerator:
             print(f"ResponseGenerator._get_default_response: Entering")
         # Access dere_context from waifu_chatbot instance
         current_dere = get_current_dere(self.waifu_memory.affection)  # Get the current dere type
+        #used_default_responses: Set[str] = set() # Removed
 
-        return dere_response(self.waifu_chatbot.dere_context, *default_responses.get(current_dere, ["..."])) # Use dere_response
+        return dere_response(self.waifu_chatbot.dere_context, self.used_default_responses, *default_responses.get(current_dere, ["..."])) # Use dere_response
 
     def _maybe_use_small_talk(self) -> Optional[str]:
         """Uses small talk based on randomness"""
@@ -82,21 +84,6 @@ class ResponseGenerator:
             self.topic_context = True # Set topic_context to True
             return topic_response
 
-        if self.topic_context:
-            if self.waifu_chatbot.debug:
-                print(f"ResponseGenerator.generate: In topic context, trying to generate topic-specific response")
-            # Prioritize topic-specific responses
-            topic_response = self.waifu_chatbot.topic_manager.respond_based_on_current_topic(tokens, self.keywords)
-            if topic_response:
-                if self.waifu_chatbot.debug:
-                    print(f"ResponseGenerator.generate: Returning topic response: {topic_response}")
-                return topic_response
-            else:
-                # If no topic-specific response, still allow other responses, but with lower priority
-                if self.waifu_chatbot.debug:
-                    print(f"ResponseGenerator.generate: No specific topic response found in topic context")
-                #self.topic_context = False # Reset topic_context if no response found
-
         # Then check for transformations
         response = self._handle_transformations(tokens)
         if response:
@@ -110,8 +97,6 @@ class ResponseGenerator:
             if self.waifu_chatbot.debug:
                 print(f"ResponseGenerator.generate: Returning keyword response: {response}")
             return response
-
-
 
         # Use small talk
         response = self._maybe_use_small_talk()

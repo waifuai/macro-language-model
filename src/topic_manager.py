@@ -78,7 +78,8 @@ class TopicManager:
                 if self.waifu_chatbot.debug:
                     print(f"TopicManager.maybe_introduce_topic: Stored topic keyword: {self.last_topic_keyword}")
                 self.turns_since_last_topic = 0 # Reset the counter
-                self.topic_turns = 2 # Set topic_turns to 2
+                self.topic_turns = 4 # Set topic_turns to 4
+                self.waifu_chatbot.response_generator.topic_context = True # Set topic_context
                 return response
         self.turns_since_last_topic += 1 # Increment the counter
         self.last_topic = None  # Reset last_topic if no new topic is introduced
@@ -98,9 +99,9 @@ class TopicManager:
                     for resp_pattern, resp_text in keywords[self.current_topic]:
                         if matches(tokenize(resp_pattern), tokens):
                             self.dere_context.used_responses.add(resp_text)
-                            self.current_topic = None  # Reset topic after a match
-                            self.topic_dere = None # Reset the dere type
-                            self.topic_turns = 0 # Reset topic turns
+                            #self.current_topic = None  # Reset topic after a match
+                            #self.topic_dere = None # Reset the dere type
+                            #self.topic_turns = 0 # Reset topic turns
                             if self.waifu_chatbot.debug:
                                 print(f"TopicManager.respond_based_on_current_topic: Found response: {resp_text}")
                             return resp_text
@@ -121,12 +122,13 @@ class TopicManager:
                     self.topic_dere, # Use the stored dere type
                     dere_response,
                     self.waifu_chatbot.debug,
+                    self.waifu_chatbot.response_generator.used_default_responses, # Pass used_default_responses
                     self.previous_input # Pass previous input
                 )
                 if response: # If a topic-specific response was generated
-                    self.topic_turns = 0 # Reset topic turns
-                    self.current_topic = None # Reset the topic
-                    self.topic_dere = None # Reset dere type
+                    self.topic_turns -= 1 # Decrement topic_turns
+                    #self.current_topic = None # Reset the topic
+                    #self.topic_dere = None # Reset dere type
                     self.turns_since_last_topic = 0 # Reset the counter
                     self.waifu_chatbot.response_generator.topic_context = False # Reset topic_context
                     if self.waifu_chatbot.debug:
@@ -141,4 +143,5 @@ class TopicManager:
                     print(f"TopicManager.respond_based_on_current_topic: No more topic turns remaining")
                 self.current_topic = None # Reset if no current topic
                 self.topic_dere = None
+                self.turns_since_last_topic = 0 # Reset turns_since_last_topic
         return None
