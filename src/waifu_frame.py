@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 class WaifuFrame:
     """Represents the waifu's memory and state."""
@@ -19,6 +19,7 @@ class WaifuFrame:
         self.favorite_food: str = "pocky"
         self.personality_quirks: List[str] = []  # Add a list for personality quirks
         self.current_topic: Optional[str] = None # Added to fix AttributeError
+        self.topic_counts: Dict[str, int] = {}  # Add a dictionary to track topic counts
 
     def set_favorite_food(self, food: str) -> None:
         """Updates the waifu's favorite food.

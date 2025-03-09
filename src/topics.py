@@ -46,7 +46,7 @@ def talk_about_interest(waifu_memory: Any, current_dere: str, used_responses: Li
     Returns:
         A string containing the generated response.
     """
-    if not waifu_memory.interests:  # Add this check
+    if not waifu_memory.interests:
         dere_context = DereContext(waifu_memory, current_dere, set(used_responses), debug) #Convert used_response to set.
         return dere_response(dere_context,
             "What are you talking about?", "I don't get it.", "Hmph.", "O-okay..."
@@ -85,4 +85,9 @@ def introduce_topic(topic: str, waifu_memory: Any, current_dere: str, used_respo
         "You should be honored that I'm even talking to you about this!"
     )
 
-    return f"{response} Could you tell me more about {topic}?"
+    if topic == "favorite_food":
+        return f"{response} What's your favorite food?"
+    elif topic == "relationship_status":
+        return f"{response} How do you feel about our relationship?"
+    else:
+        return f"{response} Could you tell me more about {topic}?"

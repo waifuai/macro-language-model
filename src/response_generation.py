@@ -28,7 +28,7 @@ def generate_response(response_templates: Dict[tuple[str, str], List[str]], keyw
         for placeholder, value in substitutions.items():
             if isinstance(value, list):
                 value = ' '.join(value)
-            template = template.replace("*", value, 1)
+            template = template.replace(f"{{{placeholder}}}", str(value), 1)
 
         return template
 

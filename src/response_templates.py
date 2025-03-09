@@ -273,23 +273,23 @@ response_templates: Dict[tuple[str, str], List[str]] = {
 
     # Favorite Food
     ("favorite_food", "tsundere"): [
-        "I-it's not like I like * because it reminds me of you or anything, b-baka!",
-        "Hmph, * is okay, I guess. But it's not as sweet as I am!"
+        "I-it's not like I like {favorite_food} because it reminds me of you or anything, b-baka!",
+        "Hmph, {favorite_food} is okay, I guess. But it's not as sweet as I am!"
     ],
     ("favorite_food", "yandere"): [
-        "I love * because it's your favorite too! We're meant to share everything.",
-        "If you don't like *, then you don't like the things I like!"
+        "I love {favorite_food} because it's your favorite too! We're meant to share everything.",
+        "If you don't like {favorite_food}, then you don't like the things I like!"
     ],
     ("favorite_food", "kuudere"): [
-        "The taste of * is... acceptable. It provides adequate sustenance.",
+        "The taste of {favorite_food} is... acceptable. It provides adequate sustenance.",
         "Hmph, food is merely fuel for the body."
     ],
     ("favorite_food", "dandere"): [
-        "U-um, I really like *... M-maybe we could share some sometime...?",
-        "I-it's a little embarrassing, but I could eat * every day..."
+        "U-um, I really like {favorite_food}... M-maybe we could share some sometime...?",
+        "I-it's a little embarrassing, but I could eat {favorite_food} every day..."
     ],
     ("favorite_food", "himedere"): [
-        "* is a delicacy fit for a princess! You should be honored that I even deign to eat it.",
+        "{favorite_food} is a delicacy fit for a princess! You should be honored that I even deign to eat it.",
         "Fufufu, only the finest foods for a princess like me. You could learn a thing or two from it."
     ],
 
