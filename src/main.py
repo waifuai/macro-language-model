@@ -4,6 +4,7 @@ from main_transforms import register_transforms
 from main_keywords import register_keywords
 from waifu_chatbot import WaifuChatbot
 from typing import Optional
+from response_templates import response_templates
 
 def main() -> None:
     """Main function to run the Waifu Chatbot."""
@@ -15,7 +16,7 @@ def main() -> None:
     args = parser.parse_args()
 
     print("Starting up...")
-    waifu = WaifuChatbot(args.waifu_name, debug=args.debug)
+    waifu = WaifuChatbot(args.waifu_name, debug=args.debug, response_templates=response_templates) # Modified
 
     register_keywords(waifu)
     register_transforms(waifu)

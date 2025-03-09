@@ -10,5 +10,11 @@
     "Bye-bye, Onii-chan! Don't forget about me!",
     "Oyasumi nasai. Sweet dreams!",
     "Come back soon, okay?"
+  ],
+  "small_talk": [
+    "The weather is nice today, isn't it?",
+    "Have you heard any good news lately?",
+    "Did you see that viral video about the cat playing the piano?",
+    "I wonder what the next big trend will be..."
   ]
 }

@@ -1,5 +1,5 @@
 import random
-from dere_types import dere_response, DereContext
+from dere_manager import dere_response, DereContext # Modified import
 from typing import List, Dict, Any
 
 interest_templates: Dict[str, Dict[str, List[str]]] = {
