@@ -72,7 +72,7 @@ def apply_transformations(transformations: Dict[str, Tuple[Any, Optional[str], i
                         if handler:
                             if part[0] == "generate":
                                 # Access dere_context from waifu_chatbot instance
-                                transformed_response.append(handler(waifu_chatbot.dere_context, part, substitutions, response_templates, dere_response,  waifu_chatbot.debug))
+                                transformed_response.append(handler(waifu_chatbot, part, substitutions, response_templates, dere_response,  waifu_chatbot.debug))
                             elif part[0] in ("waifu-memory", "dere-response"):
                                 transformed_response.append(handler(waifu_memory, part))
                             elif part[0] == "maybe-change-dere":

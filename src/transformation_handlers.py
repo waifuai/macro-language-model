@@ -2,18 +2,31 @@ from typing import Dict, List, Tuple, Callable, Any, Optional, Set
 from dere_manager import DereContext, dere_response, maybe_change_dere
 from topics import talk_about_interest, introduce_topic
 from response_generation import generate_response
+from dere_data import default_responses
 
-def handle_generate_response(context: DereContext, part: tuple, substitutions: Dict[str, List[str]], response_templates: Dict[tuple[str, str], List[str]], dere_response: Callable[..., str], debug: bool) -> str:
+def handle_generate_response(waifu_chatbot: Any, part: tuple, substitutions: Dict[str, List[str]], response_templates: Dict[tuple[str, str], List[str]], dere_response: Callable[..., str], debug: bool) -> str:
     """Handles the 'generate' response type."""
     keyword = part[1]
     sub_dict = {}
     for sub_key, sub_value in part[2]:
         # Get substitutions for all wildcards in the tuple
-        all_values = []
+        all_values: List[str] = []
         for k, v in substitutions.items():
             all_values.extend(v)
         sub_dict[sub_key] = all_values
-    return generate_response(response_templates, keyword, sub_dict, context.used_responses, context.waifu_memory, context.current_dere, dere_response, debug)
+    return generate_response(
+        response_templates, # Pass response_templates
+        keyword,  # Use current_topic as keyword
+        sub_dict,  # Pass substitutions
+        waifu_chatbot.dere_context.used_responses,
+        waifu_chatbot.waifu_memory,
+        waifu_chatbot.dere_context.current_dere, # Use the stored dere type
+        dere_response,
+        waifu_chatbot.debug,
+        waifu_chatbot.response_generator.used_default_responses, # Pass used_default_responses
+        "" # Pass previous input
+    )
+
 
 def handle_waifu_memory_response(waifu_memory: Any, part: tuple) -> str:
     """Handles the 'waifu-memory' response type."""

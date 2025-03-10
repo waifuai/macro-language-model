@@ -41,7 +41,7 @@ class WaifuChatbot:
         self.farewells = farewells
 
         self.current_dere: str = random.choice(dere_types)
-        self.dere_context = DereContext(self.waifu_memory, self.current_dere, self.conversation_context.used_responses, self.debug)
+        self.dere_context = DereContext(self.waifu_memory, self.current_dere, set(), self.debug) # Give dere_context its own set
         self.topic_manager: TopicManager = TopicManager(self)  # Pass self
         # Removed response_templates
         self.response_generator = ResponseGenerator(self, self.waifu_memory, self.keywords, self.transformations, talk_about_interest, introduce_topic, generate_response, remember, self.debug)

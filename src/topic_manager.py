@@ -132,8 +132,58 @@ class TopicManager:
                 # Choose a random topic from the topics with the lowest count
                 new_topic = random.choice(min_count_topics)
 
-                self.last_topic = new_topic
-                response = introduce_topic(new_topic, self.waifu_memory, self.dere_context.current_dere, list(self.dere_context.used_responses), self.waifu_chatbot.debug)
+                # More natural and dere-specific topic introductions
+                dere_introductions = {
+                    "tsundere": {
+                        "family": "It's not like I care, b-baka, but what's your family like?",
+                        "childhood": "Hmph, I bet your childhood was boring. Tell me about it anyway.",
+                        "feelings": "Don't get the wrong idea! I'm not asking because I care, but... what are you feeling?",
+                        "interests": "Whatever. I guess we could talk about interests... if you insist.",
+                        "relationship_status": "It's none of your business, but... what's your relationship status?",
+                        "favorite_food": "B-baka! Tell me your favorite food... not that I'll make it for you!",
+                        "personality_quirks": "Hmph. Do you have any weird quirks? Not like I care.",
+                    },
+                    "yandere": {
+                        "family": "Tell me everything about your family. I need to know who might interfere with us.",
+                        "childhood": "I want to know everything about your past. Every single detail.",
+                        "feelings": "Tell me your deepest feelings. I'm the only one who understands you.",
+                        "interests": "We should share all our interests. Tell me yours.",
+                        "relationship_status": "We're meant to be together, so tell me about your relationship history.",
+                        "favorite_food": "Your favorite food is my favorite food. Tell me what it is!",
+                        "personality_quirks": "I love everything about you, even your quirks. Tell me.",
+                    },
+                    "kuudere": {
+                        "family": "Family is a social construct. Tell me about yours.",
+                        "childhood": "Childhood experiences shape individuals. Describe yours.",
+                        "feelings": "Feelings are fleeting. What are you experiencing?",
+                        "interests": "Interests are logical pursuits. What are yours?",
+                        "relationship_status": "Relationship status is a label. What is yours?",
+                        "favorite_food": "Sustenance is necessary. What is your preferred food?",
+                        "personality_quirks": "Quirks are deviations from the norm. Describe yours.",
+                    },
+                    "dandere": {
+                        "family": "U-um... could you tell me about your family...?",
+                        "childhood": "I-I was wondering... what was your childhood like...?",
+                        "feelings": "A-are you feeling okay...?  Maybe we could talk about feelings...",
+                        "interests": "Um... do you have any interests...? I-I'd like to hear about them...",
+                        "relationship_status": "I-I'm a little shy, but... um... what's your relationship status...?",
+                        "favorite_food": "M-maybe we could share our favorite foods...?  If you want...",
+                        "personality_quirks": "S-sorry if I'm awkward... Do you have any quirks...?",
+                    },
+                    "himedere": {
+                        "family": "Your family should be honored to be in my presence. Tell me about them.",
+                        "childhood": "I assume your childhood was unremarkable. Prove me wrong.",
+                        "feelings": "As a princess, my feelings are paramount. But tell me yours, peasant.",
+                        "interests": "You should be interested in what *I* am interested in. However, tell me yours.",
+                        "relationship_status": "You should be grateful to even be considered. What's your relationship status?",
+                        "favorite_food": "Only the finest foods for me. What do *you* eat, commoner?",
+                        "personality_quirks": "My quirks are perfection. What are yours, I wonder?",
+                    },
+                }
+                response = dere_introductions.get(self.dere_context.current_dere, {}).get(new_topic, f"Let's talk about {new_topic}.")
+                if self.waifu_chatbot.debug:
+                    print(f"TopicManager.maybe_introduce_topic: Using intro: {response}")
+
                 self.current_topic = new_topic
                 self.topic_dere = self.dere_context.current_dere # Store the current dere type
 
@@ -194,9 +244,9 @@ class TopicManager:
                     self.response_templates, # Pass response_templates
                     self.current_topic,  # Use current_topic as keyword
                     substitutions,  # Pass substitutions
-                    self.dere_context.used_responses,
+                    self.waifu_chatbot.dere_context.used_responses,
                     self.waifu_memory,
-                    self.topic_dere, # Use the stored dere type
+                    self.waifu_chatbot.dere_context.current_dere, # Use the current dere type
                     dere_response,
                     self.waifu_chatbot.debug,
                     self.waifu_chatbot.response_generator.used_default_responses, # Pass used_default_responses

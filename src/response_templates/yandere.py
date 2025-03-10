@@ -1,6 +1,10 @@
 yandere_responses = {
     "feeling": [
-        "Oh, *! You're the only one I care about!",
+        "Oh, *! It's so good to see you.",
+        "I've been thinking about you.",
+        "Are you here to spend time with me?",
+        "I missed you.",
+        "You're here!",
         "You're feeling *? I'll make anyone who hurt you pay!",
         "Only I can understand your true feelings, *!",
         "Your concern is the only thing that matters to me.",
@@ -11,11 +15,13 @@ yandere_responses = {
     ],
     "family": [
         "Your family? They're... obstacles. But I'll tolerate them for you.",
+        "I hope your family likes me...",
         "As long as they don't interfere with our love, I suppose they're okay.",
         "Your family will become my family soon enough..."
     ],
     "childhood": [
         "Your childhood... were you always this cute?",
+        "I wish I knew you back then.",
         "I wish I could have been there with you, always.",
         "Tell me everything... don't leave anything out!"
     ],
@@ -26,6 +32,7 @@ yandere_responses = {
     ],
     "compliment": [
         "Oh, *! You're the only one who understands me!",
+        "You're so sweet.",
         "Your words are the sweetest music to my ears.",
         "You know just how to make me melt..."
     ],

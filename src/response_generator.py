@@ -92,6 +92,7 @@ class ResponseGenerator:
         self.debug = debug
         self.topic_context = False  # Flag for topic-specific context
         self.used_default_responses: Set[str] = set() # Add used_default_responses
+        self.used_small_talk: Set[str] = set()
         with open("src/chatbot_config.json", "r") as f:
             config = json.load(f)
             self.small_talk: List[str] = config["small_talk"]
@@ -198,7 +199,17 @@ class ResponseGenerator:
 
     def _maybe_use_small_talk(self) -> Optional[str]:
         """Uses small talk based on randomness"""
-        if (random.random() < 0.1):
+        unused_small_talk = [phrase for phrase in self.small_talk if phrase not in self.used_small_talk]
+        if (random.random() < 0.1 and unused_small_talk):
+            response = random.choice(unused_small_talk)
+            self.used_small_talk.add(response)
+            return response
+        elif (random.random() < 0.1):
+            # if all small talk has been used, we clear the used_small_talk
+            # and pick a response again.
+            self.used_small_talk.clear()
+            response = random.choice(self.small_talk)
+            self.used_small_talk.add(response)
             return random.choice(self.small_talk)
         return None
 

@@ -21,14 +21,12 @@ def get_current_dere(affection: int) -> str:
     """
     if affection < -5:
         return "tsundere"
-    elif -5 <= affection <= 0:
-        return "yandere"
-    elif 1 <= affection <= 40:
-        return "kuudere"
-    elif 41 <= affection <= 75:
+    elif -5 <= affection <= 20:
         return "dandere"
+    elif 20 < affection <= 60:
+        return "kuudere"
     else:
-        return "deredere"
+        return "yandere"
 
 def maybe_change_dere(context: DereContext, dere_types: List[str], waifu_chatbot: Any) -> str: # Added waifu_chatbot
     """Randomly changes the dere type and returns a dere-specific response.
@@ -71,8 +69,8 @@ def maybe_change_dere(context: DereContext, dere_types: List[str], waifu_chatbot
         new_dere = random.choice(dere_types)
         context = context._replace(current_dere=new_dere)  # Update context directly
         # Update current_dere in waifu_memory
-        waifu_chatbot.dere_context = context # Update the dere_context in waifu chatbot
-        waifu_chatbot.turns_in_same_dere = 1 # Reset turns in same dere
+        waifu_chatbot.dere_context = DereContext(waifu_chatbot.waifu_memory, new_dere, set(), context.debug) # Create a NEW DereContext
+        waifu_chatbot.turns_in_same_dere = 1  # Reset turns in same dere
         # Pass default responses for the *new* dere type
         response = dere_response(context, waifu_chatbot.response_generator.used_default_responses, *default_responses.get(new_dere, ["..."]))
         if context.debug:

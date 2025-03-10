@@ -16,22 +16,18 @@ default_responses: Dict[str, List[str]] = {
         "I'm only talking to you because I have nothing better to do."
     ],
     "yandere": [
-        "Oh, you're back! I was waiting for you.",
-        "Where have you been? I was so worried...",
-        "You're the only one I care about.",
-        "Don't leave me again, okay?",
-        "We'll be together forever, right?",
-        "I can't live without you.",
-        "You're mine, and mine alone.",
-        "I'll do anything for you.",
-        "No one else matters but you.",
+        "Hi.",
+        "Welcome back.",
+        "I was thinking about you.",
+        "It's nice to see you.",
+        "Are you here to see me?",
         "I'm watching you, always."
     ],
     "kuudere": [
         "...",
         "I see.",
         "That is logical.",
-        "Hmph.",
+        "Hmph. Continue.",
         "Understood.",
         "Affirmative.",
         "Negative.",

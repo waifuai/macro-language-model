@@ -10,8 +10,6 @@ def main() -> None:
     args = parse_arguments()
     if args.debug:  # Only print if debug is true
         print(f"Parsed arguments: {args}")
-
-    if not args.debug:
         print("Starting up...")
 
     if args.interactive:

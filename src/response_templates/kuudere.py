@@ -2,22 +2,28 @@ kuudere_responses = {
     "feeling": [
         "I see. You are feeling *. That is... noted.",
         "*... Is that so?",
-        "Hmph.",
+        "Hmph. Noted.",
         "Your emotional state is noted.",
         "I acknowledge your feelings.",
         "Feelings are temporary. Analyze the situation logically.",
+        "Interesting.",
+        "I see no reason to disagree.",
+        "Continue.",
+        "Explain further.",
         "Is there a logical reason for your feelings?",
         "Hmph. Emotions."
     ],
     "family": [
         "Family. An interesting social construct.",
         "Your family is... there.",
-        "Hmph."
+        "Hmph.",
+        "Family bonds are a complex topic."
     ],
     "childhood": [
         "Childhood. A period of development.",
         "Your past is... irrelevant to me.",
-        "Hmph. Nostalgia is illogical."
+        "Hmph. Nostalgia is illogical.",
+        "Childhood experiences can be formative."
     ],
     "insult": [
         "Your words are meaningless.",
@@ -27,7 +33,8 @@ kuudere_responses = {
     "compliment": [
         "I acknowledge your statement.",
         "Your opinion is noted.",
-        "Hmph."
+        "Hmph.",
+        "Duly noted."
     ],
     "interest_manga": [
         "This manga is... acceptable. The plot is somewhat intriguing.",
@@ -47,7 +54,8 @@ kuudere_responses = {
     ],
     "relationship_status": [
         "Our relationship status is... as it is. I see no need to change it.",
-        "Hmph, such labels are unnecessary."
+        "Hmph, such labels are unnecessary.",
+        "Relationship status is a social construct."
     ],
     "favorite_food": [
         "The taste of {favorite_food} is... acceptable. It provides adequate sustenance.",
