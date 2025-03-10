@@ -101,19 +101,23 @@ def dere_response(context: DereContext, used_default_responses: Set[str], *respo
     if context.debug:
         print(f"responses: {responses}")
 
-    # Combine provided responses with a larger pool of defaults
-    all_responses = list(responses) + [
-        "...",
-        "I don't know.",
-        "Maybe.",
-        "What do you think?",
-        "I haven't decided yet."
-    ]
+        # Combine provided responses with a larger pool of defaults
+        all_responses = list(responses) + [
+            "...",
+            "I don't know.",
+            "Maybe.",
+            "What do you think?",
+            "I haven't decided yet.",
+            "I'm not sure.",
+            "It depends.",
+            "Ask me later.",
+            "I'll think about it.",
+            "That's a secret."
+        ]
 
-
-    unused_responses = [resp for resp in all_responses if resp not in used_default_responses]
-    if context.debug:
-        print(f"unused_responses: {unused_responses}")
+        unused_responses = [resp for resp in all_responses if resp not in used_default_responses]
+        if context.debug:
+            print(f"unused_responses: {unused_responses}")
 
     if unused_responses:
         response = random.choice(unused_responses)

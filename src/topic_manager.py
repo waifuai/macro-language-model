@@ -253,20 +253,23 @@ class TopicManager:
                     self.previous_input # Pass previous input
                 )
                 if response: # If a topic-specific response was generated
+                    if self.waifu_chatbot.debug:
+                        print(f"TopicManager.respond_based_on_current_topic: Before decrement, topic_turns = {self.topic_turns}")
                     if input_relates_to_topic:
                         self.topic_turns -= 1 # Decrement topic_turns
                     else:
                         self.topic_turns -= 2  # Decrement faster if user doesn't engage
                         if self.topic_turns < 0:
                             self.topic_turns = 0
+                    if self.waifu_chatbot.debug:
+                        print(f"TopicManager.respond_based_on_current_topic: After decrement, topic_turns = {self.topic_turns}")
 
                     if self.topic_turns == 0:
                         self.current_topic = None  # Reset the topic when turns run out
                         self.topic_dere = None
                     self.turns_since_last_topic = 0 # Reset the counter
                     self.waifu_chatbot.response_generator.topic_context = False # Reset topic_context
-                    if self.waifu_chatbot.debug:
-                        print(f"TopicManager.respond_based_on_current_topic: topic_turns set to {self.topic_turns}")
+
 
                 return response
             else:
@@ -276,11 +279,11 @@ class TopicManager:
                 self.topic_dere = None
                 self.turns_since_last_topic = 0 # Reset turns_since_last_topic
 
-            if self.topic_turns <= 0 or not input_relates_to_topic:
-                if self.waifu_chatbot.debug:
-                    print("TopicManager.respond_based_on_current_topic: Exiting topic due to no engagement or turns limit")
-                self.current_topic = None
-                self.topic_dere = None
-                self.turns_since_last_topic = 0
+        if self.topic_turns <= 0 or not input_relates_to_topic:
+            if self.waifu_chatbot.debug:
+                print("TopicManager.respond_based_on_current_topic: Exiting topic due to no engagement or turns limit")
+            self.current_topic = None
+            self.topic_dere = None
+            self.turns_since_last_topic = 0
 
         return None

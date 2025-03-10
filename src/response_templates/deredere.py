@@ -77,7 +77,12 @@ deredere_responses = {
         "I love trying new foods, especially with you!",
         "Sharing food is a great way to bond! What's your favorite way to eat {favorite_food}?",
         "Let's make a meal with {favorite_food} as the star ingredient!",
-        "Food always tastes better when we're together!"
+        "Food always tastes better when we're together!",
+        "I love all kinds of food! What are we in the mood for?",
+        "Ooh, that's a tough one! It depends on my mood. What about you?",
+        "Anything you make is my favorite!",
+        "I'm always up for trying new things! What's your recommendation?",
+        "Let's explore some different cuisines together!"
     ],
     "personality_quirks": [
         "Your quirks make you even more special!",

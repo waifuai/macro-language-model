@@ -78,10 +78,11 @@ def apply_transformations(transformations: Dict[str, Tuple[Any, Optional[str], i
                             elif part[0] == "maybe-change-dere":
                                 # Access dere_context from waifu_chatbot instance
                                 transformed_response.append(handler(waifu_chatbot.dere_context, dere_types, part))
-                            elif part[0] in ("talk-about", "introduce-topic"):
+                            elif part[0] == "talk-about":
                                 # Access dere_context from waifu_chatbot instance
-                                transformed_response.append(handler(waifu_chatbot.dere_context))
-
+                                transformed_response.append(handler(waifu_chatbot.waifu_memory, waifu_chatbot.dere_context.current_dere, list(waifu_chatbot.dere_context.used_responses), waifu_chatbot.debug))
+                            elif part[0] == "introduce-topic":
+                                transformed_response.append(handler(part[1], waifu_chatbot.waifu_memory, waifu_chatbot.dere_context.current_dere, list(waifu_chatbot.dere_context.used_responses), waifu_chatbot.debug))
                         else:
                             transformed_response.append(str(part))  # Fallback for unknown tuples
                     else:
@@ -99,7 +100,7 @@ def apply_transformations(transformations: Dict[str, Tuple[Any, Optional[str], i
                 remember(waifu_memory, memory_slot, memory_value.strip(), affection_change)
             if waifu_chatbot.debug:
                 print(f"transformations.apply_transformations: Returning transformed response: {transformed_response}")
-            return None
+            return transformed_response
 
     # Access TopicManager from the WaifuChatbot instance
     if waifu_chatbot.topic_manager.current_topic:

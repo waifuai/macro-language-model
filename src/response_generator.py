@@ -148,42 +148,71 @@ class ResponseGenerator:
                 "It's not like I care, b-baka!",
                 "Don't get the wrong idea!",
                 "Whatever you say...",
-                "I'm not interested in that."
+                "I'm not interested in that.",
+                "Baka! Why would you ask that?",
+                "Don't ask stupid questions.",
+                "Hmph. As if I'd tell you.",
+                "That's none of your concern."
             ],
             "yandere": [
                 "...",
                 "I only care about you.",
                 "Don't leave me.",
                 "We'll be together forever.",
-                "You're mine."
+                "You're mine.",
+                "Where are you going?",
+                "Who were you talking to?",
+                "You're not thinking about anyone else, are you?",
+                "I'll always be watching you.",
+                "Stay with me."
             ],
             "kuudere": [
                 "...",
                 "I see.",
                 "That is logical.",
                 "Indifferent.",
-                "As you wish."
+                "As you wish.",
+                "That is irrelevant.",
+                "Unnecessary.",
+                "Explain.",
+                "Continue.",
+                "Observation noted."
             ],
             "dandere": [
                 "U-um...",
                 "I-I'm sorry...",
                 "O-okay...",
                 "I-I'll try my best...",
-                "E-excuse me..."
+                "E-excuse me...",
+                "P-please don't be mad...",
+                "I-I didn't mean to...",
+                "S-sorry...",
+                "Y-yes?",
+                "I-is that so...?"
             ],
             "himedere": [
                 "Fufufu...",
                 "Kneel before me!",
                 "You should be honored.",
                 "Of course.",
-                "Remember your place."
+                "Remember your place.",
+                "I am superior.",
+                "Naturally.",
+                "You are amusing.",
+                "How predictable.",
+                "Impress me."
             ],
             "deredere": [
                 "Okay!",
                 "Sure!",
                 "I understand.",
                 "No problem!",
-                "Got it!"
+                "Got it!",
+                "Sounds good!",
+                "Alright!",
+                "Yeah!",
+                "I'm here for you!",
+                "Let's do it!"
             ]
         }
 
@@ -254,15 +283,23 @@ class ResponseGenerator:
                 print(f"ResponseGenerator.generate: Returning keyword response: {response}")
             return response
 
-        # Use small talk
+        # Then check for keywords
+        response = self._handle_keywords(tokens)
+        if response:
+            if self.waifu_chatbot.debug:
+                print(f"ResponseGenerator.generate: Returning keyword response: {response}")
+            return response
+
+        # Use small talk (less frequently)
         response = self._maybe_use_small_talk()
         if response:
             if self.waifu_chatbot.debug:
                 print(f"ResponseGenerator.generate: Returning small talk response: {response}")
             return response
 
+
         # Get the default response
-        response =  self._get_default_response()
+        response = self._get_default_response()
         if self.waifu_chatbot.debug:
             print(f"ResponseGenerator.generate: Returning default response: {response}")
         return response
