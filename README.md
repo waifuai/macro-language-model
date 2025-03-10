@@ -61,19 +61,10 @@ The chatbot can be run in four modes:
 
 -   `--waifu_name`: Sets the waifu's name (default is "Waifu").
 -   `--gemini`: Enables Gemini mode.
-
-## Example
-
-```
-$ python main.py --interactive --waifu_name "Alice"
-Starting up...
-Alice: Senpai, you're back! How was your day?
-User: I'm doing well, how are you?
-Alice: I'm fine.
-User: I'm feeling great
-Alice: Oh, you're feeling great.
-Alice: I-I'll remember that, okay?
-```
+-   `--personality`: Sets the waifu's personality (default is "deredere"). Choices are: "deredere", "dandere", "himedere", "kuudere", "tsundere", "yandere", "dynamic".
+    - "deredere": A very positive, loving, and energetic personality.
+    - "dynamic": Uses the existing logic with affection levels to determine the personality.
+    - Other personalities: See `src/dere_data.py` and `src/response_templates/` for details.
 
 ## Dependencies
 

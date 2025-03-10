@@ -1,6 +1,6 @@
 from typing import List, Dict
 
-dere_types: List[str] = ["tsundere", "yandere", "kuudere", "dandere", "himedere"]
+dere_types: List[str] = ["tsundere", "yandere", "kuudere", "dandere", "himedere", "deredere"]
 
 default_responses: Dict[str, List[str]] = {
     "tsundere": [

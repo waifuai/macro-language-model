@@ -8,5 +8,6 @@ def parse_arguments():
     parser.add_argument("--debug", action="store_true", help="Enable debug mode")
     parser.add_argument("--waifu_name", default="Waifu", help="Set the waifu's name")
     parser.add_argument("--gemini", action="store_true", help="Enable Gemini mode")
+    parser.add_argument("--personality", default="deredere", choices=["deredere", "dandere", "himedere", "kuudere", "tsundere", "yandere", "dynamic"], help="Set the waifu's personality")
     args = parser.parse_args()
     return args

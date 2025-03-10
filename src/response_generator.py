@@ -12,6 +12,7 @@ from response_templates.yandere import yandere_responses
 from response_templates.kuudere import kuudere_responses
 from response_templates.dandere import dandere_responses
 from response_templates.himedere import himedere_responses
+from response_templates.deredere import deredere_responses
 
 
 class ResponseGenerator:
@@ -83,6 +84,18 @@ class ResponseGenerator:
             ("relationship_status", "himedere"): himedere_responses["relationship_status"],
             ("favorite_food", "himedere"): himedere_responses["favorite_food"],
             ("personality_quirks", "himedere"): himedere_responses["personality_quirks"],
+            ("feeling", "deredere"): deredere_responses["feeling"],
+            ("family", "deredere"): deredere_responses["family"],
+            ("childhood", "deredere"): deredere_responses["childhood"],
+            ("insult", "deredere"): deredere_responses["insult"],
+            ("compliment", "deredere"): deredere_responses["compliment"],
+            ("interest_manga", "deredere"): deredere_responses["interest_manga"],
+            ("interest_anime", "deredere"): deredere_responses["interest_anime"],
+            ("interest_games", "deredere"): deredere_responses["interest_games"],
+            ("interest_cooking", "deredere"): deredere_responses["interest_cooking"],
+            ("relationship_status", "deredere"): deredere_responses["relationship_status"],
+            ("favorite_food", "deredere"): deredere_responses["favorite_food"],
+            ("personality_quirks", "deredere"): deredere_responses["personality_quirks"],
         }
         self.talk_about_interest = talk_about_interest
         self.introduce_topic = introduce_topic
