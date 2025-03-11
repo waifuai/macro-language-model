@@ -39,4 +39,4 @@ def generate_response(response_templates: Dict[tuple[str, str], List[str]], keyw
 
     # Create DereContext here:
     dere_context = DereContext(waifu_memory, topic_dere, used_responses, debug) # Use topic_dere
-    return dere_response(dere_context, used_default_responses, "I don't know what to say.", "Is that so?", "Hmph.", "O-okay...")
+    return dere_response(dere_context, *used_default_responses)

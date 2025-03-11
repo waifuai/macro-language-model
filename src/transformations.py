@@ -10,7 +10,8 @@ from transformation_handlers import (
     handle_talk_about,
     handle_introduce_topic
 )
-from topic_manager import TopicManager
+from memory import remember
+
 
 def deftransform(transformations: Dict[str, Tuple[Any, Optional[str], int]], pattern: str, response: Any, memory_slot: Optional[str] = None, affection_change: int = 0) -> None:
     """Defines a transformation pattern and its corresponding response.
@@ -76,9 +77,9 @@ def apply_transformations(transformations: Dict[str, Tuple[Any, Optional[str], i
                                 transformed_response.append(handler(waifu_chatbot.dere_context, dere_types, waifu_chatbot))
                             elif part[0] == "talk-about":
                                 # Access dere_context from waifu_chatbot instance
-                                transformed_response.append(handler(waifu_chatbot.waifu_memory, waifu_chatbot.dere_context.current_dere, list(waifu_chatbot.dere_context.used_responses), waifu_chatbot.debug))
+                                transformed_response.append(handler(waifu_chatbot.dere_context, part))
                             elif part[0] == "introduce-topic":
-                                transformed_response.append(handler(part[1], waifu_chatbot.waifu_memory, waifu_chatbot.dere_context.current_dere, list(waifu_chatbot.dere_context.used_responses), waifu_chatbot.debug))
+                                transformed_response.append(handler(waifu_chatbot.dere_context, part))
                         else:
                             transformed_response.append(str(part))  # Fallback for unknown tuples
                     else:
@@ -98,8 +99,7 @@ def apply_transformations(transformations: Dict[str, Tuple[Any, Optional[str], i
                 print(f"transformations.apply_transformations: Returning transformed response: {transformed_response}")
             return transformed_response
 
-    # Access TopicManager from the WaifuChatbot instance
     if waifu_chatbot.topic_manager.current_topic:
-        return waifu_chatbot.topic_manager.maybe_introduce_topic(waifu_chatbot.topic_manager.current_topic, waifu_memory, waifu_chatbot.dere_context.current_dere, list(used_responses),  waifu_chatbot.debug) # Updated call
+        return waifu_chatbot.topic_manager.maybe_introduce_topic(waifu_chatbot.previous_input, waifu_chatbot.turn_count)
 
     return None

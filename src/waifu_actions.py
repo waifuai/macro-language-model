@@ -19,7 +19,7 @@ def register_actions(waifu: Any) -> None:
         "i really love *"
     ]
     for pattern in patterns:
-        deftransform(waifu.transformations, pattern, waifu.set_favorite_food, "favorite_food")
+        deftransform(waifu.transformations, pattern, set_favorite_food, "favorite_food")
 
 def set_favorite_food(self, food: str) -> str:
     """Updates the waifu's favorite food.

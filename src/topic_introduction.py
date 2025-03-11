@@ -11,10 +11,10 @@ def maybe_introduce_topic(self, input_str: str, turn_count: int) -> Optional[str
     """Introduces a new topic based on affection level, randomness, and topic counts."""
     if self.waifu_chatbot.debug:
         print(f"TopicManager.maybe_introduce_topic: Entering with input: {input_str}, turn: {turn_count}")
-    if (self.waifu_memory.affection > 30 and # Lowered affection threshold
-            random.random() < 0.3 and # Decreased probability
+    if (self.waifu_memory.affection > 40 and # Increased affection threshold
+            random.random() < 0.2 and # Decreased probability
             (self.last_topic_keyword is None or self.last_topic_keyword not in input_str) and
-            self.turns_since_last_topic >= 5 and # Increased turns_since_last_topic
+            self.turns_since_last_topic >= 8 and # Increased turns_since_last_topic
             self.topic_turns == 0): # Only introduce a new topic if topic_turns is 0
 
         available_topics = [
