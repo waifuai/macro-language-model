@@ -4,8 +4,8 @@ import re
 
 from transformations import deftransform
 from memory import remember
-from dere_manager import get_current_dere, maybe_change_dere, dere_response, DereContext
-from dere_data import dere_types
+from dere_utils import get_dere_default_response, maybe_change_dere, dere_response  # Updated import
+from dere_types import DereContext  # Updated import
 from topics import talk_about_interest  # Keep this for now, used in response_generator
 from utils import tokenize, matches
 from waifu_frame import WaifuFrame
@@ -16,11 +16,12 @@ from chatbot_config import greetings, farewells
 from response_templates.deredere import deredere_responses
 from core.registry import Registry
 from waifu_actions import register_actions
+from personalities.personality_interface import PersonalityInterface  # Import the interface
+from dere_data import dere_types
 
 
 class WaifuChatbot:
     """A chatbot that simulates a waifu."""
-    # Removed response_templates from __init__
     def __init__(self, name: str, personality: str = "deredere", debug: bool = False) -> None:
         """Initializes the WaifuChatbot.
 
@@ -44,14 +45,32 @@ class WaifuChatbot:
         self.greetings = greetings
         self.farewells = farewells
 
-        self.personality = personality  # Store the personality
-        if personality == "dynamic":
-            self.current_dere = "deredere" # Initialize with deredere.
+        # Modified personality loading
+        self.personality: Optional[PersonalityInterface] = None  # Store the personality *instance*
+        if personality == "tsundere":
+            from personalities.tsundere.logic import TsundereLogic
+            self.personality = TsundereLogic()
+        elif personality == "yandere":
+            from personalities.yandere.logic import YandereLogic
+            self.personality = YandereLogic()
+        elif personality == "kuudere":
+            from personalities.kuudere.logic import KuudereLogic
+            self.personality = KuudereLogic()
+        elif personality == "dandere":
+            from personalities.dandere.logic import DandereLogic
+            self.personality = DandereLogic()
+        elif personality == "himedere":
+            from personalities.himedere.logic import HimedereLogic
+            self.personality = HimedereLogic()
+        elif personality == "deredere":
+            from personalities.deredere.logic import DeredereLogic
+            self.personality = DeredereLogic(self.debug)
         else:
-            self.current_dere = personality
-        self.dere_context = DereContext(self.waifu_memory, self.current_dere, set(), self.debug) # Give dere_context its own set
+            raise ValueError(f"Invalid personality: {personality}")
+
+        self.current_dere = personality
+        self.dere_context = DereContext(self.waifu_memory, self.current_dere, set(), self.debug)
         self.topic_manager: TopicManager = TopicManager(self)  # Pass self
-        # Removed response_templates
         self.response_generator = ResponseGenerator(self, self.waifu_memory, self.keywords, self.transformations, talk_about_interest, self.topic_manager.maybe_introduce_topic, remember, self.debug)
 
         register_actions(self) # Register actions from waifu_actions.py
@@ -96,25 +115,20 @@ class WaifuChatbot:
             self.expecting_topic_input = True
             return response
 
-        # Maybe change dere type if personality is dynamic
-        if self.personality == "dynamic":
-            if self.waifu_memory.affection < -5:
-                self.current_dere = "tsundere"
-            elif -5 <= self.waifu_memory.affection <= 0:
-                self.current_dere = "yandere"
-            elif 1 <= self.waifu_memory.affection <= 40:
-                self.current_dere = "kuudere"
-            elif 41 <= self.waifu_memory.affection <= 75:
-                self.current_dere = "dandere"
-            else:
-                self.current_dere = "deredere"
-            maybe_change_dere(self.dere_context, dere_types, self)  # Pass self
-        else:  # If not dynamic, update dere_context with current personality
-            self.dere_context = self.dere_context._replace(current_dere=self.personality, used_responses=self.dere_context.used_responses)
+        # Dynamic dere type switching logic
+        maybe_change_dere_response = maybe_change_dere(self.dere_context, dere_types)
+        if maybe_change_dere_response:
+            self.turns_in_same_dere = 0  # Reset turns_in_same_dere
+            if self.debug:
+                print(f"WaifuChatbot.respond: Dere type changed: {maybe_change_dere_response}")
+            return maybe_change_dere_response
+        else:
+            self.turns_in_same_dere += 1  # Increment turns_in_same_dere
 
         if self.debug:
             print(f"WaifuChatbot.respond: Calling response generator")
-        response = self.response_generator.generate(input_str, tokens)
+        # Delegate to the personality's generate_response method
+        response = self.personality.generate_response(tokens, {"waifu_memory": self.waifu_memory, "debug": self.debug, "conversation_context": self.conversation_context, "current_dere": self.current_dere, "waifu_chatbot": self})
 
 
         self.previous_input = original_input # Store the original input before processing

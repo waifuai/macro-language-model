@@ -1,10 +1,11 @@
 import random
 from typing import List, Optional, Dict, Any, Tuple
-from dere_manager import DereContext, dere_response
+from dere_types import DereContext  # Updated import
+from dere_utils import dere_response
 from utils import tokenize, matches
 from topics import introduce_topic
 from conversation_context import ConversationContext
-from response_generation import generate_response
+from response_generation import generate_response  # Updated import
 import re
 
 def respond_based_on_current_topic(self, tokens: List[str], keywords: Dict[str, List[Tuple[str, Any]]], dere_context: DereContext, response_templates: Dict[tuple[str, str], List[str]]) -> Optional[str]: # Added response_templates argument

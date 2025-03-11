@@ -1,7 +1,8 @@
 from typing import Dict, List, Tuple, Callable, Any, Optional, Set
 
 from utils import matches
-from dere_manager import DereContext, maybe_change_dere
+from dere_types import DereContext  # Updated import
+from dere_utils import dere_response, maybe_change_dere
 from dere_data import dere_types
 from transformation_handlers import (
     handle_waifu_memory_response,
@@ -74,7 +75,7 @@ def apply_transformations(transformations: Dict[str, Tuple[Any, Optional[str], i
                                 transformed_response.append(handler(waifu_memory, part))
                             elif part[0] == "maybe-change-dere":
                                 # Access dere_context from waifu_chatbot instance
-                                transformed_response.append(handler(waifu_chatbot.dere_context, dere_types, waifu_chatbot))
+                                transformed_response.append(handler(waifu_chatbot.dere_context, dere_types))
                             elif part[0] == "talk-about":
                                 # Access dere_context from waifu_chatbot instance
                                 transformed_response.append(handler(waifu_chatbot.dere_context, part))
