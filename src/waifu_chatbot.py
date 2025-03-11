@@ -109,8 +109,8 @@ class WaifuChatbot:
             else:
                 self.current_dere = "deredere"
             maybe_change_dere(self.dere_context, dere_types, self)  # Pass self
-        else: # If not dynamic, update dere_context with current personality
-            self.dere_context = self.dere_context._replace(current_dere=self.personality)
+        else:  # If not dynamic, update dere_context with current personality
+            self.dere_context = self.dere_context._replace(current_dere=self.personality, used_responses=self.dere_context.used_responses)
 
         if self.debug:
             print(f"WaifuChatbot.respond: Calling response generator")

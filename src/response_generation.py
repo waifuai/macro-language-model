@@ -19,6 +19,8 @@ def generate_response(response_templates: Dict[tuple[str, str], List[str]], keyw
         if k == keyword and d == dere_type:
             template_group = templates
             break
+        if debug: # ADDED DEBUG PRINT
+            print(f"generate_response: Checking template: {(k, d)}") # ADDED DEBUG PRINT
 
     if template_group:
         unused_templates = [t for t in template_group if t not in used_responses]
@@ -36,7 +38,10 @@ def generate_response(response_templates: Dict[tuple[str, str], List[str]], keyw
             template = template.replace(f"{{{placeholder}}}", str(value), 1)
 
         return template
+    else: # ADDED ELSE BLOCK
+        if debug:
+            print(f"generate_response: No matching template group found for keyword: {keyword}, dere_type: {dere_type}")
 
     # Create DereContext here:
     dere_context = DereContext(waifu_memory, topic_dere, used_responses, debug) # Use topic_dere
-    return dere_response(dere_context, *used_default_responses)
+    return dere_response(dere_context, used_default_responses) # Corrected call to dere_response

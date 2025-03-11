@@ -43,20 +43,24 @@ class ResponseGenerator:
         if self.waifu_chatbot.debug:
             print(f"ResponseGenerator._select_response: Entering")
 
-        # 1. Topic-specific responses
-        if self.waifu_chatbot.topic_manager.current_topic:
-            topic_response = self.waifu_chatbot.topic_manager.respond_based_on_current_topic(tokens, self.keywords)
-            if topic_response:
-                if self.waifu_chatbot.debug:
-                    print(f"ResponseGenerator._select_response: Topic response selected: {topic_response}")
-                return topic_response
-
-        # 2. Keywords
+        # 1. Keywords (Prioritized)
+        print(f"ResponseGenerator: Type of dere_context.used_responses before keyword: {type(self.waifu_chatbot.dere_context.used_responses)}") # DEBUG PRINT
         keyword_response = handle_keywords(tokens, self.keywords, self.waifu_chatbot.dere_context.used_responses, self.debug)
+        print(f"ResponseGenerator: Type of dere_context.used_responses after keyword: {type(self.waifu_chatbot.dere_context.used_responses)}") # DEBUG PRINT
         if keyword_response:
             if self.waifu_chatbot.debug:
                 print(f"ResponseGenerator._select_response: Keyword response selected: {keyword_response}")
             return keyword_response
+
+        # 2. Topic-specific responses
+        if self.waifu_chatbot.topic_manager.current_topic:
+            print(f"ResponseGenerator: Type of dere_context.used_responses before topic: {type(self.waifu_chatbot.dere_context.used_responses)}") # DEBUG PRINT
+            topic_response = self.waifu_chatbot.topic_manager.respond_based_on_current_topic(tokens, self.keywords, self.waifu_chatbot.dere_context, self.response_templates) # Pass response_templates
+            print(f"ResponseGenerator: Type of dere_context.used_responses after topic: {type(self.waifu_chatbot.dere_context.used_responses)}") # DEBUG PRINT
+            if topic_response:
+                if self.waifu_chatbot.debug:
+                    print(f"ResponseGenerator._select_response: Topic response selected: {topic_response}")
+                return topic_response
 
         # 3. Transformations
         transformed_response = self._handle_transformations(tokens)
@@ -65,8 +69,8 @@ class ResponseGenerator:
                 print(f"ResponseGenerator._select_response: Transformed response selected: {transformed_response}")
             return transformed_response
 
-        # 4. Small talk (less frequent - only if turns_since_small_talk > 3)
-        if self.turns_since_small_talk > 3:
+        # 4. Small talk (more frequent)
+        if self.turns_since_small_talk > 1: # Reduced threshold
             small_talk_response = maybe_use_small_talk(self.small_talk, self.used_small_talk)
             if small_talk_response:
                 if self.waifu_chatbot.debug:
@@ -75,7 +79,7 @@ class ResponseGenerator:
                 return small_talk_response
         else:
             self.turns_since_small_talk += 1
-            if self.waifu_chatbot.debug: # Added debug print
+            if self.waifu_chatbot.debug:
                 print(f"ResponseGenerator._select_response: Skipping small talk, turns_since_small_talk = {self.turns_since_small_talk}")
 
         # 5. Default response

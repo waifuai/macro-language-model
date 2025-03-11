@@ -20,26 +20,25 @@ def dere_response(context: DereContext, used_default_responses: Set[str], *respo
             print("No responses provided to dere_response, returning '...'")
         return "..." # Or some other default
 
+    # Combine provided responses with a larger pool of defaults
+    all_responses = list(responses) + [
+        "...",
+        "I don't know.",
+        "Maybe.",
+        "What do you think?",
+        "I haven't decided yet.",
+        "I'm not sure.",
+        "It depends.",
+        "Ask me later.",
+        "I'll think about it.",
+        "That's a secret."
+    ]
+
+    unused_responses = [resp for resp in all_responses if resp not in used_default_responses]
+
     if context.debug:
         print(f"responses: {responses}")
-
-        # Combine provided responses with a larger pool of defaults
-        all_responses = list(responses) + [
-            "...",
-            "I don't know.",
-            "Maybe.",
-            "What do you think?",
-            "I haven't decided yet.",
-            "I'm not sure.",
-            "It depends.",
-            "Ask me later.",
-            "I'll think about it.",
-            "That's a secret."
-        ]
-
-        unused_responses = [resp for resp in all_responses if resp not in used_default_responses]
-        if context.debug:
-            print(f"unused_responses: {unused_responses}")
+        print(f"unused_responses: {unused_responses}")
 
     if unused_responses:
         response = random.choice(unused_responses)
@@ -136,7 +135,14 @@ def get_dere_default_response(context: DereContext, used_default_responses: Set[
             "Alright!",
             "Yeah!",
             "I'm here for you!",
-            "Let's do it!"
+            "Let's do it!",
+            "Tell me more!", # Added
+            "That's interesting!", # Added
+            "I'm listening!", # Added
+            "Go on!", # Added
+            "What then?", # Added
+            "Hmm...", # Added
+            "I see..." # Added
         ]
     }
 
