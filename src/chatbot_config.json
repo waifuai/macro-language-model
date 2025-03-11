@@ -1,20 +1,14 @@
 {
-  "greetings": [
-    "Senpai, you're back! How was your day?",
-    "Welcome home, Onii-chan! What did you do today?",
-    "Ara ara, you seem troubled. Tell me everything.",
-    "I'm here for you, okay? Let's talk."
-  ],
-  "farewells": [
-    "See you later, Senpai! Stay safe!",
-    "Bye-bye, Onii-chan! Don't forget about me!",
-    "Oyasumi nasai. Sweet dreams!",
-    "Come back soon, okay?"
-  ],
-  "small_talk": [
-    "The weather is nice today, isn't it?",
-    "Have you heard any good news lately?",
-    "Did you see that viral video about the cat playing the piano?",
-    "I wonder what the next big trend will be..."
-  ]
+    "small_talk": [
+        "I wonder what the next big trend will be...",
+        "Do you believe in fate?",
+        "What's your favorite color?",
+        "If you could have any superpower, what would it be?",
+        "What's the meaning of life?",
+        "Do you like cats or dogs more?",
+        "What's your favorite season?",
+        "Do you prefer the mountains or the beach?",
+        "What's your favorite type of music?",
+        "Do you like to dance?"
+    ]
 }

@@ -6,13 +6,12 @@ from transformations import deftransform
 from memory import remember
 from dere_manager import get_current_dere, maybe_change_dere, dere_response, DereContext
 from dere_data import dere_types
-from topics import talk_about_interest, introduce_topic
+from topics import talk_about_interest  # Keep this for now, used in response_generator
 from utils import tokenize, matches
 from waifu_frame import WaifuFrame
-from topic_manager import TopicManager
+from topic_manager import TopicManager  # Corrected import
 from response_generator import ResponseGenerator
 from conversation_context import ConversationContext
-from response_generation import generate_response
 from chatbot_config import greetings, farewells
 from response_templates.deredere import deredere_responses
 
@@ -50,7 +49,7 @@ class WaifuChatbot:
         self.dere_context = DereContext(self.waifu_memory, self.current_dere, set(), self.debug) # Give dere_context its own set
         self.topic_manager: TopicManager = TopicManager(self)  # Pass self
         # Removed response_templates
-        self.response_generator = ResponseGenerator(self, self.waifu_memory, self.keywords, self.transformations, talk_about_interest, introduce_topic, generate_response, remember, self.debug)
+        self.response_generator = ResponseGenerator(self, self.waifu_memory, self.keywords, self.transformations, talk_about_interest, self.topic_manager.maybe_introduce_topic, remember, self.debug)
 
         patterns = [
             "my favorite food is *",

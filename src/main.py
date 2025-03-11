@@ -2,7 +2,9 @@ from waifu_chatbot import WaifuChatbot
 from typing import Optional, Dict, List, Tuple
 import os
 from cli import parse_arguments
-from modes import run_interactive_mode, run_auto_mode, run_gemini_mode
+from modes.auto_mode import run_auto_mode
+from modes.gemini_mode import run_gemini_mode
+from modes.interactive_mode import run_interactive_mode
 
 
 def main() -> None:

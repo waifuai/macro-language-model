@@ -1,16 +1,16 @@
 from typing import Dict, List, Tuple, Callable, Any, Optional, Set
 
 from utils import matches
-from dere_manager import DereContext, dere_types
+from dere_manager import DereContext, maybe_change_dere
+from dere_data import dere_types
 from transformation_handlers import (
-    handle_generate_response,
     handle_waifu_memory_response,
     handle_dere_response,
     handle_maybe_change_dere,
     handle_talk_about,
     handle_introduce_topic
 )
-from topic_manager import TopicManager # New import
+from topic_manager import TopicManager
 
 def deftransform(transformations: Dict[str, Tuple[Any, Optional[str], int]], pattern: str, response: Any, memory_slot: Optional[str] = None, affection_change: int = 0) -> None:
     """Defines a transformation pattern and its corresponding response.
@@ -24,13 +24,12 @@ def deftransform(transformations: Dict[str, Tuple[Any, Optional[str], int]], pat
     """
     transformations[pattern] = (response, memory_slot, affection_change)
 
-def apply_transformations(transformations: Dict[str, Tuple[Any, Optional[str], int]], input_list: List[str], waifu_memory: Any, current_dere: str, talk_about_interest: Callable[..., str], introduce_topic: Callable[..., str], dere_response: Callable[..., str], maybe_change_dere: Callable[..., str], generate_response: Callable[..., str], remember: Callable[..., None], response_templates: Dict[tuple[str, str], List[str]], used_responses: Set[str], dere_types: List[str], debug: bool, waifu_chatbot: Any) -> Optional[str]:
+def apply_transformations(transformations: Dict[str, Tuple[Any, Optional[str], int]], input_list: List[str], waifu_memory: Any, current_dere: str, talk_about_interest: Callable[..., str], introduce_topic: Callable[..., str], dere_response: Callable[..., str], response_templates: Dict[tuple[str, str], List[str]], used_responses: Set[str], dere_types: List[str], debug: bool, waifu_chatbot: Any) -> Optional[str]:
     """Applies transformations to the input and returns a transformed response."""
     if waifu_chatbot.debug:
         print(f"transformations.apply_transformations: Entering with input: {input_list}")
     # Dictionary to map response types to handler functions
     response_handlers: Dict[str, Callable] = {
-        "generate": handle_generate_response,
         "waifu-memory": handle_waifu_memory_response,
         "dere-response": handle_dere_response,
         "maybe-change-dere": handle_maybe_change_dere,
@@ -70,14 +69,11 @@ def apply_transformations(transformations: Dict[str, Tuple[Any, Optional[str], i
                     elif isinstance(part, tuple):
                         handler = response_handlers.get(part[0])
                         if handler:
-                            if part[0] == "generate":
-                                # Access dere_context from waifu_chatbot instance
-                                transformed_response.append(handler(waifu_chatbot, part, substitutions, response_templates, dere_response,  waifu_chatbot.debug))
-                            elif part[0] in ("waifu-memory", "dere-response"):
+                            if part[0] in ("waifu-memory", "dere-response"):
                                 transformed_response.append(handler(waifu_memory, part))
                             elif part[0] == "maybe-change-dere":
                                 # Access dere_context from waifu_chatbot instance
-                                transformed_response.append(handler(waifu_chatbot.dere_context, dere_types, part))
+                                transformed_response.append(handler(waifu_chatbot.dere_context, dere_types, waifu_chatbot))
                             elif part[0] == "talk-about":
                                 # Access dere_context from waifu_chatbot instance
                                 transformed_response.append(handler(waifu_chatbot.waifu_memory, waifu_chatbot.dere_context.current_dere, list(waifu_chatbot.dere_context.used_responses), waifu_chatbot.debug))
@@ -104,7 +100,6 @@ def apply_transformations(transformations: Dict[str, Tuple[Any, Optional[str], i
 
     # Access TopicManager from the WaifuChatbot instance
     if waifu_chatbot.topic_manager.current_topic:
-        return introduce_topic(waifu_chatbot.topic_manager.current_topic, waifu_memory,
-                             # Access dere_context from waifu_chatbot instance
-                             current_dere, list(used_responses),  waifu_chatbot.debug)
+        return waifu_chatbot.topic_manager.maybe_introduce_topic(waifu_chatbot.topic_manager.current_topic, waifu_memory, waifu_chatbot.dere_context.current_dere, list(used_responses),  waifu_chatbot.debug) # Updated call
+
     return None
