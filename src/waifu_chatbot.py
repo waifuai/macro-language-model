@@ -14,6 +14,8 @@ from response_generator import ResponseGenerator
 from conversation_context import ConversationContext
 from chatbot_config import greetings, farewells
 from response_templates.deredere import deredere_responses
+from core.registry import Registry
+from waifu_actions import register_actions
 
 
 class WaifuChatbot:
@@ -27,8 +29,9 @@ class WaifuChatbot:
             personality: The personality of the waifu.
             debug: A boolean indicating whether to print debug messages.
         """
-        self.keywords: Dict[str, List[Tuple[str, Any]]] = {}
-        self.transformations: Dict[str, Tuple[Any, Optional[str], int]] = {}
+        self.registry = Registry()
+        self.keywords = self.registry.keywords  # Use the registry's keywords
+        self.transformations = self.registry.transformations  # Use the registry's transformations
         self.waifu_memory: WaifuFrame = WaifuFrame(name)
         self.debug: bool = debug
         self.conversation_context = ConversationContext()
@@ -51,71 +54,8 @@ class WaifuChatbot:
         # Removed response_templates
         self.response_generator = ResponseGenerator(self, self.waifu_memory, self.keywords, self.transformations, talk_about_interest, self.topic_manager.maybe_introduce_topic, remember, self.debug)
 
-        patterns = [
-            "my favorite food is *",
-            "i love eating *",
-            "i enjoy eating *",
-            "i like eating *",
-            "i really like *",
-            "i really love *"
-        ]
-        for pattern in patterns:
-            deftransform(self.transformations, pattern, self.set_favorite_food, "favorite_food")
+        register_actions(self) # Register actions from waifu_actions.py
 
-
-    def defkeyword(self, keyword: str, responses: List[str]) -> None:
-        """Defines a keyword and its associated responses.
-
-        Args:
-            keyword: The keyword to define.
-            responses: A list of responses associated with the keyword.
-        """
-        if responses and isinstance(responses[0], tuple):
-            self.keywords[keyword] = responses
-        else:
-            self.keywords[keyword] = [(keyword, response) for response in responses]
-
-    def set_favorite_food(self, food: str) -> str:
-        """Updates the waifu's favorite food.
-
-        Args:
-            food: The waifu's favorite food.
-
-        Returns:
-            A string containing the generated response.
-        """
-        self.waifu_memory.set_favorite_food(food)
-        response = f"Okay, I'll remember that your favorite food is {food}!"
-        if self.debug: # Debug print
-            print(f"{self.waifu_memory.name}: {response}")
-            print()
-        return response
-
-    def defsynonym(self, word: str, *synonyms: str) -> None:
-        """Defines synonyms for a given word.
-
-        Args:
-            word: The word to define synonyms for.
-
-            *synonyms: Variable number of synonyms for the word.
-        """
-        if word not in self.keywords:
-            return
-
-        for syn in synonyms:
-            self.keywords[syn] = self.keywords[word][:]  # Create a copy of list.
-
-    def def_topic_response(self, topic: str, pattern: str, response: str) -> None:
-        """Defines a response for a specific topic.
-
-        Args:
-            topic: The topic to define the response for.
-            pattern: The pattern to match against the input.
-            response: The response to return if the pattern matches.
-        """
-        if topic not in self.keywords:
-            self.keywords[topic] = []
-        self.keywords[topic].append((pattern, response))
 
     def respond(self, input_str: str) -> str:
         """Generates a response to the user's input.

@@ -53,8 +53,10 @@ def run_auto_mode(waifu_name: str, debug: bool, max_turns: int = 10) -> None:
     except Exception as e:
         print(f"Error generating initial response: {e}")
         return
-    #user_input = "Placeholder response" # Placeholder
+    #user_input = \"Placeholder response\" # Placeholder
 
+    # Apply encoding fix here
+    user_input = user_input.encode('utf-8', 'replace').decode('utf-8')
     print(f"User: {user_input}")
     conversation_history.append(f"User: {user_input}")
 
@@ -84,9 +86,11 @@ def run_auto_mode(waifu_name: str, debug: bool, max_turns: int = 10) -> None:
         try:
             response = generate_with_retry(model, prompt, waifu_response)
             user_input = response.text
+            # Apply encoding fix here
+            user_input = user_input.encode('utf-8', 'replace').decode('utf-8')
             print(f"User: {user_input}")
             conversation_history.append(f"User: {user_input}")
         except Exception as e:
             print(f"Error in turn {turn + 1}: {e}")
             break
-        #user_input = "Placeholder response" # Placeholder
+        #user_input = \"Placeholder response\" # Placeholder
