@@ -1,8 +1,9 @@
 from typing import Dict, List, Tuple, Callable, Any, Optional, Set
 from dere_types import DereContext  # Updated import
-from dere_utils import dere_response, maybe_change_dere
+from dere_utils import maybe_change_dere
+from dere_response_selection import dere_response
 from topics import talk_about_interest, introduce_topic
-from dere_data import default_responses, dere_types
+from dere_data import dere_types
 from utils import matches
 from memory import remember
 
@@ -18,9 +19,9 @@ def handle_dere_response(context: DereContext, part: tuple) -> str:
     """Handles the 'dere-response' response type."""
     return dere_response(context, *part[1:])
 
-def handle_maybe_change_dere(context: DereContext, dere_types: List[str]) -> str: # Removed waifu_chatbot
+def handle_maybe_change_dere(context: DereContext, dere_types: List[str]) -> str:
     """Handles the 'maybe-change-dere' response type."""
-    return maybe_change_dere(context, dere_types) # Removed waifu_chatbot
+    return maybe_change_dere(context, dere_types)
 
 def handle_talk_about(context: DereContext) -> str:
     """Handles the 'talk-about' response type."""
