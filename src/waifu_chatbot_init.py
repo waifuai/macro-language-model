@@ -1,6 +1,6 @@
 from core.registry import Registry
-from main_keywords import register_keywords
-from main_transforms import register_transforms
+#from main_keywords import register_keywords
+#from main_transforms import register_transforms
 from dere_types import DereContext
 from response_generator import ResponseGenerator
 
@@ -30,18 +30,18 @@ def initialize_personality(chatbot, personality: str):
 
 def register_components(chatbot):
     chatbot.registry = Registry()
-    register_keywords(chatbot)
-    register_transforms(chatbot)
+    #register_keywords(chatbot)
+    #register_transforms(chatbot)
     chatbot.response_generator = ResponseGenerator(
         chatbot,
         chatbot.waifu_memory,
-        chatbot.registry.keywords,
-        chatbot.registry.transformations,
+        {}, # Removed keywords
+        {}, # Removed transformations
         chatbot.personality.talk_about_interest,  # Assuming personalities have this method
         chatbot.personality.introduce_topic,  # Assuming personalities have this method
         chatbot.personality.remember, # Assuming personalities have this method.
         chatbot.debug
     )
-    if chatbot.debug:
-        print(f"WaifuChatbot.__init__: Keywords: {chatbot.registry.keywords}")
-        print(f"WaifuChatbot.__init__: Transformations: {chatbot.registry.transformations}")
+    #if chatbot.debug:
+    #    print(f"WaifuChatbot.__init__: Keywords: {chatbot.registry.keywords}")
+    #    print(f"WaifuChatbot.__init__: Transformations: {chatbot.registry.transformations}")

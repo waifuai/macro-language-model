@@ -1,6 +1,4 @@
 from waifu_chatbot import WaifuChatbot
-from main_transforms import register_transforms
-from main_keywords import register_keywords
 from typing import Dict, List, Tuple
 import google.generativeai as genai
 from tenacity import retry, stop_after_attempt, wait_exponential
@@ -19,8 +17,7 @@ def run_auto_mode(waifu_name: str, debug: bool, max_turns: int = 10) -> None:
 
     # Initialize the WaifuChatbot
     waifu = WaifuChatbot(waifu_name, debug=debug)
-    register_keywords(waifu)
-    register_transforms(waifu)
+    #register_transforms(waifu)
 
     # System instruction for Gemini
     system_instruction = (

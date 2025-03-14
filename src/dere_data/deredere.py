@@ -28,5 +28,10 @@ deredere_default_responses = [
     "I love spending time with you!",
     "You always make me smile!",
     "You're so amazing!",
-    "I'm so lucky to have you in my life!"
+    "I'm so lucky to have you in my life!",
+    "That's interesting!",  # Added
+    "Tell me more!",       # Added
+    "I'm listening!",      # Added
+    "Ooh, exciting!",     # Added
+    "Sounds good!",       # Added
 ]

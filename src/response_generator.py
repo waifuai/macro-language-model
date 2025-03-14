@@ -5,7 +5,6 @@ from conversation_context import ConversationContext
 import json
 import random
 from response_template_loader import load_response_templates
-from keyword_handler import handle_keywords
 from small_talk import maybe_use_small_talk
 
 
@@ -41,14 +40,7 @@ class ResponseGenerator:
         # if self.waifu_chatbot.debug:
         #     print(f"ResponseGenerator._select_response: Entering")
 
-        # 1. Keywords (Prioritized)
-        # Delegate to personality
-        keyword_response = self.waifu_chatbot.personality.handle_keywords(tokens, self.keywords, self.debug)
-
-        if keyword_response:
-            # if self.waifu_chatbot.debug:
-            #     print(f"ResponseGenerator._select_response: Keyword response selected: {keyword_response}")
-            return keyword_response
+        # 1. Keywords (Prioritized) - REMOVED
 
         # 2. Topic-specific responses
         if self.waifu_chatbot.topic_manager.current_topic:

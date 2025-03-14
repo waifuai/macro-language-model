@@ -1,33 +1,47 @@
 from typing import List, Optional, Dict, Any, Tuple
-# Removed: from dere_manager import DereContext
-from topic_introduction import maybe_introduce_topic
-from topic_response import respond_based_on_current_topic
-# Removed:
-# from response_templates.tsundere import tsundere_responses
-# from response_templates.yandere import yandere_responses
-# from response_templates.kuudere import kuudere_responses
-# from response_templates.dandere import dandere_responses
-# from response_templates.himedere import himedere_responses
 
 class TopicManager:
     def __init__(self, waifu_chatbot: Any):
         self.waifu_chatbot = waifu_chatbot
         self.waifu_memory = waifu_chatbot.waifu_memory
-        # Removed: self.dere_context = waifu_chatbot.dere_context
         self.current_topic: Optional[str] = None
-        self.last_topic: Optional[str] = None
-        self.last_topic_keyword: Optional[str] = None  # Store the extracted topic keyword
-        self.turns_since_last_topic: int = 0  # Counter for turns since last topic
-        self.previous_input: str = ""  # Store the previous input
-        # Removed: self.topic_dere: Optional[str] = None  # Store the dere type when the topic was introduced
-        self.topic_turns: int = 0  # Counter for turns since a topic-specific response
-        self.max_topic_turns: int = 4  # Maximum turns to stay on a topic
+        self.topic_turns: int = 0
 
-        # REMOVED response_templates initialization
-    def maybe_introduce_topic(self, input_str: str, turn_count: int) -> Optional[str]:
-        """Introduces a new topic based on affection level, randomness, and topic counts."""
-        return self.waifu_chatbot.personality.maybe_introduce_topic({"waifu_chatbot": self.waifu_chatbot}, input_str, turn_count)
+    def maybe_introduce_topic(self, input_str: str, turn_count: int, topic: str = None) -> Optional[str]:
+        """Introduces a new topic."""
+        if topic:
+          self.current_topic = topic
+          self.topic_turns = 3  # Set initial topic turns
+          return self.waifu_chatbot.personality.introduce_topic(topic, {"waifu_chatbot": self.waifu_chatbot})
+        return None
 
-    def respond_based_on_current_topic(self, tokens: List[str], keywords: Dict[str, List[Tuple[str, Any]]], context: Dict[str, Any], response_templates: Dict[tuple[str, str], List[str]]) -> Optional[str]:
-        """Responds based on current topic"""
-        return self.waifu_chatbot.personality.respond_based_on_current_topic(self, tokens, keywords, context, response_templates)
+    def get_current_topic(self):
+        return self.current_topic
+
+    def decrement_topic_turns(self):
+        """Decrements the topic turns counter and clears the topic if it reaches 0."""
+        if self.topic_turns > 0:
+            self.topic_turns -= 1
+            if self.topic_turns == 0:
+                self.current_topic = None
+
+    def generate_topic_response(self, topic: str, input_tokens: List[str]) -> str:
+        """Generates a response based on the current topic and user input."""
+
+        if topic == "family":
+            if any(keyword in input_tokens for keyword in ["mom", "mother", "dad", "father", "brother", "sister", "sibling"]):
+                return "That's cool! Tell me more about your family!"
+            else:
+                return "Family is really important, don't you think?"
+        elif topic == "food":
+            if any(keyword in input_tokens for keyword in ["pocky", "chocolate", "sweets", "cake", "eat"]):
+                return "Mmm, that sounds delicious! I love talking about food."
+            else:
+                return "Food is the best! What's your favorite thing to cook?"
+        elif topic == "games":
+            if any(keyword in input_tokens for keyword in ["play", "game", "video", "rpg", "rhythm"]):
+                return "Awesome! What kind of games do you usually play?"
+            else:
+                return "Video games are so much fun! Do you have a favorite?"
+        else:
+            return "That's an interesting topic!" # Generic topic response

@@ -40,12 +40,14 @@ def run_conversation(waifu, model, max_turns: int, debug: bool):
             response = generate_with_retry(model, prompt, greeting if turn == 0 else waifu_response)
             if response:
                 user_input = response
-                # user_input = user_input.encode('utf-8', 'replace').decode('utf-8') # No longer needed
-                print(f"User: {user_input}")
+                try:
+                    print(f"User: {user_input.encode('utf-8', 'replace').decode('utf-8')}") # Encode for printing
+                except UnicodeEncodeError:
+                    print("User: [Response contains unsupported characters]")
                 conversation_history.append(f"User: {user_input}")
 
                 waifu_response = waifu.respond(user_input)
-                print(f"{waifu.waifu_memory.name}: {waifu_response}")
+                print(f"{waifu.waifu_memory.name}: {waifu_response.encode('utf-8', 'replace').decode('utf-8')}") # Encode for printing
                 conversation_history.append(f"{waifu.waifu_memory.name}: {waifu_response}")
                 if waifu_response in waifu.farewells:
                     break
