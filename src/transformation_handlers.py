@@ -17,18 +17,23 @@ def handle_waifu_memory_response(waifu_memory: Any, part: tuple) -> str:
 
 def handle_dere_response(context: DereContext, part: tuple) -> str:
     """Handles the 'dere-response' response type."""
-    return dere_response(context, *part[1:])
+    response = dere_response(context, *part[1:])
+    return response.encode('utf-8', 'replace').decode('utf-8')
 
 def handle_maybe_change_dere(context: DereContext, dere_types: List[str]) -> str:
     """Handles the 'maybe-change-dere' response type."""
-    return maybe_change_dere(context, dere_types)
+    response = maybe_change_dere(context, dere_types)
+    if response:
+        return response.encode('utf-8', 'replace').decode('utf-8')
+    return ""
 
 def handle_talk_about(context: DereContext) -> str:
     """Handles the 'talk-about' response type."""
-    return talk_about_interest(context.waifu_memory, context.current_dere, context.used_responses, context.debug)
+    response = talk_about_interest(context.waifu_memory, context.current_dere, context.used_responses, context.debug)
+    return response.encode('utf-8', 'replace').decode('utf-8')
 
 def handle_introduce_topic(waifu_chatbot: Any, part: tuple) -> str:
     """Handles the 'introduce-topic' response type."""
     topic = part[1]
     response = waifu_chatbot.personality.introduce_topic(topic, {"waifu_memory": waifu_chatbot.waifu_memory, "debug": waifu_chatbot.debug})
-    return response
+    return response.encode('utf-8', 'replace').decode('utf-8')

@@ -3,6 +3,14 @@ from typing import Dict, List, Set, Any
 from dere_types import DereContext  # Import DereContext
 # Removed: from dere_types import get_current_dere, DereContext # Import DereContext
 
+def generate_response_from_template(template: str, substitutions: Dict[str, Any]) -> str:
+    """Replaces placeholders in the template with actual values."""
+    for placeholder, value in substitutions.items():
+        if isinstance(value, list):
+            value = ' '.join(value)
+        template = template.replace(f"{{{placeholder}}}", str(value), 1)
+    return template.encode('utf-8', 'replace').decode('utf-8')
+
 def generate_response(response_templates: Dict[tuple[str, str], List[str]], keyword: str, substitutions: Dict[str, Any], used_responses: Set[str], waifu_memory: Any, topic_dere: str, dere_response: Any, debug: bool, used_default_responses: Set[str], previous_input: str = "") -> str:  # Added topic_dere and used_default_responses
     """Generates a response based on the keyword, substitutions, and current dere type.
     """
@@ -33,10 +41,7 @@ def generate_response(response_templates: Dict[tuple[str, str], List[str]], keyw
         template = random.choice(unused_templates)
         used_responses.add(template)
 
-        for placeholder, value in substitutions.items():
-            if isinstance(value, list):
-                value = ' '.join(value)
-            template = template.replace(f"{{{placeholder}}}", str(value), 1)
+        template = generate_response_from_template(template, substitutions)
 
         return template
     else:  # ADDED ELSE BLOCK

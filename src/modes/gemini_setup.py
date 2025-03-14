@@ -14,7 +14,7 @@ def setup_gemini(waifu_name: str, debug: bool):
         f"to {waifu_name}'s personality and interests. "
         f"Avoid asking overly personal or sensitive questions."
     )
-    model = genai.GenerativeModel("gemini-pro", generation_config={"temperature": 0.9, "top_p": 0.95})
+    model = genai.GenerativeModel("gemini-2.0-flash", generation_config={"temperature": 0.9, "top_p": 0.95})
     if debug:
         print("Entering run_gemini_mode")
     return genai_instance, model

@@ -9,6 +9,7 @@ def remember(waifu_memory: Any, slot: str, value: str, affection_change: int = 0
         value: The value to store.
         affection_change: The amount to change the waifu's affection by.
     """
+    value = value.encode('utf-8', 'replace').decode('utf-8')
     setattr(waifu_memory, slot, value)
     if "love" in value.lower() or "care" in value.lower():
         affection_change += 3

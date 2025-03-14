@@ -8,8 +8,8 @@ def respond(chatbot, input_str: str) -> str:
     chatbot.previous_input = input_str
     chatbot.turn_count += 1
     tokens = tokenize(input_str)
-    if chatbot.debug:
-        print(f"Input: {input_str}, Current Dere: {chatbot.current_dere}, Turn: {chatbot.turn_count}")
+    # if chatbot.debug:
+    #     print(f"Input: {input_str}, Current Dere: {chatbot.current_dere}, Turn: {chatbot.turn_count}")
 
     # Dere switching (commented out as in original)
     # maybe_change_dere_response = maybe_change_dere(chatbot.dere_context, dere_types)
@@ -29,6 +29,7 @@ def respond(chatbot, input_str: str) -> str:
     affection_change = random.randint(-1, 2)
     chatbot.waifu_memory.affection += affection_change
     chatbot.waifu_memory.affection = max(0, min(100, chatbot.waifu_memory.affection))
-    if chatbot.debug:
-        print(f"Response: {response}, Affection change: {affection_change}, New affection: {chatbot.waifu_memory.affection}")
+    # if chatbot.debug:
+    #    print(f"Response: {response}, Affection change: {affection_change}, New affection: {chatbot.waifu_memory.affection}")
+    response = response.encode('utf-8', 'replace').decode('utf-8')
     return response
