@@ -15,21 +15,12 @@ from memory import remember
 
 
 def deftransform(transformations: Dict[str, Tuple[Any, Optional[str], int]], pattern: str, response: Any, memory_slot: Optional[str] = None, affection_change: int = 0) -> None:
-    """Defines a transformation pattern and its corresponding response.
-
-    Args:
-        transformations: A dictionary to store the transformations.
-        pattern: The pattern to match against the input.
-        response: The response to return if the pattern matches.
-        memory_slot: The memory slot to store the matched value in.
-        affection_change: The amount to change the waifu's affection by.
-    """
+    """Defines a transformation pattern and its corresponding response."""
     transformations[pattern] = (response, memory_slot, affection_change)
 
 def apply_transformations(transformations: Dict[str, Tuple[Any, Optional[str], int]], input_list: List[str], waifu_memory: Any, current_dere: str, talk_about_interest: Callable[..., str], introduce_topic: Callable[..., str], dere_response: Callable[..., str], response_templates: Dict[tuple[str, str], List[str]], used_responses: Set[str], dere_types: List[str], debug: bool, waifu_chatbot: Any) -> Optional[str]:
     """Applies transformations to the input and returns a transformed response."""
-    if waifu_chatbot.debug:
-        print(f"transformations.apply_transformations: Entering with input: {input_list}")
+
     # Dictionary to map response types to handler functions
     response_handlers: Dict[str, Callable] = {
         "waifu-memory": handle_waifu_memory_response,
@@ -75,12 +66,12 @@ def apply_transformations(transformations: Dict[str, Tuple[Any, Optional[str], i
                                 transformed_response.append(handler(waifu_memory, part))
                             elif part[0] == "maybe-change-dere":
                                 # Access dere_context from waifu_chatbot instance
-                                transformed_response.append(handler(waifu_chatbot.dere_context, dere_types))
+                                transformed_response.append(handler(DereContext(waifu_memory, current_dere, set(), debug), dere_types))
                             elif part[0] == "talk-about":
                                 # Access dere_context from waifu_chatbot instance
-                                transformed_response.append(handler(waifu_chatbot.dere_context, part))
+                                transformed_response.append(handler(DereContext(waifu_memory, current_dere, set(), debug)))
                             elif part[0] == "introduce-topic":
-                                transformed_response.append(handler(waifu_chatbot.dere_context, part))
+                                transformed_response.append(handler(waifu_chatbot, part))
                         else:
                             transformed_response.append(str(part))  # Fallback for unknown tuples
                     else:
@@ -96,11 +87,6 @@ def apply_transformations(transformations: Dict[str, Tuple[Any, Optional[str], i
                 for k, v in substitutions.items():
                     memory_value += " ".join(v) + " "
                 remember(waifu_memory, memory_slot, memory_value.strip(), affection_change)
-            if waifu_chatbot.debug:
-                print(f"transformations.apply_transformations: Returning transformed response: {transformed_response}")
             return transformed_response
-
-    if waifu_chatbot.topic_manager.current_topic:
-        return waifu_chatbot.topic_manager.maybe_introduce_topic(waifu_chatbot.previous_input, waifu_chatbot.turn_count)
 
     return None

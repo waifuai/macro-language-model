@@ -1,19 +1,13 @@
 from typing import Any, List
 
 def register_keywords(waifu: Any) -> None:
-    """Registers keywords and synonyms for the waifu chatbot.
-
-    Args:
-        waifu: The waifu chatbot object.
-    """
-    waifu.registry.defkeyword("hello", ["Hi!", "Hello there!", "Hey!", "Hi there!"]) # More varied
-    waifu.registry.defkeyword("how are you", ["I'm doing well, thank you!", "I'm fine.", "I'm great! How about you?", "Doing good!"]) # More varied
-    waifu.registry.defkeyword("how's it going", ["I'm doing well, thank you!", "I'm fine.", "Things are going great!", "Pretty good!"]) # More varied
-    waifu.registry.defkeyword("how's things", ["I'm doing well, thank you!", "I'm fine.", "Things are good!", "Can't complain!"]) # More varied
-    waifu.registry.defkeyword("what's up", ["I'm doing well, thank you!", "I'm fine.", "Just hanging out!", "Not much, what's up with you?"]) # More varied
-    # Add more general conversational keywords
-    waifu.registry.defkeyword("what are you doing", ["Just chatting with you!", "Thinking about you.", "Nothing much, what about you?", "Just relaxing!", "Browsing the internet."]) # More varied
-    waifu.registry.defkeyword("what do you think", ["I think it's interesting.", "Hmm, I'm not sure.", "What do you think?", "That's a good question!", "I'm still thinking about it."]) # More varied
+    waifu.registry.defkeyword("hello", ["Hi!", "Hello there!", "Hey!", "Hi there!"])
+    waifu.registry.defkeyword("how are you", ["I'm doing well, thank you!", "I'm fine.", "I'm great! How about you?", "Doing good!"])
+    waifu.registry.defkeyword("how's it going", ["I'm doing well, thank you!", "I'm fine.", "Things are going great!", "Pretty good!"])
+    waifu.registry.defkeyword("how's things", ["I'm doing well, thank you!", "I'm fine.", "Things are good!", "Can't complain!"])
+    waifu.registry.defkeyword("what's up", ["I'm doing well, thank you!", "I'm fine.", "Just hanging out!", "Not much, what's up with you?"])
+    waifu.registry.defkeyword("what are you doing", ["Just chatting with you!", "Thinking about you.", "Nothing much, what about you?", "Just relaxing!", "Browsing the internet."])
+    waifu.registry.defkeyword("what do you think", ["I think it's interesting.", "Hmm, I'm not sure.", "What do you think?", "That's a good question!", "I'm still thinking about it."])
     waifu.registry.defkeyword("bye", waifu.farewells)
     waifu.registry.defkeyword("goodbye", waifu.farewells)
     waifu.registry.defkeyword("see you", waifu.farewells)
@@ -21,12 +15,12 @@ def register_keywords(waifu: Any) -> None:
     waifu.registry.defsynonym("hi", "hello", "hey", "hiya", "greetings")
 
     # More general keywords
-    waifu.registry.defkeyword("yes", [("yes", "Yes, that's right!"), ("yeah", "Yeah!"), ("yep", "Yup!"), ("yes", "Absolutely!"), ("yeah", "Totally!"), ("yep", "For sure!")]) # More varied
-    waifu.registry.defkeyword("no", [("no", "No, that's not right."), ("nope", "Nope!"), ("no", "Hmm, I don't think so."), ("nope", "Nah."), ("no", "Not really.")]) # More varied
-    waifu.registry.defkeyword("maybe", ["Maybe...", "Perhaps...", "I'm not sure.", "Possibly...", "Could be!"]) # More varied
-    waifu.registry.defkeyword("okay", [("okay", "Okay, I understand."), ("alright", "Alright, I get it."), ("okay", "Okay, what's next?"), ("alright", "Alright, let's do it!"), ("okay", "Okay, sounds good!")]) # More varied and prompting
-    waifu.registry.defkeyword("thanks", ["You're welcome!", "No problem!", "Anytime!", "Glad to help!"]) # More varied
-    waifu.registry.defkeyword("thank you", ["You're welcome!", "No problem!", "My pleasure!", "Don't mention it!"]) # More varied
+    waifu.registry.defkeyword("yes", [("yes", "Yes, that's right!"), ("yeah", "Yeah!"), ("yep", "Yup!"), ("yes", "Absolutely!"), ("yeah", "Totally!"), ("yep", "For sure!")])
+    waifu.registry.defkeyword("no", [("no", "No, that's not right."), ("nope", "Nope!"), ("no", "Hmm, I don't think so."), ("nope", "Nah."), ("no", "Not really.")])
+    waifu.registry.defkeyword("maybe", ["Maybe...", "Perhaps...", "I'm not sure.", "Possibly...", "Could be!"])
+    waifu.registry.defkeyword("okay", [("okay", "Okay, I understand."), ("alright", "Alright, I get it."), ("okay", "Okay, what's next?"), ("alright", "Alright, let's do it!"), ("okay", "Okay, sounds good!")])
+    waifu.registry.defkeyword("thanks", ["You're welcome!", "No problem!", "Anytime!", "Glad to help!"])
+    waifu.registry.defkeyword("thank you", ["You're welcome!", "No problem!", "My pleasure!", "Don't mention it!"])
 
     # Topic-related keywords (for detection)
     waifu.registry.defkeyword("family", ["family"])
@@ -42,12 +36,12 @@ def register_keywords(waifu: Any) -> None:
 
 
     # Keywords for asking questions
-    waifu.registry.defkeyword("who", ["Who are you talking about?", "I don't know who that is.", "Who's that?"]) # More varied
-    waifu.registry.defkeyword("what", ["What are you talking about?", "I don't understand.", "What is it?", "What do you mean?"]) # More varied
-    waifu.registry.defkeyword("where", ["Where is that?", "I don't know where that is.", "Where are we going?"]) # More varied
-    waifu.registry.defkeyword("when", ["When was that?", "I don't remember.", "When will that be?"]) # More varied
-    waifu.registry.defkeyword("why", ["Why do you ask?", "I don't know why.", "That's a good question!", "Why not?"]) # More varied
-    waifu.registry.defkeyword("how", ["How is that possible?", "I don't know how.", "How does that work?", "How are you?"]) # More varied
+    waifu.registry.defkeyword("who", ["Who are you talking about?", "I don't know who that is.", "Who's that?"])
+    waifu.registry.defkeyword("what", ["What are you talking about?", "I don't understand.", "What is it?", "What do you mean?"])
+    waifu.registry.defkeyword("where", ["Where is that?", "I don't know where that is.", "Where are we going?"])
+    waifu.registry.defkeyword("when", ["When was that?", "I don't remember.", "When will that be?"])
+    waifu.registry.defkeyword("why", ["Why do you ask?", "I don't know why.", "That's a good question!", "Why not?"])
+    waifu.registry.defkeyword("how", ["How is that possible?", "I don't know how.", "How does that work?", "How are you?"])
 
     # Synonyms for question words
     waifu.registry.defsynonym("what's", "what", "is")
@@ -84,12 +78,12 @@ def register_keywords(waifu: Any) -> None:
     waifu.registry.defsynonym("doing", "do")
 
     # Keywords for agreement/disagreement (more specific responses)
-    waifu.registry.defkeyword("yes", [("yes", "Yes, that's right!"), ("yeah", "Yeah!"), ("yep", "Yup!"), ("yes", "Absolutely!"), ("yeah", "Totally!"), ("yep", "For sure!")]) # More varied
-    waifu.registry.defkeyword("no", [("no", "No, that's not right."), ("nope", "Nope!"), ("no", "Hmm, I don't think so."), ("nope", "Nah."), ("no", "Not really.")]) # More varied
-    waifu.registry.defkeyword("okay", [("okay", "Okay, I understand."), ("alright", "Alright, I get it."), ("okay", "Okay, what's next?"), ("alright", "Alright, let's do it!"), ("okay", "Okay, sounds good!")]) # More varied and prompting
-    waifu.registry.defkeyword("sure", [("sure", "Sure, I guess."), ("yeah", "Yeah, I suppose."), ("sure", "Sure, why not?"), ("sure", "Sure, what do you mean?"), ("yeah", "Yeah, tell me more.")]) # More varied and prompting
-    waifu.registry.defkeyword("understand", [("understand", "I understand."), ("i see", "I see."), ("understand", "I get it now."), ("i see", "I see what you mean."), ("got it", "Gotcha!")]) # More varied and prompting
-    waifu.registry.defkeyword("got it", [("got it", "Got it."), ("ok", "Okay."), ("got it", "Gotcha!"), ("ok", "Okay, I'm with you."), ("got it", "I understand now.")]) # More varied
+    waifu.registry.defkeyword("yes", [("yes", "Yes, that's right!"), ("yeah", "Yeah!"), ("yep", "Yup!"), ("yes", "Absolutely!"), ("yeah", "Totally!"), ("yep", "For sure!")])
+    waifu.registry.defkeyword("no", [("no", "No, that's not right."), ("nope", "Nope!"), ("no", "Hmm, I don't think so."), ("nope", "Nah."), ("no", "Not really.")])
+    waifu.registry.defkeyword("okay", [("okay", "Okay, I understand."), ("alright", "Alright, I get it."), ("okay", "Okay, what's next?"), ("alright", "Alright, let's do it!"), ("okay", "Okay, sounds good!")])
+    waifu.registry.defkeyword("sure", [("sure", "Sure, I guess."), ("yeah", "Yeah, I suppose."), ("sure", "Sure, why not?"), ("sure", "Sure, what do you mean?"), ("yeah", "Yeah, tell me more.")])
+    waifu.registry.defkeyword("understand", [("understand", "I understand."), ("i see", "I see."), ("understand", "I get it now."), ("i see", "I see what you mean."), ("got it", "Gotcha!")])
+    waifu.registry.defkeyword("got it", [("got it", "Got it."), ("ok", "Okay."), ("got it", "Gotcha!"), ("ok", "Okay, I'm with you."), ("got it", "I understand now.")])
 
     # New keywords for prompting conversation
     waifu.registry.defkeyword("tell me", [("tell me", "What do you want to know?"), ("tell me", "I'm all ears!"), ("tell me", "Okay, I'm listening.")])
