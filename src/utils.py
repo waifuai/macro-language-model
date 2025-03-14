@@ -4,16 +4,20 @@ from typing import List, Dict, Any
 
 def tokenize(input_str: str) -> List[str]:
     """Tokenizes the input string into a list of lowercase words."""
+    print(f"utils.tokenize: Entering with input: {input_str}")  # Debug print
     if not isinstance(input_str, str):
         input_str = str(input_str)
-    return [
+    tokens = [
         word.lower()
         for word in re.split(r"[ .,!?]+", input_str)
         if word
     ]
+    print(f"utils.tokenize: Returning tokens: {tokens}")  # Debug print
+    return tokens
 
 def matches(pattern: List[str], input_list: List[str]) -> bool:
     """Checks if the input list matches the given pattern."""
+    print(f"utils.matches: Entering with pattern: {pattern}, input_list: {input_list}")  # Debug print
     if not pattern:
         return not input_list  # Empty pattern matches only empty input
     if not input_list:
