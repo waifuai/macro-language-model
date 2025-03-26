@@ -35,7 +35,6 @@ def register_components(chatbot):
     chatbot.response_generator = ResponseGenerator(
         chatbot,
         chatbot.waifu_memory,
-        {}, # Removed keywords
         {}, # Removed transformations
         chatbot.personality.talk_about_interest,  # Assuming personalities have this method
         chatbot.personality.introduce_topic,  # Assuming personalities have this method

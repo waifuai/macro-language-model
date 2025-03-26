@@ -1,12 +1,11 @@
 from typing import Dict, List, Tuple, Callable, Any, Optional, Set
 
 from dere_types import DereContext  # Updated import
-from dere_utils import dere_response, maybe_change_dere
+from dere_utils import dere_response
 from dere_data import dere_types
 from transformation_handlers import (
     handle_waifu_memory_response,
     handle_dere_response,
-    handle_maybe_change_dere,
     handle_talk_about,
     handle_introduce_topic
 )

@@ -1,6 +1,6 @@
 from typing import Dict, List, Tuple, Callable, Any, Optional, Set
 from dere_types import DereContext  # Updated import
-from dere_utils import maybe_change_dere
+# from dere_utils import maybe_change_dere # REMOVED
 from dere_response_selection import dere_response
 from topics import talk_about_interest, introduce_topic
 from dere_data import dere_types
@@ -20,12 +20,13 @@ def handle_dere_response(context: DereContext, part: tuple) -> str:
     response = dere_response(context, *part[1:])
     return response.encode('utf-8', 'replace').decode('utf-8')
 
-def handle_maybe_change_dere(context: DereContext, dere_types: List[str]) -> str:
-    """Handles the 'maybe-change-dere' response type."""
-    response = maybe_change_dere(context, dere_types)
-    if response:
-        return response.encode('utf-8', 'replace').decode('utf-8')
-    return ""
+# REMOVED handle_maybe_change_dere function
+# def handle_maybe_change_dere(context: DereContext, dere_types: List[str]) -> str:
+#     """Handles the 'maybe-change-dere' response type."""
+#     response = maybe_change_dere(context, dere_types)
+#     if response:
+#         return response.encode('utf-8', 'replace').decode('utf-8')
+#     return ""
 
 def handle_talk_about(context: DereContext) -> str:
     """Handles the 'talk-about' response type."""

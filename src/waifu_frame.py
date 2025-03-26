@@ -11,7 +11,7 @@ class WaifuFrame:
         #self.conversation_history: List[Tuple[str, str]] = [] # Removed
         self.context_stack: List[str] = []
         self.name: str = name
-        self.affection: int = 50
+        # self.affection: int = 50 # REMOVED
         self.interests: List[str] = ["reading manga", "watching anime", "playing video games", "cooking"]
         self.hobbies: List[str] = ["cosplay", "singing karaoke", "collecting anime figures"]
         self.memories: List[str] = []

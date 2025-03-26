@@ -9,10 +9,10 @@ from small_talk import maybe_use_small_talk
 
 
 class ResponseGenerator:
-    def __init__(self, waifu_chatbot: Any, waifu_memory: Any, keywords: Dict[str, List[Tuple[str, Any]]], transformations: Dict[str, Tuple[Any, Optional[str], int]], talk_about_interest: Callable[..., str], introduce_topic: Callable[..., str], remember: Callable[..., None], debug: bool = False):
+    def __init__(self, waifu_chatbot: Any, waifu_memory: Any, transformations: Dict[str, Tuple[Any, Optional[str], int]], talk_about_interest: Callable[..., str], introduce_topic: Callable[..., str], remember: Callable[..., None], debug: bool = False): # Removed keywords parameter
         self.waifu_chatbot = waifu_chatbot  # Store the WaifuChatbot instance
         self.waifu_memory = waifu_memory
-        self.keywords = keywords
+        # self.keywords = keywords # REMOVED
         self.transformations = transformations
         self.response_templates = load_response_templates()  # Use the loader function
         self.talk_about_interest = talk_about_interest
@@ -45,7 +45,8 @@ class ResponseGenerator:
         # 2. Topic-specific responses
         if self.waifu_chatbot.topic_manager.current_topic:
             # Delegate to personality
-            topic_response = self.waifu_chatbot.personality.respond_based_on_current_topic(tokens, self.keywords, {"dere_context": self.waifu_chatbot.dere_context}, self.response_templates)
+            # Removed self.keywords from the call below
+            topic_response = self.waifu_chatbot.personality.respond_based_on_current_topic(tokens, {"dere_context": self.waifu_chatbot.dere_context}, self.response_templates)
             if topic_response:
                 # if self.waifu_chatbot.debug:
                 #     print(f"ResponseGenerator._select_response: Topic response selected: {topic_response}")
@@ -81,6 +82,25 @@ class ResponseGenerator:
 
     def generate(self, input_str: str, tokens: List[str], keyword: str = None, substitutions: Dict[str, Any] = None) -> str:
         """Generates a response to the user's input. Now accepts optional keyword and substitutions."""
+        # if self.waifu_chatbot.debug:
+        #     print(f"ResponseGenerator.generate: Entering with input: {input_str}")
+        #     print(f"ResponseGenerator.generate: topic_context = {self.topic_context}")
+
+        response = self._select_response(tokens)
+        return response.encode('utf-8', 'replace').decode('utf-8')
+
+    # REMOVED generate method that accepted keyword/substitutions
+    # def generate(self, input_str: str, tokens: List[str], keyword: str = None, substitutions: Dict[str, Any] = None) -> str:
+    #     """Generates a response to the user's input. Now accepts optional keyword and substitutions."""
+    #     # if self.waifu_chatbot.debug:
+    #     #     print(f"ResponseGenerator.generate: Entering with input: {input_str}")
+    #     #     print(f"ResponseGenerator.generate: topic_context = {self.topic_context}")
+    #
+    #     response = self._select_response(tokens)
+    #     return response.encode('utf-8', 'replace').decode('utf-8')
+
+    def generate(self, input_str: str, tokens: List[str]) -> str: # Simplified generate method
+        """Generates a response to the user's input."""
         # if self.waifu_chatbot.debug:
         #     print(f"ResponseGenerator.generate: Entering with input: {input_str}")
         #     print(f"ResponseGenerator.generate: topic_context = {self.topic_context}")

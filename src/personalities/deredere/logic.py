@@ -32,42 +32,65 @@ class DeredereLogic(PersonalityInterface):
 
         # Probabilistic response selection (if no active topic)
         choice = random.random()
+        input_str = " ".join(input_tokens) # Join tokens for easier checks
 
         if choice < 0.1:  # 10% chance to talk about interest
             return talk_about_interest(context["waifu_memory"], context["current_dere"], [], self.debug)
-        elif choice < 0.4:  # 30% chance for a default response
-            return random.choice(deredere_default_responses)
-        else:  # 60% chance for input-specific responses
-            input_str = " ".join(input_tokens)
-            if "sad" in input_str:
-                return "Aww, I'm sorry to hear you're feeling sad.  Is there anything I can do?"
-            elif "happy" in input_str:
-                return "Yay! I'm so glad you're happy!  What's making you so cheerful?"
-            elif "angry" in input_str:
-                return "Whoa, you seem angry!  What happened?"
-            elif "hi" in input_tokens or "hello" in input_tokens:
-                return "Hiya! It’s so great to see you again!"
-            elif "bye" in input_tokens:
-                return random.choice(self.waifu_chatbot.farewells)
-            elif "family" in input_str:
-                return "Family is super important! Tell me more about yours!"
-            elif "games" in input_str or "game" in input_str:
-                return "Games are so fun! What do you play?"
-            elif "food" in input_str:
-                return "Ooh, food! What's your favorite?"
-            elif "work" in input_str:
-                return "Work can be tough sometimes! Do you want to talk about it?"
+        # Removed explicit keyword matching block
+        # Rely on probabilistic choice or default response
+        elif choice < 0.2: # Reduce chance of using the most basic defaults (now 10%)
+            response = random.choice(deredere_default_responses)
+        else: # Use the expanded, more enthusiastic fallbacks (80% chance)
+            fallback_responses = [
+                "Wow, really?! Tell me more!",
+                "That sounds super interesting!",
+                "No way! Go on, I'm listening!",
+                "Ooh, exciting! What happened next?",
+                "Sounds like fun!",
+                "Keep going!",
+                "That's amazing!",
+                "I wanna hear all about it!",
+                "Seriously? That's wild!",
+                "Cool!",
+                "Awesome!",
+            ]
+            # Simple reaction based on punctuation
+            if input_str.endswith('!'):
+                response = random.choice([r for r in fallback_responses if '!' in r]) # Prefer exclamatory responses
+            elif input_str.endswith('?'):
+                 response = random.choice(["Good question!", "Hmm, let me think...", "What do *you* think?"])
             else:
-                return "Tell me more!"  # Generic response if no keywords matched
+                response = random.choice(fallback_responses)
+
+        # Add a simple follow-up question sometimes to make it more engaging
+        if random.random() < 0.4: # Increased chance slightly to 40%
+            # More varied follow-ups, less dependent on specific words
+            follow_ups = [
+                "What do you think about that?",
+                "How did that make you feel?",
+                "Anything else happen?",
+                "What happened after that?",
+                "Is there more to the story?",
+                "What are you thinking now?",
+                "What's on your mind?",
+                "Tell me everything!",
+                "And then what?",
+            ]
+            # Avoid adding a question if the response already ends with one
+            if not response.endswith('?'):
+                 response += f" {random.choice(follow_ups)}"
+
+        return response
 
 
     def introduce_topic(self, topic: str, context: Dict[str, Any]) -> Optional[str]:
+        # Ensure standard apostrophe is used
         if topic == "family":
-            return "Hey, let’s chat about family! What are they like?"
+            return "Hey, let's chat about family! What are they like?" # Standard apostrophe
         elif topic == "food":
-            return "Hey, let's talk about food! What's your favorite thing to eat?"
+            return "Hey, let's talk about food! What's your favorite thing to eat?" # Standard apostrophe
         elif topic == "games":
-            return "Hey, let's talk about games! What do you like to play?"
+            return "Hey, let's talk about games! What do you like to play?" # Standard apostrophe
         return None
 
     def maybe_introduce_topic(self, input_str: str, turn_count: int) -> Optional[str]:

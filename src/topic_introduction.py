@@ -6,8 +6,8 @@ from topic_responses import generate_topic_response
 def maybe_introduce_topic(self, input_str: str, turn_count: int) -> Optional[str]:
     if self.waifu_chatbot.debug:
         print(f"TopicManager.maybe_introduce_topic: Input: {input_str}, Turn: {turn_count}")
-    if (self.waifu_memory.affection > 20 and
-            random.random() < 0.5 and
+    # REMOVED affection check: self.waifu_memory.affection > 20 and
+    if (random.random() < 0.5 and
             (self.last_topic_keyword is None or self.last_topic_keyword not in input_str) and
             self.turns_since_last_topic >= 4):
         new_topic = select_new_topic(self)

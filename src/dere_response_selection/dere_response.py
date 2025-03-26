@@ -21,7 +21,8 @@ def dere_response(context: DereContext, used_default_responses: Set[str], *respo
             print("No responses provided to dere_response, returning '...'")
         return "..." # Or some other default
 
-    # Combine provided responses with a larger pool of defaults
+    # Combine provided responses with a pool of generic, neutral/positive defaults
+    # Removed negative/unfitting defaults like "Hmph."
     all_responses = list(responses) + [
         "...",
         "I don't know.",
@@ -32,7 +33,9 @@ def dere_response(context: DereContext, used_default_responses: Set[str], *respo
         "It depends.",
         "Ask me later.",
         "I'll think about it.",
-        "That's a secret."
+        #"That's a secret." # Can sometimes feel dismissive
+        "Hmm, interesting point.", # Added more engaging neutral options
+        "Okay, I see.",
     ]
 
     unused_responses = [resp for resp in all_responses if resp not in used_default_responses]

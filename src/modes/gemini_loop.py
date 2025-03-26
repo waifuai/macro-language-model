@@ -1,9 +1,16 @@
 from gemini_utils import generate_with_retry
+import sys
 import traceback
 import google.generativeai as genai
 from modes.common import setup_gemini_api
 
 def run_conversation(waifu, model, max_turns: int, debug: bool):
+    # Attempt to force UTF-8 output for stdout
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except Exception as e:
+        print(f"Warning: Could not reconfigure stdout to UTF-8: {e}", file=sys.stderr)
+
     greeting = waifu.greetings[0]
     print(f"{waifu.waifu_memory.name}: {greeting}")
     conversation_history = [f"{waifu.waifu_memory.name}: {greeting}"]
@@ -11,7 +18,7 @@ def run_conversation(waifu, model, max_turns: int, debug: bool):
     # System instruction for Gemini
     system_instruction = (
         f"You are a human user interacting with a chatbot named {waifu.waifu_memory.name}. "
-        f"Generate engaging, natural responses that continue the conversation in a realistic way. "
+        f"Generate engaging, natural, **very short** responses (max 20 words) that continue the conversation in a realistic way. " # Added length constraint
         f"Be friendly, curious, and show personality. Avoid repeating what {waifu.waifu_memory.name} says."
     )
     for turn in range(max_turns):
@@ -38,16 +45,28 @@ def run_conversation(waifu, model, max_turns: int, debug: bool):
             )
         try:
             response = generate_with_retry(model, prompt, greeting if turn == 0 else waifu_response)
-            if response:
+            if response: # 'response' here is the raw text from Gemini
                 user_input = response
+                # Ensure user_input is treated as a string and print safely
                 try:
-                    print(f"User: {user_input.encode('utf-8', 'replace').decode('utf-8')}") # Encode for printing
-                except UnicodeEncodeError:
-                    print("User: [Response contains unsupported characters]")
-                conversation_history.append(f"User: {user_input}")
+                    # Print user input directly (stdout reconfigured)
+                    if debug: # Use the debug flag passed into the function
+                        print(f"DEBUG: Original user_input type: {type(user_input)}")
+                        print(f"DEBUG: Original user_input repr: {repr(user_input)}")
+                    print(f"User: {str(user_input)}")
+                except Exception as e:
+                    # Fallback if printing fails
+                    print(f"User: [Error displaying response: {e}]")
+                conversation_history.append(f"User: {user_input}") # Append original user_input to history
 
+                # Pass the potentially raw user_input string to the chatbot
                 waifu_response = waifu.respond(user_input)
-                print(f"{waifu.waifu_memory.name}: {waifu_response.encode('utf-8', 'replace').decode('utf-8')}") # Encode for printing
+                # Print waifu_response directly (stdout reconfigured)
+                try:
+                    print(f"{waifu.waifu_memory.name}: {str(waifu_response)}")
+                except Exception as e:
+                    # Fallback if printing fails
+                    print(f"{waifu.waifu_memory.name}: [Error displaying response: {e}]")
                 conversation_history.append(f"{waifu.waifu_memory.name}: {waifu_response}")
                 if waifu_response in waifu.farewells:
                     break

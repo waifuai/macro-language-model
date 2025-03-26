@@ -22,11 +22,11 @@ def run_auto_mode(waifu_name: str, debug: bool, max_turns: int = 10) -> None:
     # System instruction for Gemini
     system_instruction = (
         f"You are a human user interacting with a chatbot named {waifu_name}. "
-        f"Generate engaging, natural responses that continue the conversation in a realistic way. "
+        f"Generate engaging, natural, **very short** responses (max 20 words) that continue the conversation in a realistic way. " # Added length constraint
         f"Be friendly, curious, and show personality. Avoid repeating what {waifu_name} says."
     )
 
-    model = genai.GenerativeModel("gemini-2.0-flash", generation_config={"temperature": 0.9, "top_p": 0.95})
+    model = genai.GenerativeModel("gemini-1.5-flash", generation_config={"temperature": 0.9, "top_p": 0.95}) # Updated model name
 
     # Initialize conversation
     conversation_history = []

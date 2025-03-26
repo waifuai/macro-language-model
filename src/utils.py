@@ -11,11 +11,7 @@ def tokenize(input_str: str) -> List[str]:
         for word in re.split(r"[ .,!?]+", input_str)
         if word
     ]
-    try:
-        print(f"utils.tokenize: Entering with input: {input_str}")
-        print(f"utils.tokenize: Returning tokens: {tokens}")
-    except UnicodeEncodeError:
-        print("utils.tokenize: Error encoding input or tokens for printing.")
+    # Removed problematic print statements to avoid encoding errors during tokenization logging
     return tokens
 
 def substitute_template(template: str, substitutions: Dict[str, Any]) -> str:

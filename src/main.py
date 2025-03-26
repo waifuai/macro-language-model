@@ -1,3 +1,6 @@
+import win_unicode_console
+win_unicode_console.enable()
+
 from waifu_chatbot import WaifuChatbot
 from typing import Optional, Dict, List, Tuple
 import os

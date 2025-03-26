@@ -5,22 +5,32 @@ def is_echoed_response(user_response: str, waifu_response: str) -> bool:
     return user_response.lower().strip() == waifu_response.lower().strip()
 
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10))
-def generate_with_retry(model, prompt, waifu_response: str):
-    # print(f"Calling generate_content with prompt: {prompt[:100]}...")  # Truncate for readability
+def generate_with_retry(model, prompt, previous_waifu_response: str):
+    """Generates content using the Gemini model with retry logic."""
+    # print(f"Calling generate_content with prompt: {prompt[:100]}...") # Debug
     response = model.generate_content(prompt)
-    # Explicitly decode with UTF-8, replacing errors
-    response_text = response.text.encode('utf-8', 'replace').decode('utf-8')
-    # Add an extra check for valid UTF-8
-    try:
-        response_text.encode('ascii')
-    except UnicodeEncodeError:
-        print("DEBUG: Gemini response contains non-ASCII characters.")
-        response_text = response_text.encode('utf-8', 'replace').decode('utf-8')
-    else:
-        # If it's all ASCII, it's safe, but we still want to return UTF-8
-        response_text = response_text.encode('utf-8').decode('utf-8')
 
-    # print(f"Response received: {response_text[:100]}...")  # Truncate for readability
-    if is_echoed_response(response.text, waifu_response):
+    # Access the text part of the response more robustly
+    response_text = ""
+    try:
+        # Gemini API might return parts, try accessing the first part's text
+        if response.parts:
+            response_text = response.parts[0].text
+        else:
+            # Fallback if structure is different or text is directly available
+            response_text = response.text
+    except (AttributeError, IndexError, ValueError) as e:
+        print(f"DEBUG: Error accessing Gemini response text: {e}")
+        # Attempt a simpler access if the above fails
+        try:
+            response_text = response.text
+        except AttributeError:
+             print(f"DEBUG: Could not access response text at all.")
+             raise Exception("Failed to extract text from Gemini response.") from e
+
+    # Simple check for echoed response using the extracted text
+    if is_echoed_response(response_text, previous_waifu_response):
         raise Exception("Echoed response detected. Retrying...")
+
+    # Return the extracted text directly, encoding handled later
     return response_text

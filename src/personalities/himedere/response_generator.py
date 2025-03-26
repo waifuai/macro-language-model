@@ -1,11 +1,12 @@
 from typing import List, Dict, Any, Optional
 from keyword_handler import handle_keywords
 from response_generation import generate_response_from_template
+from keyword_handler import handle_keywords # Keep import for now
 
 def generate_response(self, input_tokens: List[str], context: Dict[str, Any]) -> str:
-    keyword_response = handle_keywords(input_tokens, context["waifu_chatbot"].registry.keywords, context["debug"])
-    if keyword_response:
-        return keyword_response
+    # keyword_response = handle_keywords(input_tokens, context["waifu_chatbot"].registry.keywords, context["debug"]) # REMOVED
+    # if keyword_response:
+    #     return keyword_response
 
     if context["waifu_chatbot"].response_generator.topic_context:
         response = context["waifu_chatbot"].response_generator.generate_topic_response(input_tokens, context)
