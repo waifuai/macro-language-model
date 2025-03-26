@@ -12,6 +12,7 @@ class DeredereLogic(PersonalityInterface):
         self.debug = debug
         self.topic_manager = None
         self.waifu_chatbot = None
+        self.last_response_was_question: bool = False # Track if last response was a question
 
     def generate_response(self, input_tokens: List[str], context: Dict[str, Any]) -> str:
         if self.waifu_chatbot is None:
@@ -33,52 +34,87 @@ class DeredereLogic(PersonalityInterface):
         # Probabilistic response selection (if no active topic)
         choice = random.random()
         input_str = " ".join(input_tokens) # Join tokens for easier checks
+        response = "" # Initialize response
+        current_response_is_question = False # Track if the *selected* response is a question
 
-        if choice < 0.1:  # 10% chance to talk about interest
-            return talk_about_interest(context["waifu_memory"], context["current_dere"], [], self.debug)
-        # Removed explicit keyword matching block
-        # Rely on probabilistic choice or default response
-        elif choice < 0.2: # Reduce chance of using the most basic defaults (now 10%)
-            response = random.choice(deredere_default_responses)
-        else: # Use the expanded, more enthusiastic fallbacks (80% chance)
-            fallback_responses = [
-                "Wow, really?! Tell me more!",
-                "That sounds super interesting!",
-                "No way! Go on, I'm listening!",
-                "Ooh, exciting! What happened next?",
-                "Sounds like fun!",
+        # Very low chance for random interest/default
+        if choice < 0.01: # 1% interest
+            response = talk_about_interest(context["waifu_memory"], context["current_dere"], [], self.debug)
+        elif choice < 0.03: # 2% basic default
+             response = random.choice(deredere_default_responses)
+        else: # Main fallback logic (97% chance)
+            # Reactions to statements (less prompting)
+            statement_reactions = [
+                "Wow, really?!", "That sounds super interesting!", "No way!",
+                "Ooh, exciting!", "Sounds like fun!", "That's amazing!",
+                "Seriously? That's wild!", "Awesome!", "Hehe, okay!",
+                "Oh wow!", "Uh-huh!", "Okay!", "Totally!", "Right?!",
+            ]
+            # Answers/deflections to user questions - MORE ANSWERS
+            question_reactions = [
+                 "Good question! What do *you* think?", # Deflect
+                 "Hmm, let me think... hehe!", # Deflect
+                 "That's a fun question! My answer is... maybe! 😉", # Deflect
+                 "I'm not sure! Let's brainstorm together!", # Collaborate
+                 "You tell me first!", # Challenge
+                 "Hehe, secrets!", # Deflect
+                 "Why do you ask? 😊", # Deflect
+                 "I was just thinking the same thing!", # Agree/Answer
+                 "Probably!", # Answer
+                 "Definitely!", # Answer
+                 "I think so!", # Answer
+                 "Just relaxing!", # Answer (generic activity)
+                 "Thinking about you!", # Answer (deredere classic)
+                 "Not much, just hanging out!", # Answer (generic activity)
+                 "The usual!", # Answer (generic)
+            ]
+            # Prompts (use sparingly)
+            prompt_reactions = [ # Mostly questions
+                "Tell me more!", "Go on!", "I'm listening!", "And then?", "What else?",
                 "Keep going!",
-                "That's amazing!",
-                "I wanna hear all about it!",
-                "Seriously? That's wild!",
-                "Cool!",
-                "Awesome!",
             ]
-            # Simple reaction based on punctuation
-            if input_str.endswith('!'):
-                response = random.choice([r for r in fallback_responses if '!' in r]) # Prefer exclamatory responses
-            elif input_str.endswith('?'):
-                 response = random.choice(["Good question!", "Hmm, let me think...", "What do *you* think?"])
-            else:
-                response = random.choice(fallback_responses)
 
-        # Add a simple follow-up question sometimes to make it more engaging
-        if random.random() < 0.4: # Increased chance slightly to 40%
-            # More varied follow-ups, less dependent on specific words
-            follow_ups = [
-                "What do you think about that?",
-                "How did that make you feel?",
-                "Anything else happen?",
-                "What happened after that?",
-                "Is there more to the story?",
-                "What are you thinking now?",
-                "What's on your mind?",
-                "Tell me everything!",
-                "And then what?",
-            ]
-            # Avoid adding a question if the response already ends with one
-            if not response.endswith('?'):
-                 response += f" {random.choice(follow_ups)}"
+            user_asked_question = input_str.endswith('?')
+
+            # --- Response Selection ---
+            if user_asked_question:
+                 # User asked a question -> Waifu MUST answer/deflect.
+                 response = random.choice(question_reactions)
+                 current_response_is_question = response.endswith('?') # Check if the *answer* is also a question
+            elif self.last_response_was_question:
+                 # User made a statement after waifu asked -> Waifu should react strongly.
+                 response = random.choice(statement_reactions)
+                 current_response_is_question = False
+            else:
+                 # User made a statement, waifu didn't just ask. Primarily react.
+                 if random.random() < 0.85: # 85% chance to react
+                     response = random.choice(statement_reactions)
+                     current_response_is_question = False
+                 else: # 15% chance to prompt
+                     response = random.choice(prompt_reactions)
+                     # Check if the prompt itself is a question
+                     current_response_is_question = response.endswith('?') or response in ["Tell me more!", "Go on!", "I'm listening!", "Keep going!"]
+
+
+        # --- Follow-up Logic ---
+        # Add a short follow-up question *very* infrequently, only if waifu made a statement.
+        if not current_response_is_question and not self.last_response_was_question and random.random() < 0.10: # Reduced chance to 10%
+            follow_ups = [ "Right?", "What do you think?", "How about you?" ]
+            response += f" {random.choice(follow_ups)}"
+            current_response_is_question = True
+
+        # Update state for next turn *before* final cleanup
+        self.last_response_was_question = current_response_is_question
+
+        # Final cleanup
+        response = response.replace("..", ".").replace("!!", "!").replace("??", "?").strip()
+        if response.count('?') > 1:
+            first_q_index = response.find('?')
+            response = response[:first_q_index+1]
+
+        # Ensure response isn't empty
+        if not response:
+             response = random.choice(["Hehe!", "Okay!", "Wow!"]) # Safe default
 
         return response
 

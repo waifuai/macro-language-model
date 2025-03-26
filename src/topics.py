@@ -47,10 +47,13 @@ def talk_about_interest(waifu_memory: Any, current_dere: str, used_responses: Li
         A string containing the generated response.
     """
     if not waifu_memory.interests:
-        dere_context = DereContext(waifu_memory, current_dere, set(used_responses), debug) #Convert used_response to set.
-        return dere_response(dere_context, set(),
-            "What are you talking about?", "I don't get it.", "Hmph.", "O-okay..."
-        )
+        # Use deredere-specific fallbacks if no interests are defined
+        deredere_interest_fallbacks = [
+            "I haven't thought much about interests yet! What do you like?",
+            "Hehe, I'm still discovering my interests! Tell me about yours!",
+            "Hmm, interests... Let's talk about something else for now!",
+        ]
+        return random.choice(deredere_interest_fallbacks)
 
     interest = random.choice(waifu_memory.interests)
     if interest in interest_templates:
@@ -58,11 +61,19 @@ def talk_about_interest(waifu_memory: Any, current_dere: str, used_responses: Li
         if current_dere in templates:
             response = random.choice(templates[current_dere])
             return response
-    # No need for the 'else' here, it's covered above
-    dere_context = DereContext(waifu_memory, current_dere, set(used_responses), debug)
-    return dere_response(dere_context, set(),
-            "What are you talking about?", "I don't get it.", "Hmph.", "O-okay..."
-    )
+    # Fallback if specific template for interest/dere combo not found
+    deredere_interest_fallbacks = [
+        f"Hmm, I like {interest}, but I'm not sure what to say right now! Hehe.",
+        f"Talking about {interest} is fun! What do you think about it?",
+        f"Oh, {interest}! Let's chat about something else for a moment!",
+        "My mind went blank! What were we talking about? Haha!",
+    ]
+    # Use deredere fallbacks if current_dere is deredere, otherwise a generic positive one
+    if current_dere == "deredere":
+         return random.choice(deredere_interest_fallbacks)
+    else:
+         # Generic positive fallback for other deres if template missing
+         return f"That's an interesting topic ({interest})! Tell me more about what you think."
 
 def introduce_topic(topic: str, waifu_memory: Any, current_dere: str, used_responses: List[str], debug: bool) -> str:
     """Introduces a new topic with a relevant dere-style phrase.

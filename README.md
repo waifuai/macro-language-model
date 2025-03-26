@@ -2,92 +2,114 @@
 
 ## Overview
 
-This project implements a chatbot that simulates conversation with a customizable "waifu" (a fictional character, typically from anime or manga, that someone has great affection for). The chatbot uses various techniques such as keyword matching, transformations, and a memory system to generate contextually appropriate responses. It also incorporates the concept of "dere" types, which are personality archetypes commonly found in anime and manga, to make the conversation more dynamic and engaging.
+This project implements a chatbot designed to simulate conversation with a customizable "waifu" character. It features a modular personality system, allowing the chatbot to adopt different character archetypes (like Deredere, Tsundere, etc.) which dictate its conversational style, responses, and topic handling. The chatbot operates through a command-line interface and supports various interaction modes.
 
-## Files
+## Key Features
 
--   **`main.py`**: The main script for running the chatbot. It handles argument parsing for interactive, automatic, debug, and Gemini modes, and it initializes and runs the chatbot.
--   **`dere_types.py`**: Defines functions related to different "dere" types (personality archetypes) for the chatbot.
-    -   `get_current_dere`: Determines the dere type based on affection level.
-    -   `maybe_change_dere`: Randomly changes the dere type.
-    -   `dere_response`: Returns a response based on the current dere type.
--   **`main_keywords.py`**: Defines a function `register_keywords` that registers keywords and their corresponding responses with the chatbot. It also defines synonyms for certain keywords.
--   **`main_transforms.py`**: Defines a function `register_transforms` that registers transformations with the chatbot. These transformations handle user inputs and map them to specific responses, memory slots, or actions like changing the dere type or introducing a new topic.
--   **`memory.py`**: Defines a function `remember` that stores a value in the chatbot's memory and updates the affection level.
--   **`response_generation.py`**: Defines a function `generate_response` that generates a response based on the keyword, substitutions, current dere type, and used responses.
--   **`response_templates.py`**: Contains a dictionary `response_templates` that maps keywords and dere types to lists of response templates.
--   **`topics.py`**: Defines functions for talking about interests and introducing new topics in a dere-specific manner.
-    -   `talk_about_interest`: Generates a response about a random interest.
-    -   `introduce_topic`: Introduces a new topic with a relevant phrase based on the current dere type.
--   **`transformations.py`**: Defines functions for creating and applying transformations.
-    -   `deftransform`: Defines a transformation pattern and its response.
-    -   `apply_transformations`: Applies transformations to the input and returns a transformed response.
--   **`utils.py`**: Defines utility functions for tokenizing input strings, matching patterns, and substituting placeholders in templates.
--   **`waifu_chatbot.py`**: Defines the `WaifuChatbot` class, which is the core of the chatbot. It handles keyword definitions, transformations, memory, dere types, response generation, and topic management.
--   **`waifu_frame.py`**: Defines the `WaifuFrame` class, which represents the chatbot's memory and personality.
--   **`src/chatbot_config.json`**: Contains configuration data for the chatbot, such as greetings and small talk phrases.
--   **`src/gemini_utils.py`**: Contains utility functions for interacting with the Gemini API.
--    **`src/dere_manager.py`**: Manages dere type logic, including transitions and responses.
--   **`src/conversation_context.py`**: Manages conversation history and used responses.
--   **`src/topic_manager.py`**: Manages topic introduction and topic-specific responses.
--   **`src/response_generator.py`**: Coordinates response generation using keywords, transformations, and dere types.
--   **`src/cli.py`**: Handles command-line argument parsing.
--   **`src/modes.py`**: Contains functions for running the chatbot in different modes (interactive, auto, gemini).
--   **`src/dere_data.py`**: Contains data related to dere types, including default responses.
-- **`src/response_templates/*`**: Contains separate files for each dere type's response templates.
-- **`src/transformation_handlers.py`**: Contains handler functions for different transformation response types.
+*   **Modular Personality System:** Select different character archetypes at runtime via command-line arguments. Each personality (`deredere`, `tsundere`, `yandere`, `kuudere`, `dandere`, `himedere`) has its own logic module determining behavior.
+*   **Personality-Driven Responses:** The core response generation is delegated to the currently active personality module, ensuring distinct conversational patterns for each archetype.
+*   **Topic Management:** Includes a system (`src/topic_manager.py`) for introducing and managing conversational topics, with personality-specific introductions and reactions.
+*   **Multiple Run Modes:**
+    *   **Interactive:** Engage in a real-time conversation with the chatbot via terminal input.
+    *   **Auto (Gemini User Simulation):** Simulates a conversation where Google's Gemini API generates the *user's* responses, useful for testing the chatbot's interaction flow.
+    *   **Debug:** Enables verbose logging for development and troubleshooting.
+*   **Gemini Integration:** Utilizes the Google Gemini API (`google-generativeai`) to power the user simulation in Auto mode. Requires an API key.
+*   **Organized Code Structure:** Project code is structured within the `src/` directory, separating concerns like personality logic, run modes, core chatbot mechanics, and utilities.
+*   **Configuration:** Basic chatbot attributes like greetings and farewells are defined in `src/chatbot_config.py`.
+
+## Architecture & File Structure (`src/`)
+
+The project is organized within the `src/` directory:
+
+*   **`main.py`**: Entry point. Parses arguments and launches the appropriate run mode. Uses `win_unicode_console` for Windows compatibility.
+*   **`cli.py`**: Defines and parses command-line arguments using `argparse`.
+*   **`modes/`**: Contains modules for different execution modes:
+    *   `interactive_mode.py`: Handles the loop for direct user interaction.
+    *   `auto_mode.py`: Runs a conversation simulation using Gemini for user input.
+    *   `gemini_mode.py`: Appears related to the auto/Gemini simulation setup.
+    *   `common.py`: Utility for configuring the Gemini API key.
+    *   `gemini_init.py`, `gemini_loop.py`: Helper modules potentially used by `gemini_mode.py`.
+*   **`waifu_chatbot.py`**: Defines the main `WaifuChatbot` class, holding state and orchestrating components.
+*   **`waifu_chatbot_init.py`**: Initializes the chosen personality logic and registers core components like the `ResponseGenerator`.
+*   **`waifu_chatbot_response.py`**: Contains the `respond` method logic, handling input processing and delegating response generation to the personality module.
+*   **`waifu_frame.py`**: Class representing the chatbot's memory and state (e.g., name, interests, favorite food).
+*   **`conversation_context.py`**: Manages the conversation history and tracks used responses to avoid repetition.
+*   **`response_generator.py`**: Coordinates response generation, primarily by calling the active personality's methods. Loads response templates.
+*   **`personalities/`**: Central hub for personality logic:
+    *   `personality_interface.py`: Abstract base class defining the required methods for any personality module.
+    *   `deredere/`, `tsundere/`, `yandere/`, `kuudere/`, `dandere/`, `himedere/`: Subdirectories for each archetype, containing:
+        *   `logic.py`: The main class implementing the personality's behavior.
+        *   `response_generator.py`: Response generation logic specific to the archetype.
+        *   `topic_handler.py`: Topic introduction/reaction logic.
+        *   `defaults.py`: Default/fallback responses.
+        *   `data.py` (Optional): Personality-specific data.
+*   **`response_templates/`**: Python files defining structured response templates keyed by topic/keyword and personality type.
+*   **`response_template_loader.py`**: Loads and organizes the response templates from `response_templates/`.
+*   **`topic_manager.py`**: Manages the introduction and flow of conversational topics.
+*   **`topics.py`**: Contains logic for talking about interests (like manga, anime) in a personality-specific way.
+*   **`dere_data/` & `dere_context.py`**: Contain data structures and context definitions related to personality types. (Note: 'Dere' terminology is used internally).
+*   **`memory.py`**: Simple function for storing information in the `WaifuFrame`.
+*   **`transformations.py`, `transformation_handlers.py`, `transforms/`**: Define and handle basic input pattern transformations, primarily for memory recall and simple actions. *Note: Keyword matching seems less central now.*
+*   **`utils.py`**: Utility functions for tokenization and pattern matching.
+*   **`core/registry.py`**: A registry class, primarily holding transformation definitions.
+*   **`chatbot_config.py`**: Stores lists of greetings and farewells.
 
 ## Usage
 
-The chatbot can be run in four modes:
+Run the chatbot from the command line using `python src/main.py`.
 
-1.  **Interactive mode:** `python main.py --interactive`
+**Modes:**
 
-    This mode allows for a real-time conversation with the chatbot.
+1.  **Interactive:**
+    ```bash
+    python src/main.py --interactive
+    ```
+    Chat directly with the bot in your terminal.
 
-2.  **Automatic mode:** `python main.py --auto [number_of_turns]`
+2.  **Auto (Gemini User Simulation):**
+    ```bash
+    python src/main.py --auto [number_of_turns]
+    ```
+    Simulates a conversation for `number_of_turns` (defaults to 10). Requires Gemini API setup.
 
-    This mode simulates a conversation with a specified number of turns. If no number is provided, it defaults to 10 turns.
+3.  **Debug:**
+    ```bash
+    python src/main.py --debug
+    ```
+    Runs in a default mode (likely Auto or Interactive depending on other flags) with extra debug information printed to the console. Combine with other flags like `--interactive` or `--auto`.
 
-3.  **Debug mode:** `python main.py --debug`
+**Options:**
 
-    This mode enables debug information and runs a self-conversation loop for testing purposes.
+*   `--waifu_name <name>`: Sets the chatbot's name (default: "Waifu").
+*   `--personality <type>`: Sets the chatbot's personality archetype.
+    *   Choices: `deredere`, `dandere`, `himedere`, `kuudere`, `tsundere`, `yandere` (default: `deredere`).
+*   `--gemini`: Explicitly enables Gemini mode (seems related to `--auto`).
 
-4.  **Gemini mode:** `python main.py --gemini`
+**Gemini API Setup (for Auto mode):**
 
-    This mode uses Google's Gemini API to generate user responses, allowing for a more dynamic and varied conversation. Requires an API key in `../api.txt`.
-
-### Additional Options
-
--   `--waifu_name`: Sets the waifu's name (default is "Waifu").
--   `--gemini`: Enables Gemini mode.
--   `--personality`: Sets the waifu's personality (default is "deredere"). Choices are: "deredere", "dandere", "himedere", "kuudere", "tsundere", "yandere", "dynamic".
-    - "deredere": A very positive, loving, and energetic personality.
-    - "dynamic": Uses the existing logic with affection levels to determine the personality.
-    - Other personalities: See `src/dere_data.py` and `src/response_templates/` for details.
+*   Place your Google Gemini API key in a file named `api.txt` in the directory *above* the project's root directory (i.e., `../api.txt` relative to `src/`).
 
 ## Dependencies
 
-This project uses the following Python libraries:
+*   Python 3.x
+*   `argparse` (Standard Library)
+*   `random` (Standard Library)
+*   `re` (Standard Library)
+*   `google-generativeai`: For Gemini API interaction.
+*   `tenacity`: For retry logic with the Gemini API.
+*   `win_unicode_console`: For better Unicode support on Windows terminals.
 
--   `argparse`: For parsing command-line arguments.
--   `random`: For generating random choices.
--   `re`: For regular expression operations.
--   `google-generativeai`: For using the Gemini API.
--   `tenacity`: For retrying with exponential backoff.
+Install external dependencies using pip:
 
-The `google-generativeai` and `tenacity` libraries can be installed using pip:
-
+```bash
+pip install google-generativeai tenacity win_unicode_console --user
 ```
-pip install google-generativeai tenacity --user
-```
 
-The other libraries are typically included in standard Python distributions.
+## Potential Future Improvements
 
-## Future Improvements
-
--   Add more dere types and refine existing ones.
--   Expand the range of topics and responses.
--   Implement a more sophisticated memory system.
--   Incorporate natural language processing (NLP) techniques for better understanding of user input.
--   Add a graphical user interface (GUI).
+*   Expand personality modules with more nuanced behaviors.
+*   Add more sophisticated topic tracking and transitions.
+*   Integrate more advanced Natural Language Processing (NLP) for better input understanding.
+*   Develop a graphical user interface (GUI).
+*   Refine the transformation system for more complex interactions.
+*   Implement a more persistent memory system.

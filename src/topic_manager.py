@@ -25,55 +25,77 @@ class TopicManager:
             if self.topic_turns == 0:
                 self.current_topic = None
 
-    def generate_topic_response(self, topic: str, input_tokens: List[str]) -> str:
-        """Generates a response based on the current topic and user input."""
-        import random # Add import for random
+    def generate_topic_response(self, topic: str, input_tokens: List[str]) -> Optional[str]: # Return Optional[str]
+        """Generates a response based on the current topic and user input, or None if no specific response."""
+        import random
+        input_str = " ".join(input_tokens)
+        is_question_to_waifu = any(q in input_tokens for q in ["you", "your", "yours"]) and input_str.endswith('?')
 
-        if topic == "family":
-            family_keywords = ["mom", "mother", "dad", "father", "brother", "sister", "sibling", "parents", "family"]
-            if any(keyword in input_tokens for keyword in family_keywords) and len(input_tokens) > 5: # Check if user is likely elaborating
-                responses = [
-                    "Wow, your family sounds interesting!",
-                    "That's nice you're sharing about them!",
-                    "It sounds like you have a lovely family.",
-                    "Keep going, I'm listening!",
-                ]
-                return random.choice(responses)
-            elif any(keyword in input_tokens for keyword in family_keywords):
-                 # User mentioned family but didn't elaborate much
-                 return "Tell me more about your family!"
+        # --- Deredere Specific Logic ---
+        if self.waifu_chatbot.current_dere == "deredere":
+            if topic == "family":
+                if is_question_to_waifu:
+                    return random.choice([
+                        "My family? Hehe, they're okay! What about yours?",
+                        "Hmm, family secrets! 😉 What else do you want to know?",
+                        "Let's talk about *your* family first!",
+                    ])
+                else:
+                    return random.choice([
+                        "Wow, family stories are the best!",
+                        "That's so interesting about your family!",
+                        "Aww! Tell me more!",
+                        "Family sounds important to you!",
+                    ])
+            elif topic == "food":
+                if is_question_to_waifu:
+                    # Give a playful answer or deflect
+                    return random.choice([
+                        f"Me? I love {self.waifu_memory.favorite_food}! But pizza sounds good too! 🍕",
+                        "Hehe, my favorite food is whatever you're having!",
+                        "Hmm, tough choice! What's *your* absolute favorite?",
+                        "I like sweet things! Like you! 😉",
+                        "Anything tasty is good! What are you craving?",
+                    ])
+                else:
+                    # React enthusiastically to user's food talk
+                    return random.choice([
+                        "Mmm, that sounds delicious!",
+                        "Ooh, yummy!",
+                        "Wow, great choice!",
+                        "Now I'm hungry! Hehe.",
+                        "Food talk is the best talk!",
+                    ])
+            elif topic == "games":
+                if is_question_to_waifu:
+                    return random.choice([
+                        "I love playing games! Especially with you! What should we play?",
+                        "Hehe, I'm pretty good! Wanna challenge me? 😉",
+                        "My favorite game? The one where I get to spend time with you!",
+                    ])
+                else:
+                    return random.choice([
+                        "Awesome! Games are so fun!",
+                        "Wow, you sound like a pro!",
+                        "Let's play together sometime!",
+                        "That sounds like a cool game!",
+                    ])
             else:
-                # Ask a follow-up question if user didn't mention specifics
-                return "Family is really important, don't you think? Do you have any siblings?"
-        elif topic == "food":
-            # Check for specific food items or cooking-related words
-            food_keywords = ["pocky", "chocolate", "sweets", "cake", "eat", "steak", "pasta", "cook", "make", "recipe", "bake", "dish", "sauce"]
-            if any(keyword in input_tokens for keyword in food_keywords):
-                # User mentioned food or cooking
-                responses = [
-                    "Mmm, that sounds delicious!",
-                    "Wow, homemade pasta sounds amazing!",
-                    "That's really interesting! You sound like a great cook.",
-                    "Ooh, tell me more about that recipe!",
-                ]
-                return random.choice(responses) # Give a varied positive response
-            else:
-                # User didn't mention food/cooking, ask a different food question
-                responses = [
-                    "What's a dish you'd love to try making someday?",
-                    "Do you prefer sweet or savory snacks?",
-                    "Is there any food you absolutely dislike?",
-                    "I love talking about food!", # More generic fallback
-                ]
-                return random.choice(responses)
-        elif topic == "games":
-             # Basic check if user mentioned game types or actions
-            game_keywords = ["play", "game", "video", "rpg", "rhythm", "fps", "moba", "strategy", "console", "pc"]
-            if any(keyword in input_tokens for keyword in game_keywords):
-                 return "Awesome! What kind of games do you usually play?"
-            else:
-                 # Ask a follow-up question
-                 return "Video games are so much fun! Do you have a favorite console or platform?"
+                # Generic deredere topic response if specific logic is missing
+                if is_question_to_waifu:
+                    return random.choice([f"About {topic}? Hmm, what do *you* think?", f"Hehe, secrets! 😉 Let's talk about you!", f"Good question about {topic}!"])
+                else:
+                    return random.choice([f"Wow, {topic} sounds interesting!", f"Tell me more about {topic}!", f"That's cool!"])
+                # If no specific deredere logic matched for the topic, return None to use main fallback
+                return None
+        # --- Fallback for other personalities ---
         else:
-            # Generic response for unhandled topics
-            return f"That's an interesting topic! Tell me more about {topic}."
+           # For non-deredere, only return a response if it's a very generic prompt. Otherwise, let main logic handle it.
+           if topic == "family" and not is_question_to_waifu:
+                return "Tell me more about your family."
+           elif topic == "food" and not is_question_to_waifu:
+                return "What's your favorite food?"
+           elif topic == "games" and not is_question_to_waifu:
+                return "What kind of games do you play?"
+           # In most cases for non-deredere during a topic, return None to allow main fallback logic
+           return None
