@@ -8,6 +8,6 @@ def run_gemini_mode(waifu_name: str, debug: bool, max_turns: int = 10) -> None:
     if not genai_instance:
         return
     # Initialize the model here as it's not returned by setup_gemini_api
-    model = genai.GenerativeModel("gemini-2.0-flash", generation_config={"temperature": 0.9, "top_p": 0.95})
+    model = genai.GenerativeModel("gemini-2.5-flash-preview-04-17", generation_config={"temperature": 0.9, "top_p": 0.95})
     waifu = initialize_chatbot(waifu_name, debug)
     run_conversation(waifu, model, max_turns, debug)
