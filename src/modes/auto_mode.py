@@ -26,7 +26,7 @@ def run_auto_mode(waifu_name: str, debug: bool, max_turns: int = 10) -> None:
         f"Be friendly, curious, and show personality. Avoid repeating what {waifu_name} says."
     )
 
-    model = genai.GenerativeModel("gemini-1.5-flash", generation_config={"temperature": 0.9, "top_p": 0.95}) # Updated model name
+    model = genai.GenerativeModel("gemini-2.5-flash-preview-04-17", generation_config={"temperature": 0.9, "top_p": 0.95}) # Updated model name
 
     # Initialize conversation
     conversation_history = []
