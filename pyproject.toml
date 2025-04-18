@@ -1,0 +1,11 @@
+[project]
+name = "macro-language-model"
+version = "0.1.0"
+description = "WaifuAI Macro Language Model"
+authors = [
+    { name = "Your Name", email = "waifuai@users.noreply.github.com" }
+]
+requires-python = ">=3.8"
+
+[tool.setuptools]
+packages = ["src"]

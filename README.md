@@ -62,21 +62,24 @@ Run the chatbot from the command line using `python src/main.py`.
 
 1.  **Interactive:**
     ```bash
-    python src/main.py --interactive
+    python src/main.py --interactive --personality <type> [--waifu_name <name>] [--debug]
     ```
     Chat directly with the bot in your terminal.
 
 2.  **Auto (Gemini User Simulation):**
     ```bash
-    python src/main.py --auto [number_of_turns]
+    python src/main.py --auto [number_of_turns] --personality <type> [--waifu_name <name>] [--debug]
     ```
     Simulates a conversation for `number_of_turns` (defaults to 10). Requires Gemini API setup.
 
-3.  **Debug:**
+3.  **Gemini Mode** (pure prompt test):
     ```bash
-    python src/main.py --debug
+    python src/main.py --gemini --personality <type> [--waifu_name <name>] [--debug]
     ```
-    Runs in a default mode (likely Auto or Interactive depending on other flags) with extra debug information printed to the console. Combine with other flags like `--interactive` or `--auto`.
+    Use your prompt engineering to test waifu responses directly via Gemini.
+
+4.  **Debug**:
+    Add `--debug` to any mode to enable verbose logging.
 
 **Options:**
 

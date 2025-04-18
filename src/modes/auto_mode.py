@@ -1,93 +1,56 @@
-from waifu_chatbot import WaifuChatbot
-from typing import Dict, List, Tuple
 import google.generativeai as genai
-from tenacity import retry, stop_after_attempt, wait_exponential
-from gemini_utils import is_echoed_response, generate_with_retry
+from gemini_utils import generate_with_retry
 from modes.common import setup_gemini_api
 
-
-def run_auto_mode(waifu_name: str, debug: bool, max_turns: int = 10) -> None:
-    """Runs the chatbot in auto mode with Gemini generating the user responses."""
-    print("Entering run_auto_mode with Gemini")
-
-    # Setup Gemini API
+def run_auto_mode(waifu_name: str, personality: str, debug: bool, max_turns: int = 10) -> None:
+    """Simulates a conversation for `max_turns` turns with Gemini as both waifu and user."""
     genai_instance = setup_gemini_api()
-    if genai_instance is None:
+    if not genai_instance:
         return
-
-    # Initialize the WaifuChatbot
-    waifu = WaifuChatbot(waifu_name, debug=debug)
-    #register_transforms(waifu)
-
-    # System instruction for Gemini
-    system_instruction = (
-        f"You are a human user interacting with a chatbot named {waifu_name}. "
-        f"Generate engaging, natural, **very short** responses (max 20 words) that continue the conversation in a realistic way. " # Added length constraint
-        f"Be friendly, curious, and show personality. Avoid repeating what {waifu_name} says."
+    model = genai_instance.GenerativeModel(
+        "gemini-2.5-flash-preview-04-17",
+        generation_config={"temperature": 0.9, "top_p": 0.95}
     )
-
-    model = genai.GenerativeModel("gemini-2.5-flash-preview-04-17", generation_config={"temperature": 0.9, "top_p": 0.95}) # Updated model name
-
-    # Initialize conversation
-    conversation_history = []
-    greeting = waifu.greetings[0]
-    print(f"{waifu_name}: {greeting}")
-    conversation_history.append(f"{waifu_name}: {greeting}")
-
-    # Generate first user response to greeting
-    prompt = (
-        f"{system_instruction}\n\n"
-        f"### Conversation History:\n"
-        f"{conversation_history[0]}\n"
-        f"### Your Task:\n"
-        f"Respond as the user to this greeting in a natural way.\n"
-        f"User: "
+    system_prompt = (
+        f"You are {waifu_name}, a {personality} waifu. Respond in character with emotion and style appropriate to your personality."
     )
-
+    # Generate initial greeting
+    greeting_prompt = system_prompt + "\n\n### Task: Generate an opening greeting as the waifu.\n"
     try:
-        response = generate_with_retry(model, prompt, greeting)
-        user_input = response.text
-    except Exception as e:
-        print(f"Error generating initial response: {e}")
-        return
-    #user_input = \"Placeholder response\" # Placeholder
-
-    # Apply encoding fix here
-    user_input = user_input.encode('utf-8', 'replace').decode('utf-8')
-    print(f"User: {user_input}")
-    conversation_history.append(f"User: {user_input}")
-
-    # Main conversation loop
-    for turn in range(max_turns):
-        # Get waifu response
-        waifu_response = waifu.respond(user_input)
+        waifu_response = generate_with_retry(model, greeting_prompt, "")
         print(f"{waifu_name}: {waifu_response}")
-        conversation_history.append(f"{waifu_name}: {waifu_response}")
-
-        # Check if conversation should end
-        if waifu_response in waifu.farewells:
-            break
-
-        # Prepare prompt with full history
-        history_text = "\n".join(conversation_history)
-        prompt = (
-            f"{system_instruction}\n\n"
-            f"### Conversation History:\n"
-            f"{history_text}\n"
-            f"### Your Task:\n"
-            f"Respond as the user to {waifu_name}'s last message in a natural way.\n"
-            f"User: "
+    except Exception as e:
+        print(f"Error generating greeting: {e}")
+        return
+    conversation_history = [f"{waifu_name}: {waifu_response}"]
+    user_input = ""
+    for turn in range(max_turns):
+        # User (Gemini) turn
+        user_prompt = (
+            f"You are a human user talking to a waifu named {waifu_name}.\n"
+            f"### Conversation so far:\n"
+            + "\n".join(conversation_history) +
+            "\n### Task: Respond as the user, naturally and briefly.\nUser: "
         )
-
-        # Generate user response with Gemini
         try:
-            response = generate_with_retry(model, prompt, waifu_response)
-            user_input = response.text
-            # Apply encoding fix here
-            user_input = user_input.encode('utf-8', 'replace').decode('utf-8')
+            user_input = generate_with_retry(model, user_prompt, waifu_response)
             print(f"User: {user_input}")
-            conversation_history.append(f"User: {user_input}")
         except Exception as e:
-            print(f"Error in turn {turn + 1}: {e}")
+            print(f"Error generating user input: {e}")
             break
-        #user_input = \"Placeholder response\" # Placeholder
+        conversation_history.append(f"User: {user_input}")
+        # Waifu (Gemini) turn
+        waifu_prompt = (
+            system_prompt +
+            "\n\n### Conversation so far:\n" +
+            "\n".join(conversation_history) +
+            f"\n{waifu_name}:"
+        )
+        try:
+            waifu_response = generate_with_retry(model, waifu_prompt, user_input)
+            print(f"{waifu_name}: {waifu_response}")
+        except Exception as e:
+            print(f"Error generating waifu response: {e}")
+            break
+        conversation_history.append(f"{waifu_name}: {waifu_response}")
+        # Optionally, break if a farewell is detected (not implemented in stub)

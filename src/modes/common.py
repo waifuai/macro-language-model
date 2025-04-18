@@ -4,14 +4,16 @@ from gemini_utils import generate_with_retry
 
 def setup_gemini_api():
     """Sets up the Gemini API key."""
+    import os
     try:
-        with open("../../api.txt", "r") as f:
+        api_path = os.path.expanduser("~/.api-gemini")
+        with open(api_path, "r") as f:
             api_key = f.read().strip()
     except FileNotFoundError:
-        print("Error: api.txt not found in the parent directory.")
+        print(f"Error: ~/.api-gemini not found (looked for {api_path}).")
         return None
     except Exception as e:
-        print(f"Error reading API key from file: {e}")
+        print(f"Error reading API key from {api_path}: {e}")
         return None
 
     genai.configure(api_key=api_key)

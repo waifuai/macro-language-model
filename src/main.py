@@ -18,13 +18,13 @@ def main() -> None:
         print("Starting up...")
 
     if args.interactive:
-        run_interactive_mode(args.waifu_name, args.debug)
+        run_interactive_mode(args.waifu_name, args.personality, args.debug)
 
     elif args.auto is not None:
-        run_auto_mode(args.waifu_name, args.debug, args.auto)
+        run_auto_mode(args.waifu_name, args.personality, args.debug, args.auto)
 
     elif args.gemini:
-        run_gemini_mode(args.waifu_name, args.debug)
+        run_gemini_mode(args.waifu_name, args.personality, args.debug)
 
 if __name__ == "__main__":
     main()

@@ -1,2 +1,0 @@
-from dere_utils import maybe_change_dere
-from dere_response_selection import dere_response, get_dere_default_response
