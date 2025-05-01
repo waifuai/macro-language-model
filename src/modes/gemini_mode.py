@@ -8,7 +8,7 @@ def run_gemini_mode(waifu_name: str, personality: str, debug: bool) -> None:
     if not genai_instance:
         return
     model = genai_instance.GenerativeModel(
-        "gemini-2.5-flash-preview-04-17",
+        "gemini-2.5-pro-preview-03-25",
         generation_config={"temperature": 0.9, "top_p": 0.95}
     )
     # Construct personality-based system prompt
