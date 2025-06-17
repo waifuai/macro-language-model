@@ -8,7 +8,7 @@ def run_interactive_mode(waifu_name: str, personality: str, debug: bool) -> None
     if not genai_instance:
         return
     model = genai_instance.GenerativeModel(
-        "gemini-2.5-pro-preview-05-06",
+        "gemini-2.5-pro",
         generation_config={"temperature": 0.9, "top_p": 0.95}
     )
     system_prompt = (
