@@ -1,0 +1,9 @@
+# Developer requirements: includes base requirements and test tooling
+-r requirements.txt
+
+# Test runner (pin for reproducibility)
+pytest==8.3.3
+iniconfig==2.1.0
+packaging==25.0
+pluggy==1.6.0
+colorama==0.4.6

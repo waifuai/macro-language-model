@@ -1,0 +1,10 @@
+# Runtime dependencies (flexible pins suitable for OSS consumers)
+
+# Google GenAI SDK (Client-centric API)
+google-genai~=1.28
+
+# Tenacity for retry logic
+tenacity~=9.0
+
+# Windows unicode console used in main
+win_unicode_console~=0.5

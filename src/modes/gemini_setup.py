@@ -1,9 +1,9 @@
-import google.generativeai as genai
 from modes.common import setup_gemini_api
+from genai_client import GEMINI_MODEL
 
 def setup_gemini(waifu_name: str, debug: bool):
-    genai_instance = setup_gemini_api()
-    if not genai_instance:
+    client = setup_gemini_api()
+    if not client:
         return None, None
     system_instruction = (
         f"You are a human user interacting with {waifu_name}, "
@@ -14,7 +14,7 @@ def setup_gemini(waifu_name: str, debug: bool):
         f"to {waifu_name}'s personality and interests. "
         f"Avoid asking overly personal or sensitive questions."
     )
-    model = genai.GenerativeModel("gemini-2.5-pro", generation_config={"temperature": 0.9, "top_p": 0.95})
     if debug:
         print("Entering run_gemini_mode")
-    return genai_instance, model
+    # Return client and model name for callers using generate_with_retry
+    return client, GEMINI_MODEL

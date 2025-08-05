@@ -1,17 +1,13 @@
 from .common import setup_gemini_api
 from gemini_utils import generate_with_retry
-import google.generativeai as genai
+from genai_client import GEMINI_MODEL
 
 def run_gemini_mode(waifu_name: str, personality: str, debug: bool) -> None:
-    """Interactive Gemini-driven Waifu chat using personality prompt."""
-    genai_instance = setup_gemini_api()
-    if not genai_instance:
+    """Interactive GenAI-driven Waifu chat using personality prompt."""
+    client = setup_gemini_api()
+    if not client:
         return
-    model = genai_instance.GenerativeModel(
-        "gemini-2.5-pro",
-        generation_config={"temperature": 0.9, "top_p": 0.95}
-    )
-    # Construct personality-based system prompt
+
     system_prompt = (
         f"You are {waifu_name}, a {personality} waifu. "
         "Respond in character with emotion and style appropriate to your personality."
@@ -19,7 +15,7 @@ def run_gemini_mode(waifu_name: str, personality: str, debug: bool) -> None:
     # Generate initial greeting
     greeting_prompt = system_prompt + "\n\n### Task: Generate an opening greeting as the waifu.\n"
     try:
-        greeting = generate_with_retry(model, greeting_prompt, "")
+        greeting = generate_with_retry(client, GEMINI_MODEL, greeting_prompt, "")
         print(f"{waifu_name}: {greeting}")
     except Exception as e:
         print(f"Error generating greeting: {e}")
@@ -41,7 +37,7 @@ def run_gemini_mode(waifu_name: str, personality: str, debug: bool) -> None:
         if debug:
             print(f"[DEBUG] Prompt to Gemini: {prompt}")
         try:
-            response = generate_with_retry(model, prompt, "")
+            response = generate_with_retry(client, GEMINI_MODEL, prompt, "")
             print(f"{waifu_name}: {response}")
         except Exception as e:
             print(f"Error generating response: {e}")

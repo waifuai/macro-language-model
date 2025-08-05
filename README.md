@@ -7,7 +7,7 @@ This project implements a chatbot designed to simulate conversation with a custo
 ## Key Features
 
 *   **Modular Personality System:** Select different character archetypes at runtime via command-line arguments. Each personality (`deredere`, `tsundere`, `yandere`, `kuudere`, `dandere`, `himedere`) has its own logic module determining behavior.
-*   **Gemini-Driven Chat:** All conversation logic uses Google Gemini API via `google-generativeai` and `gemini_utils.py`.
+*   **Gemini-Driven Chat:** All conversation logic uses Google GenAI SDK via `google-genai` and `genai.Client`.
 *   **Personality-Driven Responses:** The core response generation is delegated to the currently active personality module, ensuring distinct conversational patterns for each archetype.
 *   **Topic Management:** Includes a system (`src/topic_manager.py`) for introducing and managing conversational topics, with personality-specific introductions and reactions.
 *   **Multiple Run Modes:**
@@ -16,7 +16,7 @@ This project implements a chatbot designed to simulate conversation with a custo
     *   **Gemini Mode:** Prompt-only testing via `run_gemini_mode`.
 *   **Configurable:** Basic prompts and small talk stored in `src/chatbot_config.json`.
 *   **Testing Suite:** Built with pytest under `tests/`.
-*   **Gemini Integration:** Utilizes the Google Gemini API (`google-generativeai`) to power the user simulation in Auto mode. Requires an API key.
+*   **Gemini Integration:** Utilizes the Google GenAI SDK (`google-genai`) to power the user simulation in Auto mode. Requires an API key.
 *   **Organized Code Structure:** Project code is structured within the `src/` directory, separating concerns like personality logic, run modes, core chatbot mechanics, and utilities.
 *   **Configuration:** Basic chatbot attributes like greetings and farewells are defined in `src/chatbot_config.py`.
 
@@ -53,8 +53,10 @@ Ensure dependencies and venv are set up via `uv`:
 
 ```powershell
 python -m uv venv .venv
-.venv/Scripts/python.exe -m uv pip install -e .[test]
-.venv/Scripts/python.exe -m pytest
+.venv/Scripts/python.exe -m ensurepip
+.venv/Scripts/python.exe -m pip install uv
+.venv/Scripts/python.exe -m uv pip install -r requirements-dev.txt
+.venv/Scripts/python.exe -m pytest -q
 ```
 
 ## Dependencies
@@ -63,7 +65,7 @@ python -m uv venv .venv
 *   `argparse` (Standard Library)
 *   `random` (Standard Library)
 *   `re` (Standard Library)
-*   `google-generativeai`: For Gemini API interaction.
+*   `google-genai`: For Gemini API interaction via Client.
 *   `tenacity`: For retry logic with the Gemini API.
 *   `win_unicode_console`: For better Unicode support on Windows terminals.
 *   `pytest`: For testing.
@@ -71,7 +73,7 @@ python -m uv venv .venv
 Install external dependencies using pip:
 
 ```bash
-pip install google-generativeai tenacity win_unicode_console pytest --user
+.venv/Scripts/python.exe -m uv pip install -r requirements.txt
 ```
 
 ## Potential Future Improvements

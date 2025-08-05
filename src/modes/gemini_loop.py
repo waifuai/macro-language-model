@@ -1,10 +1,10 @@
 from gemini_utils import generate_with_retry
 import sys
 import traceback
-import google.generativeai as genai
 from modes.common import setup_gemini_api
+from genai_client import GEMINI_MODEL
 
-def run_conversation(waifu, model, max_turns: int, debug: bool):
+def run_conversation(waifu, client, max_turns: int, debug: bool):
     # Attempt to force UTF-8 output for stdout
     try:
         sys.stdout.reconfigure(encoding='utf-8')
@@ -44,7 +44,7 @@ def run_conversation(waifu, model, max_turns: int, debug: bool):
                 f"User: "
             )
         try:
-            response = generate_with_retry(model, prompt, greeting if turn == 0 else waifu_response)
+            response = generate_with_retry(client, GEMINI_MODEL, prompt, greeting if turn == 0 else waifu_response)
             if response: # 'response' here is the raw text from Gemini
                 user_input = response
                 # Ensure user_input is treated as a string and print safely
