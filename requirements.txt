@@ -8,3 +8,6 @@ tenacity~=9.0
 
 # Windows unicode console used in main
 win_unicode_console~=0.5
+
+# HTTP client for OpenRouter integration
+requests>=2.31,<3

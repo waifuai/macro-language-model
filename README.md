@@ -2,85 +2,138 @@
 
 ## Overview
 
-This project implements a chatbot designed to simulate conversation with a customizable "waifu" character. It features a modular personality system, allowing the chatbot to adopt different character archetypes (like Deredere, Tsundere, etc.) which dictate its conversational style, responses, and topic handling. The chatbot operates through a command-line interface and supports various interaction modes.
+This project implements a chatbot designed to simulate conversation with a customizable "waifu" character. It features a modular personality system, allowing the chatbot to adopt different character archetypes like Deredere, Tsundere, etc. The chatbot operates through a command-line interface and supports various interaction modes.
 
 ## Key Features
 
-*   **Modular Personality System:** Select different character archetypes at runtime via command-line arguments. Each personality (`deredere`, `tsundere`, `yandere`, `kuudere`, `dandere`, `himedere`) has its own logic module determining behavior.
-*   **Gemini-Driven Chat:** All conversation logic uses Google GenAI SDK via `google-genai` and `genai.Client`.
-*   **Personality-Driven Responses:** The core response generation is delegated to the currently active personality module, ensuring distinct conversational patterns for each archetype.
-*   **Topic Management:** Includes a system (`src/topic_manager.py`) for introducing and managing conversational topics, with personality-specific introductions and reactions.
-*   **Multiple Run Modes:**
-    *   **Interactive Mode:** Real-time chat via `run_interactive_mode`.
-    *   **Auto Mode:** Simulates both user and waifu with Gemini via `run_auto_mode`.
-    *   **Gemini Mode:** Prompt-only testing via `run_gemini_mode`.
-*   **Configurable:** Basic prompts and small talk stored in `src/chatbot_config.json`.
-*   **Testing Suite:** Built with pytest under `tests/`.
-*   **Gemini Integration:** Utilizes the Google GenAI SDK (`google-genai`) to power the user simulation in Auto mode. Requires an API key.
-*   **Organized Code Structure:** Project code is structured within the `src/` directory, separating concerns like personality logic, run modes, core chatbot mechanics, and utilities.
-*   **Configuration:** Basic chatbot attributes like greetings and farewells are defined in `src/chatbot_config.py`.
+*   Modular Personality System with selectable archetypes
+*   Gemini-Driven Chat via Google GenAI SDK
+*   Provider-Ready Abstractions: classifier facade to add external providers with minimal coupling
+*   Topic Management system with personality-specific prompts
+*   Multiple Run Modes: interactive, auto, and gemini mode
+*   Configurable small talk in src/chatbot_config.json
+*   Testing suite with pytest
+*   Organized code structure within src/
 
 ## Architecture & File Structure
 
-The project uses a simplified, Gemini-only codebase:
-
 ```
 ├── src/
-│   ├── main.py            # Entry point
-│   ├── cli.py             # Argument parser
-│   ├── chatbot_config.json # Small-talk and prompts
-│   ├── gemini_utils.py    # Retry wrapper for Gemini API
+│   ├── main.py
+│   ├── cli.py
+│   ├── chatbot_config.json
+│   ├── gemini_utils.py
+│   ├── genai_client.py
+│   ├── classifier.py              # Provider-agnostic facade
+│   ├── provider_openrouter.py     # OpenRouter provider for classification
 │   └── modes/
-│       ├── common.py      # API setup
+│       ├── common.py
 │       ├── interactive_mode.py
 │       ├── auto_mode.py
 │       └── gemini_mode.py
 └── tests/
-    └── test_gemini_mode.py
+    ├── test_gemini_mode.py
+    └── test_openrouter.py
 ```
 
-## Usage
+## Environment Setup using uv
 
-Run via the `src` package:
+Create a minimal virtual environment, ensure pip exists, install uv inside the venv, then install project dependencies. Always run uv via the venv’s Python.
 
-```powershell
-.venv/Scripts/python.exe -m src.main --interactive|--auto [turns]|--gemini [--personality <type>] [--waifu_name <name>] [--debug]
+Windows:
+```
+.venv/Scripts/python.exe -m uv venv .venv
+.venv/Scripts/python.exe -m ensurepip
+.venv/Scripts/python.exe -m pip install uv
+.venv/Scripts/python.exe -m uv pip install -r requirements-dev.txt
+```
+
+Linux or macOS:
+```
+.venv/bin/python -m uv venv .venv
+.venv/bin/python -m ensurepip
+.venv/bin/python -m pip install uv
+.venv/bin/python -m uv pip install -r requirements-dev.txt
+```
+
+Run tests:
+```
+.venv/Scripts/python.exe -m pytest -q
+```
+
+## Credentials
+
+Gemini:
+* Env: GEMINI_API_KEY or GOOGLE_API_KEY
+* File fallback: ~/.api-gemini
+
+OpenRouter:
+* Env: OPENROUTER_API_KEY
+* File fallback: ~/.api-openrouter
+
+Do not commit secrets to version control.
+
+## Adding OpenRouter Support
+
+This repo includes a minimal, provider-agnostic integration:
+* Provider: [`provider_openrouter.classify_with_openrouter()`](src/provider_openrouter.py:1)
+* Facade: [`classifier.classify()`](src/classifier.py:1)
+
+OpenRouter classification behavior:
+* Deterministic prompt and low temperature
+* Strict output normalization to digits 0 or 1 with conservative fallbacks
+* Clear error paths returning None
+
+## Quick Usage Examples
+
+End-to-end classification using the facade:
+```
+.venv/Scripts/python.exe -c "from classifier import classify; print(classify('This is a test sentence', provider='openrouter'))"
+```
+
+Gemini-driven run modes:
+```
+.venv/Scripts/python.exe -m src.main --interactive
+.venv/Scripts/python.exe -m src.main --auto 5
+.venv/Scripts/python.exe -m src.main --gemini
 ```
 
 ## Testing
 
-Ensure dependencies and venv are set up via `uv`:
+Unit tests cover:
+* OpenRouter key resolution paths
+* HTTP behaviors including success, non-200, missing fields, and exceptions
+* Existing Gemini mode behaviors
 
-```powershell
-python -m uv venv .venv
-.venv/Scripts/python.exe -m ensurepip
-.venv/Scripts/python.exe -m pip install uv
-.venv/Scripts/python.exe -m uv pip install -r requirements-dev.txt
+Run:
+```
 .venv/Scripts/python.exe -m pytest -q
 ```
 
 ## Dependencies
 
-*   Python 3.x
-*   `argparse` (Standard Library)
-*   `random` (Standard Library)
-*   `re` (Standard Library)
-*   `google-genai`: For Gemini API interaction via Client.
-*   `tenacity`: For retry logic with the Gemini API.
-*   `win_unicode_console`: For better Unicode support on Windows terminals.
-*   `pytest`: For testing.
+Core:
+* google-genai
+* tenacity
+* win_unicode_console
+* requests
 
-Install external dependencies using pip:
+Dev:
+* pytest and pinned tooling in requirements-dev.txt
 
-```bash
+Install:
+```
 .venv/Scripts/python.exe -m uv pip install -r requirements.txt
 ```
 
-## Potential Future Improvements
+## Operational Guidance
 
-*   Expand personality modules with more nuanced behaviors.
-*   Add more sophisticated topic tracking and transitions.
-*   Integrate more advanced Natural Language Processing (NLP) for better input understanding.
-*   Develop a graphical user interface (GUI).
-*   Refine the transformation system for more complex interactions.
-*   Implement a more persistent memory system.
+* Timeouts: sensible HTTP timeout used in OpenRouter calls
+* Determinism: keep temperature low, prompt concise, and normalize outputs strictly
+* Security: prefer env vars in CI and restrict permissions for local key files
+* Rate-limiting: consider delaying or adding retries if your workload is bursty
+* Logging: log non-200 responses, truncated to avoid leaking PII or secrets
+
+## License
+
+MIT-0 License
