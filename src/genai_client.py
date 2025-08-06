@@ -1,8 +1,22 @@
 from typing import Optional
 import os
+from pathlib import Path
 
-# Central model selection for easy future upgrades
-GEMINI_MODEL = "gemini-2.5-pro"
+# Central model selection with optional override file ~/.model-gemini
+def _read_text_file(path: Path) -> Optional[str]:
+    try:
+        if path.is_file():
+            content = path.read_text(encoding="utf-8").strip()
+            return content or None
+    except Exception as e:
+        print(f"Error reading text file {path}: {e}")
+    return None
+
+def _resolve_gemini_model() -> str:
+    override = _read_text_file(Path.home() / ".model-gemini")
+    return override if override else "gemini-2.5-pro"
+
+GEMINI_MODEL = _resolve_gemini_model()
 
 def _read_key_file(path: str) -> Optional[str]:
     try:

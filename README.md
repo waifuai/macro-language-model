@@ -73,6 +73,19 @@ OpenRouter:
 
 Do not commit secrets to version control.
 
+## Model Selection Overrides
+
+Optionally override the default model names by creating single-line files in your home directory. If the file exists and is non-empty, it takes precedence over built-in defaults.
+
+- Gemini override:
+  - Path: ~/.model-gemini
+  - Example contents: gemini-2.0-flash-lite
+  - Default if absent: gemini-2.5-pro
+- OpenRouter override:
+  - Path: ~/.model-openrouter
+  - Example contents: openrouter/auto
+  - Default if absent: openrouter/horizon-beta
+
 ## Adding OpenRouter Support
 
 This repo includes a minimal, provider-agnostic integration:

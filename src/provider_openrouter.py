@@ -7,7 +7,21 @@ from typing import Optional, Dict, Any
 import requests
 
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
-DEFAULT_OPENROUTER_MODEL = "openrouter/horizon-beta"
+
+def _read_text_file(path: Path) -> Optional[str]:
+    try:
+        if path.is_file():
+            content = path.read_text(encoding="utf-8").strip()
+            return content or None
+    except Exception:
+        pass
+    return None
+
+def _resolve_default_openrouter_model() -> str:
+    override = _read_text_file(Path.home() / ".model-openrouter")
+    return override if override else "openrouter/horizon-beta"
+
+DEFAULT_OPENROUTER_MODEL = _resolve_default_openrouter_model()
 OPENROUTER_API_KEY_FILE_PATH = Path.home() / ".api-openrouter"
 
 
