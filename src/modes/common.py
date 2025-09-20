@@ -1,16 +1,91 @@
-from gemini_utils import generate_with_retry
+import logging
+from typing import Optional, Any
 
-# New client wrapper centralizes auth and model selection
+from gemini_utils import generate_with_retry
 from genai_client import get_client, GEMINI_MODEL
 
-def setup_gemini_api():
+# Configure logging for this module
+logger = logging.getLogger(__name__)
+
+
+def setup_gemini_api() -> Optional[Any]:
     """
-    Returns a ready genai.Client instance or None on failure.
-    Prefers env GEMINI_API_KEY or GOOGLE_API_KEY, falls back to ~/.api-gemini.
+    Initialize and return a ready GenAI client instance.
+
+    Returns:
+        GenAI client instance if successful, None on failure.
+
+    Note:
+        The function handles API key resolution and client initialization,
+        preferring environment variables or fallback to ~/.api-gemini file.
     """
     try:
         client = get_client()
+        logger.info("GenAI client initialized successfully")
         return client
     except Exception as e:
-        print(f"Error initializing GenAI client: {e}")
+        logger.error(f"Failed to initialize GenAI client: {e}")
+        return None
+
+
+def validate_client(client: Optional[Any]) -> bool:
+    """
+    Validate that the client is properly initialized.
+
+    Args:
+        client: The client instance to validate.
+
+    Returns:
+        True if client is valid, False otherwise.
+    """
+    if client is None:
+        logger.error("Client is None")
+        return False
+    return True
+
+
+def safe_generate_content(
+    client: Any,
+    prompt: str,
+    model_name: Optional[str] = None,
+    max_retries: int = 3,
+    **kwargs
+) -> Optional[str]:
+    """
+    Safely generate content with comprehensive error handling.
+
+    Args:
+        client: GenAI client instance.
+        prompt: The prompt to send to the model.
+        model_name: Model to use (defaults to GEMINI_MODEL).
+        max_retries: Maximum number of retry attempts.
+        **kwargs: Additional arguments for generation.
+
+    Returns:
+        Generated content if successful, None on failure.
+    """
+    if not validate_client(client):
+        return None
+
+    if not prompt or not prompt.strip():
+        logger.error("Prompt is empty or None")
+        return None
+
+    model = model_name or GEMINI_MODEL
+    logger.debug(f"Generating content with model: {model}")
+
+    try:
+        # Temporarily adjust retry count
+        original_stop = generate_with_retry.retry.stop
+        generate_with_retry.retry.stop = generate_with_retry.retry.stop.__class__(max_retries)
+
+        result = generate_with_retry(client, model, prompt, **kwargs)
+
+        # Restore original retry configuration
+        generate_with_retry.retry.stop = original_stop
+
+        return result
+
+    except Exception as e:
+        logger.error(f"Content generation failed: {e}")
         return None

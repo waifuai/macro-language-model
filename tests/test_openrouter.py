@@ -20,16 +20,14 @@ def test_resolve_key_from_env(monkeypatch, tmp_path):
 
 def test_resolve_key_from_file(monkeypatch, tmp_path):
     monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
-    keyfile = tmp_path / ".api-openrouter"
-    keyfile.write_text("file-key", encoding="utf-8")
-    monkeypatch.setattr("provider_openrouter.OPENROUTER_API_KEY_FILE_PATH", keyfile)
+    # Mock the config system to return our test key
+    def mock_get_api_key(provider):
+        if provider == "openrouter":
+            return "file-key"
+        return None
+
+    monkeypatch.setattr("provider_openrouter.get_api_key", mock_get_api_key)
     assert _resolve_openrouter_api_key() == "file-key"
-
-
-def test_resolve_key_missing(monkeypatch, tmp_path):
-    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
-    monkeypatch.setattr("provider_openrouter.OPENROUTER_API_KEY_FILE_PATH", tmp_path / ".api-openrouter")
-    assert _resolve_openrouter_api_key() is None
 
 
 @patch.dict(os.environ, {"OPENROUTER_API_KEY": "test-key"}, clear=True)

@@ -1,53 +1,85 @@
-from gemini_utils import generate_with_retry
-from modes.common import setup_gemini_api
-from genai_client import GEMINI_MODEL
+from chat_provider import generate_chat_response, get_default_provider
 
-def run_auto_mode(waifu_name: str, personality: str, debug: bool, max_turns: int = 10) -> None:
-    """Simulates a conversation for `max_turns` turns with GenAI as both waifu and user."""
-    client = setup_gemini_api()
-    if not client:
-        return
+def run_auto_mode(waifu_name: str, personality: str, debug: bool, max_turns: int = 10, provider: str = None) -> None:
+    """Simulates a conversation for `max_turns` turns with the selected provider as both waifu and user."""
+    if provider is None:
+        provider = get_default_provider()
 
-    system_prompt = (
-        f"You are {waifu_name}, a {personality} waifu. Respond in character with emotion and style appropriate to your personality."
-    )
+    system_message = {
+        "role": "system",
+        "content": (
+            f"You are {waifu_name}, a {personality} waifu. "
+            "Respond in character with emotion and style appropriate to your personality."
+        )
+    }
+
     # Generate initial greeting
-    greeting_prompt = system_prompt + "\n\n### Task: Generate an opening greeting as the waifu.\n"
+    greeting_messages = [
+        system_message,
+        {"role": "user", "content": "### Task: Generate an opening greeting as the waifu."}
+    ]
+
     try:
-        waifu_response = generate_with_retry(client, GEMINI_MODEL, greeting_prompt, "")
-        print(f"{waifu_name}: {waifu_response}")
+        waifu_response = generate_chat_response(
+            messages=greeting_messages,
+            provider=provider,
+            temperature=0.7
+        )
+        if waifu_response:
+            print(f"{waifu_name}: {waifu_response}")
+        else:
+            print("Error: Could not generate greeting.")
+            return
     except Exception as e:
         print(f"Error generating greeting: {e}")
         return
-    conversation_history = [f"{waifu_name}: {waifu_response}"]
+
+    conversation_history = [system_message, {"role": "assistant", "content": waifu_response}]
     user_input = ""
+
     for turn in range(max_turns):
-        # User (GenAI) turn
-        user_prompt = (
-            f"You are a human user talking to a waifu named {waifu_name}.\n"
-            f"### Conversation so far:\n"
-            + "\n".join(conversation_history) +
-            "\n### Task: Respond as the user, naturally and briefly.\nUser: "
-        )
+        # User (AI) turn
+        user_system_message = {
+            "role": "system",
+            "content": f"You are a human user talking to a waifu named {waifu_name}."
+        }
+
+        user_messages = [
+            user_system_message,
+            {"role": "user", "content": f"### Task: Respond as the user, naturally and briefly. The waifu said: {waifu_response}"}
+        ]
+
         try:
-            user_input = generate_with_retry(client, GEMINI_MODEL, user_prompt, waifu_response)
-            print(f"User: {user_input}")
+            user_input = generate_chat_response(
+                messages=user_messages,
+                provider=provider,
+                temperature=0.7
+            )
+            if user_input:
+                print(f"User: {user_input}")
+                conversation_history.append({"role": "user", "content": user_input})
+            else:
+                print("Error: Could not generate user input.")
+                break
         except Exception as e:
             print(f"Error generating user input: {e}")
             break
-        conversation_history.append(f"User: {user_input}")
-        # Waifu (GenAI) turn
-        waifu_prompt = (
-            system_prompt +
-            "\n\n### Conversation so far:\n" +
-            "\n".join(conversation_history) +
-            f"\n{waifu_name}:"
-        )
+
+        # Waifu (AI) turn
         try:
-            waifu_response = generate_with_retry(client, GEMINI_MODEL, waifu_prompt, user_input)
-            print(f"{waifu_name}: {waifu_response}")
+            waifu_response = generate_chat_response(
+                messages=conversation_history,
+                provider=provider,
+                temperature=0.7,
+                previous_waifu_response=user_input
+            )
+            if waifu_response:
+                print(f"{waifu_name}: {waifu_response}")
+                conversation_history.append({"role": "assistant", "content": waifu_response})
+            else:
+                print("Error: Could not generate waifu response.")
+                break
         except Exception as e:
             print(f"Error generating waifu response: {e}")
             break
-        conversation_history.append(f"{waifu_name}: {waifu_response}")
         # Optionally, break if a farewell is detected (not implemented)
