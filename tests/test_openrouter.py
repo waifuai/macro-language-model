@@ -1,3 +1,23 @@
+"""
+Unit tests for the OpenRouter provider in the Waifu Chatbot application.
+
+This module contains comprehensive unit tests for the OpenRouter API integration,
+focusing on text classification functionality, API key resolution, and response
+handling. The tests use mocking to simulate API responses and cover various
+scenarios including success cases, errors, and edge conditions.
+
+Test coverage includes:
+- API key resolution from environment variables and files
+- Successful classification responses and parsing
+- Heuristic fallback mechanisms for ambiguous responses
+- HTTP error handling and status code validation
+- JSON parsing error scenarios
+- Network exception handling and timeouts
+- Request mocking and response validation
+
+The tests ensure reliable operation of the OpenRouter provider under various
+conditions and help maintain API integration quality during development.
+"""
 import os
 from pathlib import Path
 from unittest.mock import patch, MagicMock

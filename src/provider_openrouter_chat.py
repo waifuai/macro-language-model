@@ -1,3 +1,25 @@
+"""
+OpenRouter chat generation provider for the Waifu Chatbot application.
+
+This module implements chat completion functionality using the OpenRouter API,
+providing an alternative AI provider for conversational interactions. It includes
+robust retry logic, echo detection, and comprehensive error handling to ensure
+reliable chat generation capabilities.
+
+Key features:
+- OpenRouter API integration for chat completions
+- Exponential backoff retry logic with configurable attempts
+- Echo response detection and prevention
+- Message history support for context preservation
+- Configurable temperature and token limits
+- API key resolution from environment variables or files
+- Comprehensive error handling and logging
+- Response validation and text extraction
+
+The module serves as a critical component for providing diverse AI responses
+and maintaining conversation quality through intelligent retry mechanisms and
+echo prevention strategies.
+"""
 import logging
 from typing import Optional, Dict, Any, List
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type

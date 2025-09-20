@@ -1,3 +1,24 @@
+"""
+Interactive conversation mode for the Waifu Chatbot application.
+
+This module implements the real-time interactive conversation mode where users can
+engage in back-and-forth dialogue with an AI-powered waifu character. The module
+handles conversation flow, maintains conversation history, and manages user input
+processing with graceful exit handling.
+
+Key features:
+- Real-time conversation loop with user input handling
+- Conversation history management for context preservation
+- Support for multiple AI providers (Gemini, OpenRouter)
+- Configurable personality traits and waifu names
+- Debug mode for conversation monitoring
+- Graceful error handling and recovery
+- UTF-8 encoding support for international characters
+
+The module generates an initial greeting and then maintains a continuous conversation
+loop until the user chooses to exit, providing a natural chat experience with
+the AI character.
+"""
 from chat_provider import generate_chat_response, get_default_provider
 
 def run_interactive_mode(waifu_name: str, personality: str, debug: bool, provider: str = None) -> None:

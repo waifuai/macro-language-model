@@ -1,3 +1,24 @@
+"""
+Direct Gemini interaction mode for the Waifu Chatbot application.
+
+This module implements a simplified interactive conversation mode that provides
+direct access to AI-powered responses using the Gemini provider. This mode serves
+as a streamlined interface for users who want immediate AI interaction without
+the complexity of the full conversation system.
+
+Key features:
+- Direct AI interaction using Google Gemini API
+- Simplified conversation loop for immediate responses
+- Conversation history management for context preservation
+- Support for configurable personality traits and waifu names
+- Debug mode for conversation monitoring and troubleshooting
+- Graceful error handling and recovery
+- UTF-8 encoding support for international characters
+
+This mode provides a more direct user experience compared to the interactive mode,
+focusing on immediate AI responses while still maintaining the core waifu
+personality system and conversation flow.
+"""
 from chat_provider import generate_chat_response, get_default_provider
 
 def run_gemini_mode(waifu_name: str, personality: str, debug: bool, provider: str = None) -> None:

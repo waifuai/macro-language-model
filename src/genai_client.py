@@ -1,3 +1,23 @@
+"""
+Google Gemini API client management for the Waifu Chatbot application.
+
+This module handles the initialization and management of Google Gemini AI client
+instances, providing a centralized interface for API key resolution and client
+configuration. It supports multiple methods for API key provision and includes
+comprehensive error handling for client initialization failures.
+
+Key features:
+- Centralized API key resolution from environment variables or files
+- Google GenAI client initialization with proper configuration
+- Support for multiple API key sources (environment variables, files)
+- Comprehensive error handling and logging
+- Lazy loading to avoid unnecessary dependencies
+- Module-level constants for default model configuration
+
+The module serves as the primary interface between the application and Google's
+Gemini AI service, ensuring secure and reliable API access while providing
+clear error messages for configuration issues.
+"""
 import logging
 import os
 from pathlib import Path

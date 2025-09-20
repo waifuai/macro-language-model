@@ -1,3 +1,23 @@
+"""
+Manim animation explaining the Waifu Chatbot architecture and system design.
+
+This module creates an animated presentation using the Manim library to visually
+explain the Waifu Chatbot system's architecture, components, and data flow. It
+demonstrates the modular design, AI integration patterns, and key features of
+the chatbot system.
+
+Key features:
+- Comprehensive architectural overview with animated diagrams
+- Personality system explanation with visual examples
+- Conversation mode demonstrations (Interactive, Auto, Gemini)
+- AI integration layer visualization
+- Provider abstraction pattern explanation
+- Data flow architecture walkthrough
+- Key benefits and design principles summary
+
+The animation serves as both documentation and a visual aid for understanding
+the system's design principles, modularity, and technical implementation.
+"""
 from manim import *
 import numpy as np
 

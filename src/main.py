@@ -1,3 +1,15 @@
+"""
+Main entry point for the Waifu Chatbot application.
+
+This module serves as the primary entry point for the Waifu Chatbot system, handling
+command-line argument parsing and delegating control to the appropriate conversation
+mode based on user selection. It supports interactive mode, automatic mode, and
+direct Gemini mode, with robust error handling for various failure scenarios.
+
+The application provides an AI-powered conversational character experience with
+different personality types (deredere, tsundere, kuudere, etc.) and support for
+multiple AI providers (Gemini, OpenRouter).
+"""
 import sys
 import os
 from typing import Optional

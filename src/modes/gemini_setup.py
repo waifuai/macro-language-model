@@ -1,3 +1,21 @@
+"""
+Gemini setup utilities for the Waifu Chatbot application.
+
+This module provides setup and configuration utilities specifically for Gemini-based
+conversation modes. It handles client initialization, system instruction generation,
+and debug configuration for Gemini AI interactions.
+
+Key features:
+- Gemini API client setup and validation
+- System instruction generation for conversation context
+- Debug mode configuration and logging
+- Integration with the centralized configuration system
+- Error handling for setup failures
+- Model name resolution and management
+
+The module serves as a setup utility for Gemini-based conversation modes, ensuring
+proper initialization and configuration before starting AI interactions.
+"""
 from modes.common import setup_gemini_api
 from genai_client import GEMINI_MODEL
 

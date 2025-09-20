@@ -1,3 +1,24 @@
+"""
+Gemini conversation loop implementation for the Waifu Chatbot application.
+
+This module implements the core conversation loop for Gemini-based interactions,
+managing the flow between user input, AI response generation, and conversation
+history. It provides a complete conversation management system with features for
+UTF-8 encoding, debug logging, and graceful error handling.
+
+Key features:
+- Complete conversation loop management for Gemini interactions
+- UTF-8 encoding support for international characters
+- Debug mode for conversation monitoring and troubleshooting
+- Conversation history preservation for context awareness
+- Integration with waifu response generation
+- Graceful error handling and recovery
+- Farewell detection for conversation termination
+
+Note: This module appears to reference waifu objects and methods that may not be
+fully implemented in the current codebase, suggesting it may be part of an incomplete
+or planned feature implementation.
+"""
 from gemini_utils import generate_with_retry
 import sys
 import traceback

@@ -1,3 +1,24 @@
+"""
+Google Gemini utility functions for the Waifu Chatbot application.
+
+This module provides utility functions for interacting with the Google Gemini AI
+service, including response generation, text extraction, and echo detection. It
+includes robust retry logic and comprehensive error handling for reliable AI
+interaction.
+
+Key features:
+- Google Gemini API integration with retry mechanisms
+- Response text extraction with multiple fallback strategies
+- Echo response detection to prevent repetitive conversations
+- Exponential backoff retry logic for API failures
+- Comprehensive error handling and logging
+- Configurable generation parameters (temperature, tokens)
+- UTF-8 encoding support for international text
+
+The module serves as a critical interface between the application and Google's
+Gemini AI service, ensuring reliable and diverse conversational responses while
+preventing repetitive or echoed content.
+"""
 import logging
 from typing import Optional, Any
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type

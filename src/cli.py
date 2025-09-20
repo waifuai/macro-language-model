@@ -1,3 +1,20 @@
+"""
+Command-line interface module for the Waifu Chatbot application.
+
+This module handles all command-line argument parsing and validation for the Waifu
+Chatbot system. It provides a user-friendly interface for selecting conversation
+modes, configuring waifu personality traits, setting debug options, and choosing
+AI providers. The module uses argparse to create a comprehensive CLI with helpful
+examples and validation for mutually exclusive mode selection.
+
+Supported features:
+- Interactive mode for real-time conversation
+- Auto mode for AI vs AI conversation simulation
+- Gemini mode for direct AI interaction
+- Personality selection (deredere, tsundere, kuudere, yandere, dandere, himedere)
+- Debug mode for detailed logging
+- Multiple AI provider support (Gemini, OpenRouter)
+"""
 import argparse
 from typing import List
 

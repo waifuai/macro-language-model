@@ -1,3 +1,25 @@
+"""
+OpenRouter text classification provider for the Waifu Chatbot application.
+
+This module implements text classification functionality using the OpenRouter API
+to determine whether text content is human-written or machine-generated. It provides
+a specialized service for content analysis that can be used to detect AI-generated
+responses and maintain conversation quality.
+
+Key features:
+- OpenRouter API integration for text classification
+- Binary classification (human-written vs machine-generated)
+- Deterministic classification prompts for consistent results
+- Comprehensive error handling and fallback mechanisms
+- API key resolution from environment variables or files
+- Request timeout and retry logic
+- Heuristic fallback for ambiguous responses
+- Detailed logging for debugging and monitoring
+
+The module serves as a critical component for maintaining conversation authenticity
+by providing reliable text classification capabilities that help prevent AI response
+echoing and ensure diverse conversation patterns.
+"""
 import logging
 import os
 from pathlib import Path

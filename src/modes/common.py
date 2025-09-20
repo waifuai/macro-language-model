@@ -1,3 +1,23 @@
+"""
+Common utilities for Gemini conversation modes in the Waifu Chatbot application.
+
+This module provides shared utilities and helper functions for the Gemini-specific
+conversation modes, including client initialization, validation, and safe content
+generation. It centralizes common functionality used across different conversation
+modes to ensure consistency and reduce code duplication.
+
+Key features:
+- Gemini API client initialization and validation
+- Safe content generation with comprehensive error handling
+- Retry configuration management for API calls
+- Centralized logging and error reporting
+- Client state validation and recovery
+- Configuration management for generation parameters
+
+The module serves as a foundation for Gemini-based conversation modes, providing
+reliable and consistent access to AI generation capabilities while handling
+common edge cases and error scenarios.
+"""
 import logging
 from typing import Optional, Any
 

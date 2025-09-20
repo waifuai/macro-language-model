@@ -1,3 +1,23 @@
+"""
+Provider-agnostic chat generation interface for the Waifu Chatbot application.
+
+This module serves as the central facade for AI chat generation, providing a unified
+interface for multiple AI providers while abstracting away the implementation details
+of each provider. It currently supports Google Gemini and OpenRouter APIs.
+
+Key features:
+- Unified interface for multiple AI providers
+- Automatic provider routing based on configuration
+- Message format conversion for provider compatibility
+- Comprehensive error handling and logging
+- Provider fallback and switching capabilities
+- Temperature and token limit configuration
+- Echo detection and prevention mechanisms
+
+The module acts as a bridge between the conversation modes and the underlying AI
+services, ensuring consistent behavior across different providers while allowing
+for easy addition of new AI services in the future.
+"""
 from typing import Optional, List, Dict, Any
 
 from gemini_utils import generate_with_retry as generate_with_gemini

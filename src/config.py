@@ -1,4 +1,23 @@
 """
+Centralized configuration management for the Waifu Chatbot application.
+
+This module handles all configuration settings, environment variables, and file-based
+overrides in a centralized manner. It provides a comprehensive configuration system
+that manages API keys, model selections, personality settings, and small talk phrases
+for the waifu chatbot.
+
+Key features:
+- Environment variable support for API keys and settings
+- File-based configuration overrides in user home directory
+- Centralized model management for different AI providers
+- Small talk phrase management with fallback defaults
+- Comprehensive error handling and logging
+- Configuration caching for performance
+
+The module supports multiple AI providers (Gemini, OpenRouter) and provides
+convenient functions for accessing configuration values throughout the application.
+"""
+"""
 Centralized configuration management for the Waifu Chatbot.
 
 This module handles all configuration settings, environment variables,

@@ -1,3 +1,22 @@
+"""
+Unit tests for the Gemini conversation mode in the Waifu Chatbot application.
+
+This module contains comprehensive unit tests for the Gemini mode functionality,
+including tests for API failures, user interactions, conversation loops, exception
+handling, and provider parameter passing. The tests use mocking to simulate various
+scenarios without requiring actual API calls.
+
+Test coverage includes:
+- API failure scenarios and error handling
+- User input simulation and exit conditions
+- Conversation loop functionality with multiple turns
+- Exception handling and recovery mechanisms
+- Provider parameter validation and routing
+- Debug mode functionality and logging
+
+The tests ensure robust behavior of the Gemini mode under various conditions
+and help maintain code quality during development and refactoring.
+"""
 import builtins
 import pytest
 from unittest.mock import patch
