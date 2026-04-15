@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 
 # OpenRouter API configuration
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
-DEFAULT_OPENROUTER_MODEL = "deepseek/deepseek-chat-v3-0324:free"
+DEFAULT_OPENROUTER_MODEL = "openrouter/free"
 OPENROUTER_API_KEY_FILE_PATH = Path.home() / ".api-openrouter"
 
 

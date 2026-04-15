@@ -58,9 +58,8 @@ GEMINI_KEY_FILE = Path.home() / ".api-gemini"
 OPENROUTER_KEY_FILE = Path.home() / ".api-openrouter"
 
 # Default models
-DEFAULT_GEMINI_MODEL = "gemini-2.5-pro"
-DEFAULT_OPENROUTER_MODEL = "deepseek/deepseek-chat-v3-0324:free"
-DEFAULT_OPENROUTER_CHAT_MODEL = "deepseek/deepseek-chat-v3-0324:free"
+DEFAULT_OPENROUTER_MODEL = "openrouter/free"
+DEFAULT_OPENROUTER_CHAT_MODEL = "openrouter/free"
 
 
 class ConfigManager:

@@ -80,18 +80,14 @@ Do not commit secrets to version control.
 
 Optionally override the default model names by creating single-line files in your home directory. If the file exists and is non-empty, it takes precedence over built-in defaults.
 
-- Gemini override:
-  - Path: ~/.model-gemini
-  - Example contents: gemini-2.0-flash-lite
-  - Default if absent: gemini-2.5-pro
 - OpenRouter classification override:
   - Path: ~/.model-openrouter
-  - Example contents: openrouter/auto
-  - Default if absent: deepseek/deepseek-chat-v3-0324:free
+  - Example contents: openrouter/free
+  - Default if absent: openrouter/free
 - OpenRouter chat override:
   - Path: ~/.model-openrouter-chat
   - Example contents: meta-llama/llama-3.1-8b-instruct
-  - Default if absent: deepseek/deepseek-chat-v3-0324:free
+  - Default if absent: openrouter/free
 
 ## Multi-Provider Support
 

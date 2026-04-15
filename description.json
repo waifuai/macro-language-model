@@ -1,0 +1,6 @@
+{
+  "title": "Customizable Waifu AI Chatbot Simulator",
+  "link": "./macro-language-model",
+  "description": "Dive into the enchanting world of Waifu Chatbot, an innovative CLI-based simulator that brings customizable anime-inspired characters to life through dynamic AI conversations! 🌸 Select from modular personality archetypes like tsundere, deredere, or yandere to craft unique interactions, powered by versatile AI providers such as Gemini 🤖 and OpenRouter. Effortlessly manage topics, configure small talk, and switch between interactive, auto, or Gemini modes for endless engagement. Built with provider-agnostic facades for seamless classification and chat generation, it includes retry logic, error handling, and echo detection to ensure smooth, deterministic responses. Set up quickly with uv for virtual environments, run tests via pytest, and override models via simple config files – all under an MIT-0 license. Perfect for hobbyists and developers exploring AI companionship in a structured, extensible framework! (128 words)",
+  "description_small": "Chat with a customizable waifu! 💖 Modular personalities like Deredere or Tsundere 😊😠. Powered by Gemini & OpenRouter AI 🤖. Interactive CLI modes, topic management, and pytest suite 🧪. Quick setup with uv! 🚀"
+}
