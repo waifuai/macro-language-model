@@ -156,6 +156,10 @@ def generate_chat_with_openrouter(
     payload = _build_chat_payload(messages, model_name, temperature, max_tokens)
     headers = {
         "Authorization": f"Bearer {api_key}",
+        "HTTP-Referer": "https://waifuai.com",
+        "X-OpenRouter-Title": "Waifu AI",
+        "X-Title": "Waifu AI",
+        "X-OpenRouter-Categories": "character-chat",
         "Content-Type": "application/json",
         "User-Agent": "Waifu-Chatbot/1.0",
     }

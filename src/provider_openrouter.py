@@ -146,8 +146,11 @@ def classify_with_openrouter(
     payload = _build_payload(text, model_name)
     headers = {
         "Authorization": f"Bearer {api_key}",
+        "HTTP-Referer": "https://waifuai.com",
+        "X-OpenRouter-Title": "Waifu AI",
+        "X-Title": "Waifu AI",
+        "X-OpenRouter-Categories": "character-chat",
         "Content-Type": "application/json",
-        "User-Agent": "Waifu-Chatbot/1.0",
     }
 
     logger.debug(f"Calling OpenRouter API with model: {model_name}")
