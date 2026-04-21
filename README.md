@@ -7,10 +7,10 @@ This project implements a chatbot designed to simulate conversation with a custo
 ## Key Features
 
 *   Modular Personality System with selectable archetypes
-*   Multi-Provider AI Support: Gemini and OpenRouter for chat generation
-*   Provider-Ready Abstractions: unified facade for chat and classification across providers
+*   AI-Powered Chat via OpenRouter for chat generation
+*   Provider-Ready Abstractions: unified facade for chat and classification
 *   Topic Management system with personality-specific prompts
-*   Multiple Run Modes: interactive, auto, and gemini mode
+*   Multiple Run Modes: interactive and auto mode
 *   Configurable small talk in src/chatbot_config.json
 *   Testing suite with pytest
 *   Organized code structure within src/
@@ -23,25 +23,21 @@ This project implements a chatbot designed to simulate conversation with a custo
 │   ├── cli.py
 │   ├── chatbot_config.json
 │   ├── config.py                  # Centralized configuration management
-│   ├── gemini_utils.py
-│   ├── genai_client.py
-│   ├── classifier.py              # Provider-agnostic facade for classification
-│   ├── chat_provider.py           # Provider-agnostic facade for chat generation
+│   ├── classifier.py              # Facade for classification
+│   ├── chat_provider.py           # Facade for chat generation
 │   ├── provider_openrouter.py     # OpenRouter provider for classification
 │   ├── provider_openrouter_chat.py # OpenRouter provider for chat generation
 │   └── modes/
 │       ├── common.py
 │       ├── interactive_mode.py
-│       ├── auto_mode.py
-│       └── gemini_mode.py
+│       └── auto_mode.py
 └── tests/
-    ├── test_gemini_mode.py
     └── test_openrouter.py
 ```
 
 ## Environment Setup using uv
 
-Create a minimal virtual environment, ensure pip exists, install uv inside the venv, then install project dependencies. Always run uv via the venv’s Python.
+Create a minimal virtual environment, ensure pip exists, install uv inside the venv, then install project dependencies. Always run uv via the venv's Python.
 
 Windows:
 ```
@@ -66,10 +62,6 @@ Run tests:
 
 ## Credentials
 
-Gemini:
-* Env: GEMINI_API_KEY or GOOGLE_API_KEY
-* File fallback: ~/.api-gemini
-
 OpenRouter:
 * Env: OPENROUTER_API_KEY
 * File fallback: ~/.api-openrouter
@@ -89,9 +81,9 @@ Optionally override the default model names by creating single-line files in you
   - Example contents: meta-llama/llama-3.1-8b-instruct
   - Default if absent: openrouter/free
 
-## Multi-Provider Support
+## OpenRouter Integration
 
-This repo includes comprehensive, provider-agnostic integrations for both classification and chat generation:
+This repo uses OpenRouter for both classification and chat generation:
 
 ### Classification
 * Provider: [`provider_openrouter.classify_with_openrouter()`](src/provider_openrouter.py:1)
@@ -120,22 +112,16 @@ End-to-end classification using the facade:
 .venv/Scripts/python.exe -c "from classifier import classify; print(classify('This is a test sentence', provider='openrouter'))"
 ```
 
-Chat generation with different providers:
+Chat generation:
 ```
 # Run from src directory
 cd src
 
-# Interactive mode with Gemini (default)
+# Interactive mode with OpenRouter (default)
 python main.py --interactive --personality tsundere
 
-# Interactive mode with OpenRouter
-python main.py --interactive --provider openrouter --personality yandere
-
-# Auto mode with OpenRouter
-python main.py --auto 5 --provider openrouter --debug
-
-# Gemini mode with custom waifu name
-python main.py --gemini --provider gemini --waifu_name "Sakura"
+# Auto mode
+python main.py --auto 5 --debug
 ```
 
 ## Testing
@@ -143,8 +129,8 @@ python main.py --gemini --provider gemini --waifu_name "Sakura"
 Unit tests cover:
 * OpenRouter key resolution paths for both classification and chat
 * HTTP behaviors including success, non-200, missing fields, and exceptions
-* Multi-provider chat generation with Gemini and OpenRouter
-* Mode-specific behaviors (interactive, auto, gemini)
+* Chat generation with OpenRouter
+* Mode-specific behaviors (interactive, auto)
 * Error handling and fallback mechanisms
 
 Run:
@@ -155,10 +141,9 @@ Run:
 ## Dependencies
 
 Core:
-* google-genai - Google Gemini API client
+* requests - HTTP client for OpenRouter API
 * tenacity - Retry logic for API calls
 * win_unicode_console - Windows console encoding support
-* requests - HTTP client for OpenRouter API
 
 Dev:
 * pytest and pinned tooling in requirements-dev.txt

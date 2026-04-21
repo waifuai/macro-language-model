@@ -1,50 +1,49 @@
 """
-Common utilities for Gemini conversation modes in the Waifu Chatbot application.
+Common utilities for OpenRouter conversation modes in the Waifu Chatbot application.
 
-This module provides shared utilities and helper functions for the Gemini-specific
+This module provides shared utilities and helper functions for the OpenRouter-specific
 conversation modes, including client initialization, validation, and safe content
 generation. It centralizes common functionality used across different conversation
 modes to ensure consistency and reduce code duplication.
 
 Key features:
-- Gemini API client initialization and validation
+- OpenRouter API client initialization and validation
 - Safe content generation with comprehensive error handling
 - Retry configuration management for API calls
 - Centralized logging and error reporting
 - Client state validation and recovery
 - Configuration management for generation parameters
 
-The module serves as a foundation for Gemini-based conversation modes, providing
+The module serves as a foundation for OpenRouter-based conversation modes, providing
 reliable and consistent access to AI generation capabilities while handling
 common edge cases and error scenarios.
 """
 import logging
 from typing import Optional, Any
 
-from gemini_utils import generate_with_retry
-from genai_client import get_client, GEMINI_MODEL
+from genai_client import get_client, generate_with_retry, OPENROUTER_MODEL
 
 # Configure logging for this module
 logger = logging.getLogger(__name__)
 
 
-def setup_gemini_api() -> Optional[Any]:
+def setup_openrouter_api() -> Optional[Any]:
     """
-    Initialize and return a ready GenAI client instance.
+    Initialize and return a ready OpenRouter client instance.
 
     Returns:
-        GenAI client instance if successful, None on failure.
+        OpenRouter client instance if successful, None on failure.
 
     Note:
         The function handles API key resolution and client initialization,
-        preferring environment variables or fallback to ~/.api-gemini file.
+        preferring environment variables or fallback to ~/.api-openrouter file.
     """
     try:
         client = get_client()
-        logger.info("GenAI client initialized successfully")
+        logger.info("OpenRouter client initialized successfully")
         return client
     except Exception as e:
-        logger.error(f"Failed to initialize GenAI client: {e}")
+        logger.error(f"Failed to initialize OpenRouter client: {e}")
         return None
 
 
@@ -75,9 +74,9 @@ def safe_generate_content(
     Safely generate content with comprehensive error handling.
 
     Args:
-        client: GenAI client instance.
+        client: OpenRouter client instance.
         prompt: The prompt to send to the model.
-        model_name: Model to use (defaults to GEMINI_MODEL).
+        model_name: Model to use (defaults to OPENROUTER_MODEL).
         max_retries: Maximum number of retry attempts.
         **kwargs: Additional arguments for generation.
 
@@ -91,7 +90,7 @@ def safe_generate_content(
         logger.error("Prompt is empty or None")
         return None
 
-    model = model_name or GEMINI_MODEL
+    model = model_name or OPENROUTER_MODEL
     logger.debug(f"Generating content with model: {model}")
 
     try:

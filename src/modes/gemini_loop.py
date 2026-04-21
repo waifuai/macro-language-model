@@ -1,7 +1,7 @@
 """
-Gemini conversation loop implementation for the Waifu Chatbot application.
+OpenRouter conversation loop implementation for the Waifu Chatbot application.
 
-This module implements the core conversation loop for Gemini-based interactions,
+This module implements the core conversation loop for OpenRouter-based interactions,
 managing the flow between user input, AI response generation, and conversation
 history. It provides a complete conversation management system with features for
 UTF-8 encoding, debug logging, and graceful error handling.
@@ -19,11 +19,11 @@ Note: This module appears to reference waifu objects and methods that may not be
 fully implemented in the current codebase, suggesting it may be part of an incomplete
 or planned feature implementation.
 """
-from gemini_utils import generate_with_retry
+from genai_client import generate_with_retry
 import sys
 import traceback
-from modes.common import setup_gemini_api
-from genai_client import GEMINI_MODEL
+from modes.common import setup_openrouter_api
+from genai_client import OPENROUTER_MODEL
 
 def run_conversation(waifu, client, max_turns: int, debug: bool):
     # Attempt to force UTF-8 output for stdout
@@ -65,7 +65,7 @@ def run_conversation(waifu, client, max_turns: int, debug: bool):
                 f"User: "
             )
         try:
-            response = generate_with_retry(client, GEMINI_MODEL, prompt, greeting if turn == 0 else waifu_response)
+            response = generate_with_retry(client, OPENROUTER_MODEL, prompt, greeting if turn == 0 else waifu_response)
             if response: # 'response' here is the raw text from Gemini
                 user_input = response
                 # Ensure user_input is treated as a string and print safely

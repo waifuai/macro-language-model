@@ -49,12 +49,10 @@ CONFIG_DIR = Path.home() / ".waifu-chatbot"
 SMALL_TALK_FILE = Path(__file__).parent / "chatbot_config.json"
 
 # Model override files
-GEMINI_MODEL_FILE = Path.home() / ".model-gemini"
 OPENROUTER_MODEL_FILE = Path.home() / ".model-openrouter"
 OPENROUTER_CHAT_MODEL_FILE = Path.home() / ".model-openrouter-chat"
 
 # API key files
-GEMINI_KEY_FILE = Path.home() / ".api-gemini"
 OPENROUTER_KEY_FILE = Path.home() / ".api-openrouter"
 
 # Default models
@@ -84,21 +82,12 @@ class ConfigManager:
         Get API key for the specified provider.
 
         Args:
-            provider: Either 'gemini' or 'openrouter'.
+            provider: 'openrouter' (only supported provider).
 
         Returns:
             API key if found, None otherwise.
         """
-        if provider.lower() == 'gemini':
-            # Check environment variables
-            api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
-            if api_key and api_key.strip():
-                return api_key.strip()
-
-            # Check file
-            return self._read_text_file(GEMINI_KEY_FILE)
-
-        elif provider.lower() == 'openrouter':
+        if provider.lower() == 'openrouter':
             # Check environment variable
             api_key = os.environ.get("OPENROUTER_API_KEY")
             if api_key and api_key.strip():
@@ -116,16 +105,12 @@ class ConfigManager:
         Get model name for the specified provider.
 
         Args:
-            provider: Either 'gemini', 'openrouter', or 'openrouter_chat'.
+            provider: 'openrouter' or 'openrouter_chat'.
 
         Returns:
             Model name to use.
         """
-        if provider.lower() == 'gemini':
-            override = self._read_text_file(GEMINI_MODEL_FILE)
-            return override if override else DEFAULT_GEMINI_MODEL
-
-        elif provider.lower() == 'openrouter':
+        if provider.lower() == 'openrouter':
             override = self._read_text_file(OPENROUTER_MODEL_FILE)
             return override if override else DEFAULT_OPENROUTER_MODEL
 
@@ -135,7 +120,7 @@ class ConfigManager:
 
         else:
             logger.warning(f"Unknown provider: {provider}")
-            return DEFAULT_GEMINI_MODEL
+            return DEFAULT_OPENROUTER_MODEL
 
     def get_small_talk(self) -> List[str]:
         """

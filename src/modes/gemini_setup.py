@@ -1,9 +1,9 @@
 """
-Gemini setup utilities for the Waifu Chatbot application.
+OpenRouter setup utilities for the Waifu Chatbot application.
 
-This module provides setup and configuration utilities specifically for Gemini-based
+This module provides setup and configuration utilities specifically for OpenRouter-based
 conversation modes. It handles client initialization, system instruction generation,
-and debug configuration for Gemini AI interactions.
+and debug configuration for OpenRouter AI interactions.
 
 Key features:
 - Gemini API client setup and validation
@@ -16,11 +16,11 @@ Key features:
 The module serves as a setup utility for Gemini-based conversation modes, ensuring
 proper initialization and configuration before starting AI interactions.
 """
-from modes.common import setup_gemini_api
-from genai_client import GEMINI_MODEL
+from modes.common import setup_openrouter_api
+from genai_client import OPENROUTER_MODEL
 
-def setup_gemini(waifu_name: str, debug: bool):
-    client = setup_gemini_api()
+def setup_openrouter(waifu_name: str, debug: bool):
+    client = setup_openrouter_api()
     if not client:
         return None, None
     system_instruction = (
@@ -35,4 +35,4 @@ def setup_gemini(waifu_name: str, debug: bool):
     if debug:
         print("Entering run_gemini_mode")
     # Return client and model name for callers using generate_with_retry
-    return client, GEMINI_MODEL
+    return client, OPENROUTER_MODEL

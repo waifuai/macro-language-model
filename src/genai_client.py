@@ -1,61 +1,49 @@
 """
-Google Gemini API client management for the Waifu Chatbot application.
+OpenRouter API client management for the Waifu Chatbot application.
 
-This module handles the initialization and management of Google Gemini AI client
+This module handles the initialization and management of OpenRouter API client
 instances, providing a centralized interface for API key resolution and client
 configuration. It supports multiple methods for API key provision and includes
 comprehensive error handling for client initialization failures.
 
 Key features:
 - Centralized API key resolution from environment variables or files
-- Google GenAI client initialization with proper configuration
-- Support for multiple API key sources (environment variables, files)
+- OpenRouter API client with retry logic
+- Response text extraction with multiple fallback strategies
+- Echo response detection to prevent repetitive conversations
+- Exponential backoff retry logic for API failures
 - Comprehensive error handling and logging
-- Lazy loading to avoid unnecessary dependencies
-- Module-level constants for default model configuration
+- Configurable generation parameters (temperature, tokens)
+- UTF-8 encoding support for international text
 
-The module serves as the primary interface between the application and Google's
-Gemini AI service, ensuring secure and reliable API access while providing
+The module serves as the primary interface between the application and OpenRouter's
+LLM service, ensuring secure and reliable API access while providing
 clear error messages for configuration issues.
 """
 import logging
 import os
+import requests
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Any, Dict
 
-from config import get_api_key, get_model, DEFAULT_GEMINI_MODEL
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
+
+from config import get_api_key, get_model
 
 # Configure logging for this module
 logger = logging.getLogger(__name__)
 
+BASE_URL = "https://openrouter.ai/api/v1"
 
-def _read_text_file(path: Path) -> Optional[str]:
+
+def _resolve_openrouter_model() -> str:
     """
-    Read and return the content of a text file, handling errors gracefully.
-
-    Args:
-        path: Path to the file to read.
+    Resolve the OpenRouter model to use using the centralized configuration system.
 
     Returns:
-        File content as string if successful and non-empty, None otherwise.
+        Model name to use for OpenRouter API calls.
     """
-    try:
-        if path.is_file():
-            content = path.read_text(encoding="utf-8").strip()
-            return content or None
-    except Exception as e:
-        logger.warning(f"Error reading text file {path}: {e}")
-    return None
-
-
-def _resolve_gemini_model() -> str:
-    """
-    Resolve the Gemini model to use using the centralized configuration system.
-
-    Returns:
-        Model name to use for Gemini API calls.
-    """
-    return get_model('gemini')
+    return get_model('openrouter')
 
 
 def resolve_api_key() -> Optional[str]:
@@ -65,48 +53,148 @@ def resolve_api_key() -> Optional[str]:
     Returns:
         API key string if found, None otherwise.
     """
-    return get_api_key('gemini')
+    return get_api_key('openrouter')
 
 
-def get_client(api_key: Optional[str] = None) -> 'genai.Client':
+def get_client(api_key: Optional[str] = None) -> dict:
     """
-    Build and return a Google GenAI client instance.
+    Build and return an OpenRouter client configuration dict.
 
     Args:
         api_key: Optional API key. If not provided, will resolve automatically.
 
     Returns:
-        Configured genai.Client instance.
+        Dict with 'api_key' and 'headers' for making OpenRouter API calls.
 
     Raises:
         RuntimeError: If no API key can be resolved.
-        ImportError: If google-genai package is not installed.
     """
-    # Lazy import to avoid top-level hard dependency
-    try:
-        from google import genai
-    except ImportError as e:
-        logger.error("google-genai package not installed")
-        raise ImportError("google-genai package is required. Install with: pip install google-genai") from e
-
     # Resolve API key if not provided
     if not api_key:
         api_key = resolve_api_key()
 
     if not api_key:
         raise RuntimeError(
-            "No API key found. Set GEMINI_API_KEY/GOOGLE_API_KEY environment variables "
-            "or create ~/.api-gemini file with your API key."
+            "No API key found. Set OPENROUTER_API_KEY environment variable "
+            "or create ~/.api-openrouter file with your API key."
         )
 
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://waifuai.com",
+        "X-Title": "Waifu AI"
+    }
+
+    logger.info("Successfully initialized OpenRouter client")
+    return {"api_key": api_key, "headers": headers}
+
+
+def is_echoed_response(user_response: str, waifu_response: str) -> bool:
+    """
+    Check if the waifu response is echoing the user's previous response.
+
+    Args:
+        user_response: The user's input text.
+        waifu_response: The waifu's generated response.
+
+    Returns:
+        True if the responses are identical (ignoring case and whitespace), False otherwise.
+    """
+    return user_response.lower().strip() == waifu_response.lower().strip()
+
+
+@retry(
+    stop=stop_after_attempt(3),
+    wait=wait_exponential(multiplier=1, min=4, max=10),
+    retry=retry_if_exception_type((Exception,)),
+    reraise=True
+)
+def generate_with_retry(
+    client: Any,
+    model_name: str,
+    prompt: str,
+    previous_waifu_response: str = "",
+    max_tokens: Optional[int] = None,
+    temperature: float = 0.7
+) -> str:
+    """
+    Generate content using the OpenRouter API with retry logic.
+
+    Args:
+        client: Client dict from get_client() with 'api_key' and 'headers'.
+        model_name: The model to call, e.g., "openrouter/free".
+        prompt: String prompt contents.
+        previous_waifu_response: Used to detect echoing (default: empty string).
+        max_tokens: Maximum tokens to generate (optional).
+        temperature: Sampling temperature (default: 0.7).
+
+    Returns:
+        The response text content.
+
+    Raises:
+        Exception: If text extraction fails or echoed response is detected.
+    """
+    logger.debug(f"Generating content with model: {model_name}")
+
+    if not client or "headers" not in client:
+        raise RuntimeError("Invalid client. Call get_client() first.")
+
+    payload: Dict[str, Any] = {
+        "model": model_name,
+        "messages": [
+            {"role": "user", "content": prompt}
+        ],
+        "temperature": temperature
+    }
+    if max_tokens:
+        payload["max_tokens"] = max_tokens
+
+    url = f"{BASE_URL}/chat/completions"
+
     try:
-        client = genai.Client(api_key=api_key)
-        logger.info("Successfully initialized GenAI client")
-        return client
+        response = requests.post(
+            url,
+            headers=client["headers"],
+            json=payload,
+            timeout=120
+        )
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        if e.response.status_code == 401:
+            raise RuntimeError("Invalid OpenRouter API key")
+        elif e.response.status_code == 429:
+            raise RuntimeError("Rate limit exceeded. Retrying...")
+        elif e.response.status_code >= 500:
+            raise RuntimeError(f"Server error {e.response.status_code}. Retrying...")
+        else:
+            raise RuntimeError(f"API error: {e}")
+    except requests.exceptions.RequestException as e:
+        raise RuntimeError(f"Request failed: {e}. Retrying...")
+
+    data = response.json()
+
+    # Extract text from response
+    response_text = None
+    try:
+        choices = data.get("choices", [])
+        if choices:
+            response_text = choices[0].get("message", {}).get("content", "").strip()
     except Exception as e:
-        logger.error(f"Failed to initialize GenAI client: {e}")
-        raise
+        logger.debug(f"Error extracting text from response: {e}")
+
+    if not response_text:
+        logger.error("Failed to extract text from OpenRouter response")
+        raise Exception("Failed to extract text from OpenRouter response.")
+
+    # Check for echoed response if previous response is provided
+    if previous_waifu_response and is_echoed_response(response_text, previous_waifu_response):
+        logger.warning("Echoed response detected, will retry")
+        raise Exception("Echoed response detected. Retrying...")
+
+    logger.debug(f"Generated response: {response_text[:100]}...")
+    return response_text
 
 
 # Module-level model constant
-GEMINI_MODEL = _resolve_gemini_model()
+OPENROUTER_MODEL = _resolve_openrouter_model()

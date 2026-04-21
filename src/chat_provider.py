@@ -3,7 +3,7 @@ Provider-agnostic chat generation interface for the Waifu Chatbot application.
 
 This module serves as the central facade for AI chat generation, providing a unified
 interface for multiple AI providers while abstracting away the implementation details
-of each provider. It currently supports Google Gemini and OpenRouter APIs.
+of each provider. It currently supports OpenRouter API.
 
 Key features:
 - Unified interface for multiple AI providers
@@ -20,7 +20,7 @@ for easy addition of new AI services in the future.
 """
 from typing import Optional, List, Dict, Any
 
-from gemini_utils import generate_with_retry as generate_with_gemini
+from genai_client import generate_with_retry as generate_with_gemini
 from provider_openrouter_chat import generate_with_retry as generate_with_openrouter
 
 
@@ -35,7 +35,7 @@ def generate_chat_response(
     """
     Provider-agnostic facade for chat generation.
     Currently supports:
-      - provider="gemini" using Google Gemini API
+      - provider="gemini" using OpenRouter API
       - provider="openrouter" using OpenRouter API
 
     Args:
@@ -72,7 +72,7 @@ def generate_chat_response(
 
             return generate_with_gemini(
                 client=client,
-                model_name=model or "gemini-2.5-pro",
+                model_name=model or "openrouter/free",
                 prompt=prompt,
                 previous_waifu_response=previous_waifu_response,
                 max_tokens=max_tokens,
@@ -117,4 +117,4 @@ def get_default_provider() -> str:
     Returns:
         Default provider name.
     """
-    return "gemini"  # Maintain backward compatibility
+    return "openrouter"  # Default to OpenRouter
