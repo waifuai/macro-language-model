@@ -1,13 +1,6 @@
-# Runtime dependencies (flexible pins suitable for OSS consumers)
-
-# Google GenAI SDK (Client-centric API)
-google-genai~=1.28
-
-# Tenacity for retry logic
-tenacity~=9.0
-
-# Windows unicode console used in main
-win_unicode_console~=0.5
-
-# HTTP client for OpenRouter integration
-requests>=2.31,<3
+# tenacity~=9.0
+tenacity==9.1.4
+# win_unicode_console~=0.5
+win_unicode_console==0.5
+# requests>=2.31,<3
+requests==2.33.1
