@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>macro-language-model Documentation</title>
+<style>
+
+:root {
+  --bg: #0d1117;
+  --card-bg: #161b22;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #58a6ff;
+  --accent2: #7ee787;
+  --accent3: #d2a8ff;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding: 2rem; }
+.container { max-width: 1100px; margin: 0 auto; }
+header { text-align: center; margin-bottom: 3rem; padding: 2rem 0; border-bottom: 1px solid var(--border); }
+header h1 { font-size: 2.5rem; font-weight: 700; background: linear-gradient(135deg, var(--accent), var(--accent3)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.5rem; }
+header p { color: var(--text-muted); font-size: 1.1rem; }
+section { margin-bottom: 2.5rem; }
+h2 { font-size: 1.4rem; margin-bottom: 0.75rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border); display: flex; align-items: baseline; gap: 0.5rem; }
+.count { font-size: 0.85rem; color: var(--text-muted); font-weight: 400; }
+.section-desc { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem; }
+.link-list { display: flex; flex-direction: column; gap: 0.25rem; }
+.link-list a { color: var(--accent); text-decoration: none; padding: 0.4rem 0.75rem; border-radius: 6px; transition: background 0.15s; font-size: 0.95rem; }
+.link-list a:hover { background: var(--card-bg); text-decoration: underline; }
+footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; padding-top: 2rem; border-top: 1px solid var(--border); margin-top: 2rem; }
+
+</style>
+
+</head>
+<body>
+<div class="container">
+
+<header>
+<h1>macro-language-model</h1>
+<p>GitHub Pages documentation</p>
+</header>
+
+<section>
+<h2>Project Description</h2>
+<h1>Waifu Chatbot</h1>
+<h2>Overview</h2>
+<p>This project implements a chatbot designed to simulate conversation with a customizable "waifu" character. It features a modular personality system, allowing the chatbot to adopt different character archetypes like Deredere, Tsundere, etc. The chatbot operates through a command-line interface and supports various interaction modes.</p>
+<h2>Key Features</h2>
+<ul>
+<li>Modular Personality System with selectable archetypes</li>
+<li>AI-Powered Chat via OpenRouter for chat generation</li>
+<li>Provider-Ready Abstractions: unified facade for chat and classification</li>
+<li>Topic Management system with personality-specific prompts</li>
+<li>Multiple Run Modes: interactive and auto mode</li>
+<li>Configurable small talk in src/chatbot_config.json</li>
+<li>Testing suite with pytest</li>
+<li>Organized code structure within src/</li>
+</ul>
+<h2>Architecture &amp; File Structure</h2>
+<pre><code>├── src/
+│   ├── main.py
+│   ├── cli.py
+│   ├── chatbot_config.json
+│   ├── config.py                  # Centralized configuration management
+│   ├── classifier.py              # Facade for classification
+│   ├── chat_provider.py           # Facade for chat generation
+│   ├── provider_openrouter.py     # OpenRouter provider for classification
+│   ├── provider_openrouter_chat.py # OpenRouter provider for chat generation
+│   └── modes/
+│       ├── common.py
+│       ├── interactive_mode.py
+│       └── auto_mode.py
+└── tests/
+    └── test_openrouter.py
+</code></pre>
+<h2>Environment Setup using uv</h2>
+<p>Create a minimal virtual environment, ensure pip exists, install uv inside the venv, then install project dependencies. Always run uv via the venv's Python.</p>
+<p>Windows:</p>
+<pre><code>.venv/Scripts/python.exe -m uv venv .venv
+.venv/Scripts/python.exe -m ensurepip
+.venv/Scripts/python.exe -m pip install uv
+.venv/Scripts/python.exe -m uv pip install -r requirements-dev.txt
+</code></pre>
+<p>Linux or macOS:</p>
+<pre><code>.venv/bin/python -m uv venv .venv
+.venv/bin/python -m ensurepip
+.venv/bin/python -m pip install uv
+.venv/bin/python -m uv pip install -r requirements-dev.txt
+</code></pre>
+<p>Run tests:</p>
+<pre><code>.venv/Scripts/python.exe -m pytest -q
+</code></pre>
+<h2>Credentials</h2>
+<p>OpenRouter:
+* Env: OPENROUTER_API_KEY
+* File fallback: ~/.api-openrouter</p>
+<p>Do not commit secrets to version control.</p>
+<h2>Model Selection Overrides</h2>
+<p>Optionally override the default model names by creating single-line files in your home directory. If the file exists and is non-empty, it takes precedence over built-in defaults.</p>
+<ul>
+<li>OpenRouter classification override:</li>
+<li>Path: ~/.model-openrouter</li>
+<li>Example contents: openrouter/free</li>
+<li>Default if absent: openrouter/free</li>
+<li>OpenRouter chat override:</li>
+<li>Path: ~/.model-openrouter-chat</li>
+<li>Example contents: meta-llama/llama-3.1-8b-instruct</li>
+<li>Default if absent: openrouter/free</li>
+</ul>
+<h2>OpenRouter Integration</h2>
+<p>This repo uses OpenRouter for both classification and chat generation:</p>
+<h3>Classification</h3>
+<ul>
+<li>Provider: <a href="src/provider_openrouter.py:1"><code>provider_openrouter.classify_with_openrouter()</code></a></li>
+<li>Facade: <a href="src/classifier.py:1"><code>classifier.classify()</code></a></li>
+</ul>
+<p>OpenRouter classification behavior:
+* Deterministic prompt and low temperature
+* Strict output normalization to digits 0 or 1 with conservative fallbacks
+* Clear error paths returning None</p>
+<h3>Chat Generation</h3>
+<ul>
+<li>Provider: <a href="src/provider_openrouter_chat.py:1"><code>provider_openrouter_chat.generate_with_retry()</code></a></li>
+<li>Facade: <a href="src/chat_provider.py:1"><code>chat_provider.generate_chat_response()</code></a></li>
+</ul>
+<p>OpenRouter chat behavior:
+* Message-based conversation format
+* Configurable temperature and token limits
+* Retry logic with exponential backoff
+* Echo detection to prevent repetitive responses
+* Comprehensive error handling</p>
+<h2>Quick Usage Examples</h2>
+<p>End-to-end classification using the facade:</p>
+<pre><code>.venv/Scripts/python.exe -c &quot;from classifier import classify; print(classify('This is a test sentence', provider='openrouter'))&quot;
+</code></pre>
+<p>Chat generation:</p>
+<pre><code># Run from src directory
+cd src
+
+# Interactive mode with OpenRouter (default)
+python main.py --interactive --personality tsundere
+
+# Auto mode
+python main.py --auto 5 --debug
+</code></pre>
+<h2>Testing</h2>
+<p>Unit tests cover:
+* OpenRouter key resolution paths for both classification and chat
+* HTTP behaviors including success, non-200, missing fields, and exceptions
+* Chat generation with OpenRouter
+* Mode-specific behaviors (interactive, auto)
+* Error handling and fallback mechanisms</p>
+<p>Run:</p>
+<pre><code>.venv/Scripts/python.exe -m pytest -q
+</code></pre>
+<h2>Dependencies</h2>
+<p>Core:
+* requests - HTTP client for OpenRouter API
+* tenacity - Retry logic for API calls
+* win_unicode_console - Windows console encoding support</p>
+<p>Dev:
+* pytest and pinned tooling in requirements-dev.txt</p>
+<p>Install:</p>
+<pre><code>.venv/Scripts/python.exe -m uv pip install -r requirements.txt
+</code></pre>
+<h2>Operational Guidance</h2>
+<ul>
+<li>Timeouts: sensible HTTP timeout used in OpenRouter calls</li>
+<li>Determinism: keep temperature low, prompt concise, and normalize outputs strictly</li>
+<li>Security: prefer env vars in CI and restrict permissions for local key files</li>
+<li>Rate-limiting: consider delaying or adding retries if your workload is bursty</li>
+<li>Logging: log non-200 responses, truncated to avoid leaking PII or secrets</li>
+</ul>
+<h2>License</h2>
+<p>MIT-0 License</p>
+</section>
+
+
+<section>
+<h2>Source Code</h2>
+<p class="section-desc">View the repository on GitHub.</p>
+<div class="link-list">
+<a href="https://github.com/waifuai/macro-language-model">GitHub Repository</a>
+</div>
+</section>
+
+
+<footer>
+<p>Generated GitHub Pages for AI agent crawlability.</p>
+</footer>
+
+</div>
+</body>
+</html>
