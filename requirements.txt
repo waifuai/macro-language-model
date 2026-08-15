@@ -3,4 +3,4 @@ tenacity==9.1.4
 # win_unicode_console~=0.5
 win_unicode_console==0.5
 # requests>=2.31,<3
-requests==2.33.1
+requests==2.34.2
