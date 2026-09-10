@@ -2,4 +2,4 @@
 -r requirements.txt
 
 # Test runner (pin for reproducibility)
-pytest==8.3.3
+pytest==9.1.1
